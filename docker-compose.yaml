@@ -1,0 +1,28 @@
+version: '3.7'
+services:
+  postgres:
+    restart: always
+    build:
+      context: .
+      dockerfile: postgres/Dockerfile
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "rently", "-U", "rently" ]
+      timeout: 45s
+      interval: 10s
+      retries: 10
+    environment:
+      POSTGRES_USER: rently
+      POSTGRES_PASSWORD: rently
+      POSTGRES_DATABASE: rently
+
+  hotel:
+    container_name: hotel
+    build:
+      context: hotel
+      dockerfile: Dockerfile
+    ports:
+      - 80:80
+    environment:
+      - CHOKIDAR_USEPOLLING=true
