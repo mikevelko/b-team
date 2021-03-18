@@ -1,10 +1,24 @@
 package rently
 
+import (
+    "context"
+    "github.com/shopspring/decimal"
+)
+
 type Offer struct {
-	Id int
+    IsActive            bool            `json:"isActive"`
+    OfferTitle          string          `json:"offerTitle"`
+    CostPerChild        decimal.Decimal `json:"costPerChild"`
+    CostPerAdult        decimal.Decimal `json:"costPerAdult"`
+    MaxGuests           int             `json:"maxGuests"`
+    Description         string          `json:"description"`
+    OfferPreviewPicture string          `json:"offerPreviewPicture"`
+    Pictures            []*Picture      `json:"pictures"`
+    Rooms               []string        `json:"rooms"`
 }
 
 type OfferStorage interface {
-	DeleteOffer(id int) error
-	GetAllOffers(hotelID int) ([]*Offer, error)
+    CreateOffer(ctx context.Context, offer *Offer) (int64, error)
+    DeleteOffer(ctx context.Context, id int) error
+    GetAllOffers(ctx context.Context, hotelID int) ([]*Offer, error)
 }
