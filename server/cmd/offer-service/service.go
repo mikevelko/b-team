@@ -1,14 +1,20 @@
 package main
 
 import (
+	"context"
 	"github.com/pw-software-engineering/b-team/server/pkg/rently"
-	"net/http"
 )
 
-type OfferService struct {
+type offerService struct {
 	offerStorage rently.OfferStorage
 }
 
-func (o OfferService) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
-	writer.Write([]byte("Hello World"))
+func newOfferService(storage rently.OfferStorage) *offerService{
+	return &offerService{offerStorage: storage}
 }
+
+func (os *offerService) handleCreateOffer(ctx context.Context, request *CreateOfferRequest) (int, error){
+	//todo: add offer creation handling here
+	panic("implement me")
+}
+
