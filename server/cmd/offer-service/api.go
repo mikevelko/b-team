@@ -1,45 +1,83 @@
 package main
 
 import (
-    "github.com/go-chi/chi"
-    "go.uber.org/zap"
-    "net/http"
+	"encoding/json"
+	"github.com/go-chi/chi"
+	"github.com/pw-software-engineering/b-team/server/pkg/httputils"
+	"github.com/shopspring/decimal"
+	"go.uber.org/zap"
+	"net/http"
 )
 
-type api struct{
-    logger *zap.Logger
-    offerService *offerService
+type api struct {
+	logger       *zap.Logger
+	offerService *offerService
 }
 
-func newApi(logger *zap.Logger, service *offerService) *api{
-    return &api{
-        logger: logger,
-        offerService: service,
-    }
+type CreateOfferRequest struct {
+	Isactive     bool            `json:"isActive"`
+	Offertitle   string          `json:"offerTitle"`
+	Costperchild decimal.Decimal `json:"costPerChild"`
+	Costperadult decimal.Decimal `json:"costPerAdult"`
+	Maxguests    int             `json:"maxGuests"`
+	Description  string          `json:"description"`
+	//todo: pictures will probably need different struct, reimplement it as soon as they are implemented
+	Offerpreviewpicture string        `json:"offerPreviewPicture"`
+	Pictures            []interface{} `json:"pictures"`
+	Rooms               []string      `json:"rooms"`
+}
+
+type offerIdResponse struct {
+	offerID int64
+}
+
+func newApi(logger *zap.Logger, service *offerService) *api {
+	return &api{
+		logger:       logger,
+		offerService: service,
+	}
 }
 
 func (a *api) mount(router chi.Router) {
-    router.Route("/api/v1/hotel", func(r chi.Router) {
-        r.Route("/offers", func(r chi.Router) {
-            r.Post("/", a.handlePostOffer)
-        })
-    })
+	router.Route("/api/v1/hotel", func(r chi.Router) {
+		r.Route("/offers", func(r chi.Router) {
+			r.Post("/", a.handlePostOffer)
+		})
+	})
 }
 
-type CreateOfferRequest struct{
-    //todo: fill this with fields required by API spec, you can use sth like https://mholt.github.io/json-to-go/
+func (a *api) handlePostOffer(w http.ResponseWriter, r *http.Request) {
+	//hotelToken := r.Header.Get("x-hotel-token")
+	//todo: check x-hotel-token for correctness
+
+	contentType := r.Header.Get("Content-Type")
+	if contentType != "application/json" {
+		httputils.RespondWithError(w, "Unable to add offer")
+		return
+	}
+	decoder := json.NewDecoder(r.Body)
+	var decoded CreateOfferRequest
+	err := decoder.Decode(&decoded)
+	if err != nil {
+		httputils.RespondWithError(w, "Unable to add offer")
+		return
+	}
+	id, err := a.offerService.handleCreateOffer(r.Context(), &decoded)
+	if err != nil {
+		httputils.RespondWithError(w, "Unable to add offer")
+		return
+	}
+	idResponse := offerIdResponse{id}
+	js, err := json.Marshal(idResponse)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	_, err = w.Write(js)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	//todo: tests for this endpoint if applicable
 }
-
-func (a *api) handlePostOffer(w http.ResponseWriter,r *http.Request){
-    //todo: we check headers and generally do http-related stuff here.
-    // 1. Check headers (e.g. content-type, user-headers
-    // 2. Unmarshall request
-    // 3. Call offerService and choose appropriate response here
-    // 4. Give appropriate response
-
-
-    panic("implement me")
-}
-
-
-
