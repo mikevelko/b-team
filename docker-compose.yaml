@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: postgres/Dockerfile
     ports:
-      - "5432:5432"
+      - 5432:5432
     healthcheck:
       test: [ "CMD", "pg_isready", "-q", "-d", "rently", "-U", "rently" ]
       timeout: 45s
@@ -17,6 +17,17 @@ services:
       POSTGRES_PASSWORD: rently
       POSTGRES_DATABASE: rently
 
+  offer-service:
+    container_name: offer-service
+    build:
+      context: server
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: offer-service
+    depends_on:
+      postgres:
+        condition: service_healthy
+
   hotel:
     container_name: hotel
     build:
@@ -26,3 +37,4 @@ services:
       - 80:80
     environment:
       - CHOKIDAR_USEPOLLING=true
+
