@@ -1,14 +1,18 @@
-name: hotel-lint
+name: Lint
 
-on: 
+on:
   push:
     branches: [ main ]
+    paths:
+      - 'hotel/**'
   pull_request:
     branches: [ main ]
+    paths:
+      - 'hotel/**'
 defaults:
   run:
     working-directory: hotel
-    
+
 jobs:
   run-linters:
     name: Run linters
@@ -24,6 +28,19 @@ jobs:
 
       - name: Install Node.js dependencies
         run: npm ci
-        
+
       - name: Run linters
         run: npx eslint . --ext .js,.jsx,.ts,.tsx
+
+      - name: Run the tests
+        run: npm test
+        working-directory: ./client
+
+      - name: Build
+        run: npm run build
+        working-directory: ./client
+
+
+
+
+

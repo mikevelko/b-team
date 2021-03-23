@@ -5,10 +5,12 @@ import (
 	"net/http"
 )
 
+//ErrorResponse is json-serializable response body from http api
 type ErrorResponse struct {
 	error string
 }
 
+//RespondWithError is used to handle internal errors in httpapi
 func RespondWithError(w http.ResponseWriter, msg string) {
 	errResponse := ErrorResponse{msg}
 	js, err := json.Marshal(errResponse)

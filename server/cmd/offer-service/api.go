@@ -2,11 +2,12 @@ package main
 
 import (
 	"encoding/json"
+	"net/http"
+
 	"github.com/go-chi/chi"
 	"github.com/pw-software-engineering/b-team/server/pkg/httputils"
 	"github.com/shopspring/decimal"
 	"go.uber.org/zap"
-	"net/http"
 )
 
 type api struct {
@@ -14,6 +15,7 @@ type api struct {
 	offerService *offerService
 }
 
+//CreateOfferRequest represents deserialized data from CreateOffer request
 type CreateOfferRequest struct {
 	Isactive     bool            `json:"isActive"`
 	Offertitle   string          `json:"offerTitle"`
@@ -21,17 +23,17 @@ type CreateOfferRequest struct {
 	Costperadult decimal.Decimal `json:"costPerAdult"`
 	Maxguests    int             `json:"maxGuests"`
 	Description  string          `json:"description"`
-	//todo: pictures will probably need different struct, reimplement it as soon as they are implemented
+	// todo: pictures will probably need different struct, reimplement it as soon as they are implemented
 	Offerpreviewpicture string        `json:"offerPreviewPicture"`
 	Pictures            []interface{} `json:"pictures"`
 	Rooms               []string      `json:"rooms"`
 }
 
-type offerIdResponse struct {
+type offerIDResponse struct {
 	offerID int64
 }
 
-func newApi(logger *zap.Logger, service *offerService) *api {
+func newAPI(logger *zap.Logger, service *offerService) *api {
 	return &api{
 		logger:       logger,
 		offerService: service,
@@ -47,8 +49,8 @@ func (a *api) mount(router chi.Router) {
 }
 
 func (a *api) handlePostOffer(w http.ResponseWriter, r *http.Request) {
-	//hotelToken := r.Header.Get("x-hotel-token")
-	//todo: check x-hotel-token for correctness
+	// hotelToken := r.Header.Get("x-hotel-token")
+	// todo: check x-hotel-token for correctness
 
 	contentType := r.Header.Get("Content-Type")
 	if contentType != "application/json" {
@@ -67,7 +69,7 @@ func (a *api) handlePostOffer(w http.ResponseWriter, r *http.Request) {
 		httputils.RespondWithError(w, "Unable to add offer")
 		return
 	}
-	idResponse := offerIdResponse{id}
+	idResponse := offerIDResponse{id}
 	js, err := json.Marshal(idResponse)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -79,5 +81,5 @@ func (a *api) handlePostOffer(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	//todo: tests for this endpoint if applicable
+	// todo: tests for this endpoint if applicable
 }

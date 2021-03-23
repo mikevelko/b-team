@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+
 	"github.com/pw-software-engineering/b-team/server/pkg/rently"
 )
 
@@ -22,11 +23,11 @@ func (os *offerService) handleCreateOffer(ctx context.Context, request *CreateOf
 	addedOffer.MaxGuests = request.Maxguests
 	addedOffer.OfferTitle = request.Offertitle
 	addedOffer.OfferPreviewPicture = request.Offerpreviewpicture
-	//todo: properly handle pictures once they are implemented
-	//addedOffer.Pictures = request.Pictures
+	// todo: properly handle pictures once they are implemented
+	// addedOffer.Pictures = request.Pictures
 	addedOffer.Rooms = request.Rooms
 
-	//todo: check CreateRequestOffer data correctness
+	// todo: check CreateRequestOffer data correctness
 
 	id, err := os.offerStorage.CreateOffer(ctx, &addedOffer)
 	if err != nil {
