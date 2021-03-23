@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/pw-software-engineering/b-team/server/pkg/rently"
+	"github.com/pw-software-engineering/b-team/server/pkg/bookly"
 	"github.com/pw-software-engineering/b-team/server/pkg/testutils"
 	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/require"
@@ -15,7 +15,7 @@ func TestOfferStorage_CreateGetDeleteOffer(t *testing.T) {
 	storage, cleanup, err := NewOfferStorage(conf)
 	require.NoError(t, err)
 	t.Cleanup(cleanup)
-	correctOffer := &rently.Offer{
+	correctOffer := &bookly.Offer{
 		IsActive:            true,
 		OfferTitle:          "Sometitle",
 		CostPerChild:        decimal.New(1234, -2), // it its 12.32
@@ -39,7 +39,7 @@ func TestOfferStorage_AddUpdateOfferStatus(t *testing.T) {
 	storage, cleanup, err := NewOfferStorage(conf)
 	require.NoError(t, err)
 	t.Cleanup(cleanup)
-	correctOffer := &rently.Offer{
+	correctOffer := &bookly.Offer{
 		IsActive:            true,
 		OfferTitle:          "Sometitle",
 		CostPerChild:        decimal.New(1234, -2), // it its 12.32

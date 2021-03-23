@@ -1,5 +1,5 @@
-CREATE SCHEMA rently
-    CREATE TABLE rently.offers
+CREATE SCHEMA bookly
+    CREATE TABLE bookly.offers
     (
         id                        bigserial primary key,
         is_active                 bool    not null,

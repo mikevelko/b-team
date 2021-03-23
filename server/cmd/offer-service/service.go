@@ -3,19 +3,19 @@ package main
 import (
 	"context"
 
-	"github.com/pw-software-engineering/b-team/server/pkg/rently"
+	"github.com/pw-software-engineering/b-team/server/pkg/bookly"
 )
 
 type offerService struct {
-	offerStorage rently.OfferStorage
+	offerStorage bookly.OfferStorage
 }
 
-func newOfferService(storage rently.OfferStorage) *offerService {
+func newOfferService(storage bookly.OfferStorage) *offerService {
 	return &offerService{offerStorage: storage}
 }
 
 func (os *offerService) handleCreateOffer(ctx context.Context, request *CreateOfferRequest) (int64, error) {
-	var addedOffer rently.Offer
+	var addedOffer bookly.Offer
 	addedOffer.IsActive = request.Isactive
 	addedOffer.CostPerAdult = request.Costperadult
 	addedOffer.CostPerChild = request.Costperchild

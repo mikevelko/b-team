@@ -1,4 +1,4 @@
-package rently
+package bookly
 
 import (
 	"context"

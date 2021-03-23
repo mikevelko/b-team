@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/jackc/pgx/v4/pgxpool"
-	"github.com/pw-software-engineering/b-team/server/pkg/rently"
+	"github.com/pw-software-engineering/b-team/server/pkg/bookly"
 )
 
 // OfferStorage is responsible for storing and retrieving offers
@@ -13,9 +13,9 @@ type OfferStorage struct {
 	connPool *pgxpool.Pool
 }
 
-// this is very nice way of ensuring, that *OfferStorage{} implements rently.OfferStorage.
+// this is very nice way of ensuring, that *OfferStorage{} implements bookly.OfferStorage.
 // if it does not - program won't compile and you'll see red error in IDE
-var _ rently.OfferStorage = &OfferStorage{}
+var _ bookly.OfferStorage = &OfferStorage{}
 
 // NewOfferStorage initializes OfferStorage
 func NewOfferStorage(conf Config) (*OfferStorage, func(), error) {
@@ -30,7 +30,7 @@ func NewOfferStorage(conf Config) (*OfferStorage, func(), error) {
 }
 
 //CreateOffer implements business logic of
-func (o *OfferStorage) CreateOffer(ctx context.Context, offer *rently.Offer) (int64, error) {
+func (o *OfferStorage) CreateOffer(ctx context.Context, offer *bookly.Offer) (int64, error) {
 	const query = `
     INSERT INTO offers(
         is_active, 
@@ -77,6 +77,6 @@ func (o *OfferStorage) UpdateOfferStatus(ctx context.Context, id int64, isActive
 }
 
 // GetAllOffers implements business logic related to retrieving all offers for given hotel
-func (o *OfferStorage) GetAllOffers(ctx context.Context, hotelID int) ([]*rently.Offer, error) {
+func (o *OfferStorage) GetAllOffers(ctx context.Context, hotelID int) ([]*bookly.Offer, error) {
 	panic("implement me")
 }

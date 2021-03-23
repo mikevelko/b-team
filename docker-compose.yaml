@@ -8,14 +8,14 @@ services:
     ports:
       - 5432:5432
     healthcheck:
-      test: [ "CMD", "pg_isready", "-q", "-d", "rently", "-U", "rently" ]
+      test: [ "CMD", "pg_isready", "-q", "-d", "bookly", "-U", "bookly" ]
       timeout: 45s
       interval: 10s
       retries: 10
     environment:
-      POSTGRES_USER: rently
-      POSTGRES_PASSWORD: rently
-      POSTGRES_DATABASE: rently
+      POSTGRES_USER: bookly
+      POSTGRES_PASSWORD: bookly
+      POSTGRES_DATABASE: bookly
 
   offer-service:
     container_name: offer-service

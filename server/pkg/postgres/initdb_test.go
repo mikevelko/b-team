@@ -4,7 +4,7 @@ package postgres
 var conf Config = Config{
 	Host:     "localhost",
 	Port:     5432,
-	Database: "rently",
-	User:     "rently",
-	Password: "rently",
+	Database: "bookly",
+	User:     "bookly",
+	Password: "bookly",
 }
