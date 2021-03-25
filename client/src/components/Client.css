@@ -1,0 +1,26 @@
+.nav-buttons 
+{
+    flex: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 100px;
+    padding-top: 20px;
+}
+
+.nav-inputs 
+{
+    flex: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 50px;
+}
+
+.li 
+{
+    display: flex;
+    list-style-type: none;
+    padding-bottom: 50px;
+    padding-right: 50px;
+}
