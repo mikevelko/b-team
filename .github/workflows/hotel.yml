@@ -34,11 +34,11 @@ jobs:
 
       - name: Run the tests
         run: npm test
-        working-directory: ./client
+        working-directory: ./hotel
 
       - name: Build
         run: npm run build
-        working-directory: ./client
+        working-directory: ./hotel
 
 
 
