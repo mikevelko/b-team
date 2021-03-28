@@ -1,0 +1,19 @@
+.filters
+{
+    flex: 100%;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    margin-top: 50px;
+}
+.ul-filters 
+{
+    list-style-type: none;
+}
+
+.ul-li-filters 
+{
+    float: left;
+    margin: 30px;
+}

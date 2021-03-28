@@ -1,0 +1,12 @@
+.buttonsList{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    flex-basis: 100%;
+}
+.generalButton{
+    width: 30%;
+    height: 20%;
+    border-radius: 100px;
+}
