@@ -13,7 +13,7 @@ function Hotels() {
     const [items, setItems] = useState([]);
 
     const data = [
-        { city: 'Warsaw', 'country': 'Poland', 'HotelName': 'Grand Hotel 1' },
+        { 'city': 'Warsaw', 'country': 'Poland', 'HotelName': 'Grand Hotel 1' },
         { city: 'Warsaw', 'country': 'Poland', 'HotelName': 'Grand Hotel 2' },
         { city: 'Warsaw', 'country': 'Poland', 'HotelName': 'Grand Hotel 3' },
         { city: 'Warsaw', 'country': 'Poland', 'HotelName': 'Grand Hotel 4' },

@@ -7,6 +7,7 @@ import Hotels from './components/Hotels';
 import Client from './components/Client';
 import PrivateRoute from './components/PrivateRoute'
 import LoginPage from './components/LoginPage';
+import MyReservations from './components/MyReservations';
 
 class App extends Component {
   constructor() {
@@ -49,6 +50,7 @@ class App extends Component {
           <PrivateRoute authed={this.state.isUserAuthenticated} exact path='/home' component={MainPage} />
           <PrivateRoute authed={this.state.isUserAuthenticated} exact path='/hotels' component={Hotels} />
           <PrivateRoute authed={this.state.isUserAuthenticated} exact path='/client' component={Client} />
+          <PrivateRoute authed={this.state.isUserAuthenticated} exact path='/client/reservations' component={MyReservations} />
           <Route exact path="/client/login" component={() => <LoginPage Login={this.Login}/>}/>
         </Switch>
       </Router>
