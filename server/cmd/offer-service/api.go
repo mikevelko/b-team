@@ -2,12 +2,11 @@ package main
 
 import (
 	"encoding/json"
-	"net/http"
-
 	"github.com/go-chi/chi"
 	"github.com/pw-software-engineering/b-team/server/pkg/httputils"
 	"github.com/shopspring/decimal"
 	"go.uber.org/zap"
+	"net/http"
 )
 
 type api struct {
