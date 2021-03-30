@@ -21,7 +21,7 @@ type Offer struct {
 
 //OfferStorage is responsible for persisting offers
 type OfferStorage interface {
-	CreateOffer(ctx context.Context, offer *Offer) (int64, error)
+	CreateOffer(ctx context.Context, offer *Offer, hotelID int) (int64, error)
 	UpdateOfferStatus(ctx context.Context, offerID int64, isActive bool) error
 	GetAllOffers(ctx context.Context, hotelID int) ([]*Offer, error)
 }

@@ -3,7 +3,6 @@ package postgres
 import (
 	"context"
 	"fmt"
-
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/pw-software-engineering/b-team/server/pkg/bookly"
 )
@@ -30,18 +29,19 @@ func NewOfferStorage(conf Config) (*OfferStorage, func(), error) {
 }
 
 //CreateOffer implements business logic of
-func (o *OfferStorage) CreateOffer(ctx context.Context, offer *bookly.Offer) (int64, error) {
+func (o *OfferStorage) CreateOffer(ctx context.Context, offer *bookly.Offer, hotelID int) (int64, error) {
 	const query = `
     INSERT INTO offers(
-        is_active, 
+        is_active,
         offer_title, 
         cost_per_child, 
         cost_par_adult, 
         max_guests, 
         description, 
-        offer_preview_picture_url
+        offer_preview_picture_url,
+		hotel_id
         )
-    VALUES ($1,$2,$3,$4,$5,$6,$7)
+    VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
     RETURNING id;
 `
 	var id int64
@@ -53,6 +53,7 @@ func (o *OfferStorage) CreateOffer(ctx context.Context, offer *bookly.Offer) (in
 		offer.MaxGuests,
 		offer.Description,
 		offer.OfferPreviewPicture,
+		hotelID,
 	).Scan(&id)
 	if err != nil {
 		return 0, fmt.Errorf("postgres: could not insert offer: %w", err)
@@ -78,5 +79,31 @@ func (o *OfferStorage) UpdateOfferStatus(ctx context.Context, id int64, isActive
 
 // GetAllOffers implements business logic related to retrieving all offers for given hotel
 func (o *OfferStorage) GetAllOffers(ctx context.Context, hotelID int) ([]*bookly.Offer, error) {
-	panic("implement me")
+	const query = `
+    SELECT * FROM offers
+	WHERE hotel_id = $1
+`
+	list, err := o.connPool.Query(ctx, query, hotelID)
+	if err != nil {
+		return nil, fmt.Errorf("postgres: could not retrieve hotel's offers: %w", err)
+	}
+	result := []*bookly.Offer{}
+	defer list.Close()
+	for list.Next() {
+		var id int64
+		var hID int64
+		//todo: find better way to ignore those ids if exists
+		offer := &bookly.Offer{}
+		errScan := list.Scan(&id, &hID, &offer.IsActive, &offer.OfferTitle,
+			&offer.CostPerChild, &offer.CostPerAdult, &offer.MaxGuests, &offer.Description, &offer.OfferPreviewPicture)
+		if errScan != nil {
+			return nil, fmt.Errorf("postgres: could not retrieve hotel's offers: %w", err)
+		}
+		result = append(result, offer)
+	}
+	errFinal := list.Err()
+	if errFinal != nil {
+		return nil, fmt.Errorf("postgres: could not retrieve hotel's offers: %w", err)
+	}
+	return result, nil
 }

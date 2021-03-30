@@ -37,7 +37,8 @@ func IsCreatedOfferValid(offer *CreateOfferRequest) (err error) {
 	return nil
 }
 
-func (os *offerService) handleCreateOffer(ctx context.Context, request *CreateOfferRequest) (int64, error) {
+//handleCreateOffer validates Create Offer Request and passes arguments to business logic
+func (os *offerService) handleCreateOffer(ctx context.Context, request *CreateOfferRequest, hotelToken string) (int64, error) {
 
 	errValidation := IsCreatedOfferValid(request)
 	if errValidation != nil {
@@ -56,7 +57,7 @@ func (os *offerService) handleCreateOffer(ctx context.Context, request *CreateOf
 	// addedOffer.Pictures = request.Pictures
 	addedOffer.Rooms = request.Rooms
 
-	id, err := os.offerStorage.CreateOffer(ctx, &addedOffer)
+	id, err := os.offerStorage.CreateOffer(ctx, &addedOffer, 1)
 	if err != nil {
 		return -1, err
 	}

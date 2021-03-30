@@ -63,7 +63,8 @@ func (a *api) handlePostOffer(w http.ResponseWriter, r *http.Request) {
 		httputils.RespondWithError(w, "Unable to add offer")
 		return
 	}
-	id, err := a.offerService.handleCreateOffer(r.Context(), &decoded)
+	//todo: supply proper hotel token once hotel verification will be available
+	id, err := a.offerService.handleCreateOffer(r.Context(), &decoded, "")
 	if err != nil {
 		httputils.RespondWithError(w, "Unable to add offer")
 		return
