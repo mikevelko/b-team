@@ -7,12 +7,12 @@ import (
 	"go.uber.org/zap"
 )
 
-//Config is used to configure application
+// Config is used to configure application
 type Config struct {
 	HTTPHostAddress string `env:"default=0.0.0.0:8080"`
 }
 
-//NewApp initializes application
+// NewApp initializes application
 func NewApp(logger *zap.Logger, cfg Config) *App {
 	return &App{
 		Logger: logger,
@@ -29,7 +29,7 @@ type App struct {
 	config     Config
 }
 
-//Run runs application server and other services
+// Run runs application server and other services
 func (a *App) Run() {
 	a.Logger.Info("Application started running")
 	a.httpServer = &http.Server{
@@ -43,7 +43,7 @@ func (a *App) Run() {
 	a.Logger.Fatal("http server closed with error: %s")
 }
 
-//Build is used to initialize application's dependencies
+// Build is used to initialize application's dependencies
 func (a *App) Build(initializer func() error) {
 	err := initializer()
 	if err != nil {

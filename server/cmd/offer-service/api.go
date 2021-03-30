@@ -2,19 +2,21 @@ package main
 
 import (
 	"encoding/json"
+	"net/http"
+
 	"github.com/go-chi/chi"
+	"github.com/pw-software-engineering/b-team/server/pkg/bookly"
 	"github.com/pw-software-engineering/b-team/server/pkg/httputils"
 	"github.com/shopspring/decimal"
 	"go.uber.org/zap"
-	"net/http"
 )
 
 type api struct {
 	logger       *zap.Logger
-	offerService *offerService
+	offerService bookly.OfferService
 }
 
-//CreateOfferRequest represents deserialized data from CreateOffer request
+// CreateOfferRequest represents deserialized data from CreateOffer request
 type CreateOfferRequest struct {
 	Isactive     bool            `json:"isActive"`
 	Offertitle   string          `json:"offerTitle"`
@@ -28,11 +30,24 @@ type CreateOfferRequest struct {
 	Rooms               []string      `json:"rooms"`
 }
 
+// ToOffer maps a request to add an offer to model offer
+func (c CreateOfferRequest) ToOffer() *bookly.Offer {
+	return &bookly.Offer{
+		IsActive:            c.Isactive,
+		OfferTitle:          c.Offertitle,
+		CostPerChild:        c.Costperadult,
+		CostPerAdult:        c.Costperchild,
+		MaxGuests:           c.Maxguests,
+		Description:         c.Description,
+		OfferPreviewPicture: c.Offerpreviewpicture,
+	}
+}
+
 type offerIDResponse struct {
 	offerID int64
 }
 
-func newAPI(logger *zap.Logger, service *offerService) *api {
+func newAPI(logger *zap.Logger, service bookly.OfferService) *api {
 	return &api{
 		logger:       logger,
 		offerService: service,
@@ -57,14 +72,14 @@ func (a *api) handlePostOffer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	decoder := json.NewDecoder(r.Body)
-	var decoded CreateOfferRequest
-	err := decoder.Decode(&decoded)
+	var decodedRequest CreateOfferRequest
+	err := decoder.Decode(&decodedRequest)
 	if err != nil {
 		httputils.RespondWithError(w, "Unable to add offer")
 		return
 	}
-	//todo: supply proper hotel token once hotel verification will be available
-	id, err := a.offerService.handleCreateOffer(r.Context(), &decoded, "")
+	// todo: supply proper hotel token once hotel verification will be available
+	id, err := a.offerService.HandleCreateOffer(r.Context(), decodedRequest.ToOffer(), "")
 	if err != nil {
 		httputils.RespondWithError(w, "Unable to add offer")
 		return

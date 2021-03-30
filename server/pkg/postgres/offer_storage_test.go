@@ -2,9 +2,10 @@ package postgres
 
 import (
 	"context"
+	"testing"
+
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/stretchr/testify/assert"
-	"testing"
 
 	"github.com/pw-software-engineering/b-team/server/pkg/bookly"
 	"github.com/pw-software-engineering/b-team/server/pkg/testutils"

@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"fmt"
+
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/pw-software-engineering/b-team/server/pkg/bookly"
 )
@@ -28,7 +29,7 @@ func NewOfferStorage(conf Config) (*OfferStorage, func(), error) {
 	return storage, cleanup, nil
 }
 
-//CreateOffer implements business logic of
+// CreateOffer implements business logic of
 func (o *OfferStorage) CreateOffer(ctx context.Context, offer *bookly.Offer, hotelID int) (int64, error) {
 	const query = `
     INSERT INTO offers(
@@ -61,7 +62,7 @@ func (o *OfferStorage) CreateOffer(ctx context.Context, offer *bookly.Offer, hot
 	return id, nil
 }
 
-//UpdateOfferStatus implements business logic of updating offer status
+// UpdateOfferStatus implements business logic of updating offer status
 func (o *OfferStorage) UpdateOfferStatus(ctx context.Context, id int64, isActive bool) error {
 	const query = `
     UPDATE offers
@@ -92,7 +93,7 @@ func (o *OfferStorage) GetAllOffers(ctx context.Context, hotelID int) ([]*bookly
 	for list.Next() {
 		var id int64
 		var hID int64
-		//todo: find better way to ignore those ids if exists
+		// todo: find better way to ignore those ids if exists
 		offer := &bookly.Offer{}
 		errScan := list.Scan(&id, &hID, &offer.IsActive, &offer.OfferTitle,
 			&offer.CostPerChild, &offer.CostPerAdult, &offer.MaxGuests, &offer.Description, &offer.OfferPreviewPicture)
