@@ -14,6 +14,7 @@ import Reservations from './Reservations';
 import Rooms from './Rooms';
 import LogIn from './LogIn';
 import HomeIcon from '@material-ui/icons/Home';
+import CreateOffer from './CreateOffer';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -53,6 +54,7 @@ export default function App() {
         <Route path='/' exact component={StartPage}/>
         <Route path='/hotelInfo' component={HotelInfo}/>
         <Route path='/offers' exact component={Offers}/>
+        <Route path='/offers/create' component={CreateOffer}/>
         <Route path='/offers/:offerId' component={OfferDetails}/>
         <Route path='/reservations' component={Reservations}/>
         <Route path='/rooms' component={Rooms}/>
