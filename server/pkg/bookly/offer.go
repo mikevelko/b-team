@@ -23,10 +23,11 @@ type Offer struct {
 type OfferStorage interface {
 	CreateOffer(ctx context.Context, offer *Offer, hotelID int) (int64, error)
 	UpdateOfferStatus(ctx context.Context, offerID int64, isActive bool) error
-	GetAllOffers(ctx context.Context, hotelID int) ([]*Offer, error)
+	GetAllOffers(ctx context.Context, hotelID int, isActive *bool) ([]*Offer, error)
 }
 
 // OfferService is a service which is responsible for actions related to offers
 type OfferService interface {
 	HandleCreateOffer(ctx context.Context, offer *Offer, hotelToken string) (int64, error)
+	GetHotelOfferPreviews(ctx context.Context, isActive *bool, hotelToken string) ([]Offer, error)
 }

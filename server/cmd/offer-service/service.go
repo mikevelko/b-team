@@ -38,6 +38,7 @@ func IsCreatedOfferValid(offer *bookly.Offer) (err error) {
 	return nil
 }
 
+// HandleCreateOffer handles creating offers from request
 func (os *offerService) HandleCreateOffer(ctx context.Context, offer *bookly.Offer, hotelToken string) (int64, error) {
 	errValidation := IsCreatedOfferValid(offer)
 	if errValidation != nil {
@@ -49,6 +50,11 @@ func (os *offerService) HandleCreateOffer(ctx context.Context, offer *bookly.Off
 		return -1, err
 	}
 	return id, err
+}
+
+//HandleGetOffers handles getting offers for particular hotel
+func (os *offerService) GetHotelOfferPreviews(ctx context.Context, isActive *bool, hotelToken string) ([]bookly.Offer, error) {
+	panic("implement me")
 }
 
 var _ bookly.OfferService = &offerService{}

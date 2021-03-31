@@ -16,6 +16,8 @@ type api struct {
 	offerService bookly.OfferService
 }
 
+//todo: those structures below should be moved to other go file for readibility
+
 // CreateOfferRequest represents deserialized data from CreateOffer request
 type CreateOfferRequest struct {
 	Isactive     bool            `json:"isActive"`
@@ -28,6 +30,16 @@ type CreateOfferRequest struct {
 	Offerpreviewpicture string        `json:"offerPreviewPicture"`
 	Pictures            []interface{} `json:"pictures"`
 	Rooms               []string      `json:"rooms"`
+}
+
+//GetOffersRequest represents deserialized data from GetOffers Request
+type GetOffersRequest struct {
+	Isactive *bool `json:"isActive,omitempty"`
+}
+
+//GetOffersResponse represents serialized offers sent back to request
+type GetOffersResponse struct {
+	Offers []bookly.Offer `json:"offerPreview"`
 }
 
 // ToOffer maps a request to add an offer to model offer
@@ -58,6 +70,7 @@ func (a *api) mount(router chi.Router) {
 	router.Route("/api/v1/hotel", func(r chi.Router) {
 		r.Route("/offers", func(r chi.Router) {
 			r.Post("/", a.handlePostOffer)
+			r.Get("/", a.handleGetOffers)
 		})
 	})
 }
@@ -66,9 +79,7 @@ func (a *api) handlePostOffer(w http.ResponseWriter, r *http.Request) {
 	// hotelToken := r.Header.Get("x-hotel-token")
 	// todo: check x-hotel-token for correctness
 
-	contentType := r.Header.Get("Content-Type")
-	if contentType != "application/json" {
-		httputils.RespondWithError(w, "Unable to add offer")
+	if !httputils.IsHeaderTypeValid(w, r, "application/json", "Unable to add offer") {
 		return
 	}
 	decoder := json.NewDecoder(r.Body)
@@ -90,11 +101,34 @@ func (a *api) handlePostOffer(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	_, err = w.Write(js)
+	httputils.WriteJSONResponse(w, js)
+}
+
+func (a *api) handleGetOffers(w http.ResponseWriter, r *http.Request) {
+	// hotelToken := r.Header.Get("x-hotel-token")
+	// todo: check x-hotel-token for correctness
+
+	if !httputils.IsHeaderTypeValid(w, r, "application/json", "Unable to get offers") {
+		return
+	}
+	decoder := json.NewDecoder(r.Body)
+	var decodedRequest GetOffersRequest
+	err := decoder.Decode(&decodedRequest)
+	if err != nil {
+		httputils.RespondWithError(w, "Unable to get offers")
+		return
+	}
+	// todo: supply proper hotel token once hotel verification will be available
+	offerPreviews, err := a.offerService.GetHotelOfferPreviews(r.Context(), decodedRequest.Isactive, "")
+	if err != nil {
+		httputils.RespondWithError(w, "Unable to get offers")
+		return
+	}
+	offersResponse := GetOffersResponse{Offers: offerPreviews}
+	js, err := json.Marshal(offersResponse)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	// todo: tests for this endpoint if applicable
+	httputils.WriteJSONResponse(w, js)
 }

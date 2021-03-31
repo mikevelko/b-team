@@ -116,3 +116,18 @@ func (mr *MockOfferServiceMockRecorder) HandleCreateOffer(ctx, offer, hotelToken
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleCreateOffer", reflect.TypeOf((*MockOfferService)(nil).HandleCreateOffer), ctx, offer, hotelToken)
 }
+
+//HandleGetOffers mocks base method
+func (m *MockOfferService) GetHotelOfferPreviews(ctx context.Context, isActive *bool, hotelToken string) ([]bookly.Offer, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetHotelOfferPreviews", ctx, isActive, hotelToken)
+	ret0, _ := ret[0].([]bookly.Offer)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// HandleCreateOffer indicates an expected call of HandleCreateOffer.
+func (mr *MockOfferServiceMockRecorder) HandleGetOffers(ctx, isActive, hotelToken interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetHotelOfferPreviews", reflect.TypeOf((*MockOfferService)(nil).GetHotelOfferPreviews), ctx, isActive, hotelToken)
+}
