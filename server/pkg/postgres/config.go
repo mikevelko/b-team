@@ -10,11 +10,11 @@ import (
 
 // Config contains required values for initializing pgxpool.Config. Use in newConnConfig.
 type Config struct {
-	Host     string
-	Port     uint16
-	Database string
-	User     string
-	Password string
+	Host     string `required:"true"`
+	Port     uint16 `required:"true"`
+	Database string `required:"true"`
+	User     string `required:"true"`
+	Password string `required:"true"`
 }
 
 // newPool initializes postgres pool. If error is returned, cleanup is nil.
