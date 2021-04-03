@@ -1,5 +1,5 @@
 import './App.css';
-import React, { Component, useState } from 'react';
+import React, { Component, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import MainPage from './components/MainPage';
 import Nav from './components/Nav';
@@ -9,53 +9,60 @@ import PrivateRoute from './components/PrivateRoute'
 import LoginPage from './components/LoginPage';
 import MyReservations from './components/MyReservations';
 
-class App extends Component {
-  constructor() {
-    super();
-    this.Logout = this.Logout.bind(this);
-    this.Login = this.Login.bind(this);
-    this.state = {
-      isUserAuthenticated: false
-    };
+function App() {
+
+  const [isUserAuthenticated, SetIsUserAuthenticated] = useState(false);
+  const [token, setToken] = useState();
+
+
+  useEffect(() => {
+    const data = (window.localStorage.getItem("isUserAuthenticated"));
+    console.log(JSON.parse(data));
+    SetIsUserAuthenticated(JSON.parse(data));
+    console.log(isUserAuthenticated);
+  }, [])
+
+  useEffect(() => {
+    window.localStorage.setItem("isUserAuthenticated", JSON.stringify(isUserAuthenticated));
+  })
+
+  
+  function Logout() {
+    SetIsUserAuthenticated(false);
   }
 
-  Logout() {
-    this.setState({
-      isUserAuthenticated: false
-    });
+  function Login() {
+
+    //response from server here 
+    SetIsUserAuthenticated(true);
   }
 
-  Login() {
-    this.setState({
-      isUserAuthenticated: true
-    });
-  }
-
-  render() {
-    return (
-      <Router>
-        <Nav isUserAuthenticated={this.state.isUserAuthenticated} Logout={this.Logout}/>
-        <Switch>
-          <Route
-            exact
-            path="/"
-            render={() => {
+  //if(!isUserAuthenticated) { return <div></div> } 
+  return (
+    <Router>
+      <Nav isUserAuthenticated={isUserAuthenticated} Logout={Logout} />
+      <Switch>
+        <Route
+          exact
+          path="/"
+          render={() => {
               return (
-                this.isUserAuthenticated ?
+                isUserAuthenticated ?
                   <Redirect to="/client/login" /> :
                   <Redirect to="/home" />
               )
-            }}
-          />
-          <PrivateRoute authed={this.state.isUserAuthenticated} exact path='/home' component={MainPage} />
-          <PrivateRoute authed={this.state.isUserAuthenticated} exact path='/hotels' component={Hotels} />
-          <PrivateRoute authed={this.state.isUserAuthenticated} exact path='/client' component={Client} />
-          <PrivateRoute authed={this.state.isUserAuthenticated} exact path='/client/reservations' component={MyReservations} />
-          <Route exact path="/client/login" component={() => <LoginPage Login={this.Login}/>}/>
-        </Switch>
-      </Router>
-    );
-  }
+          }}
+        ></Route>
+        <PrivateRoute authed={isUserAuthenticated} exact path='/home' component={MainPage} />
+        <PrivateRoute authed={isUserAuthenticated} exact path='/hotels' component={Hotels} />
+        <PrivateRoute authed={isUserAuthenticated} exact path='/client' component={Client} />
+        <PrivateRoute authed={isUserAuthenticated} exact path='/client/reservations' component={MyReservations} />
+        <Route exact path="/client/login" component={() => <LoginPage Login={Login} isUserAuthenticated={isUserAuthenticated}/>} />
+      </Switch>
+    </Router>
+  );
+
 }
+
 
 export default App;

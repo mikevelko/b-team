@@ -1,16 +1,18 @@
 package main
 
 import (
+	"testing"
+
+	"github.com/pw-software-engineering/b-team/server/pkg/bookly"
 	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestIsCreatedOfferValid(t *testing.T) {
-	//todo: implement tests for rooms once they are implemented
-	//todo: also handle pictures
+	// todo: implement tests for rooms once they are implemented
+	// todo: also handle pictures
 	type args struct {
-		offer *CreateOfferRequest
+		offer *bookly.Offer
 	}
 	tests := []struct {
 		name  string
@@ -20,11 +22,11 @@ func TestIsCreatedOfferValid(t *testing.T) {
 		{
 			name: "Offer with bad cost per child",
 			args: args{
-				offer: &CreateOfferRequest{
-					Costperchild: decimal.NewFromFloat(-12.12),
-					Costperadult: decimal.NewFromFloat(250.00),
-					Maxguests:    10,
-					Offertitle:   "bad cost per child offer",
+				offer: &bookly.Offer{
+					CostPerChild: decimal.NewFromFloat(-12.12),
+					CostPerAdult: decimal.NewFromFloat(250.00),
+					MaxGuests:    10,
+					OfferTitle:   "bad cost per child offer",
 				},
 			},
 			check: func(t *testing.T, err error) {
@@ -34,11 +36,11 @@ func TestIsCreatedOfferValid(t *testing.T) {
 		{
 			name: "Offer with bad cost per adult",
 			args: args{
-				offer: &CreateOfferRequest{
-					Costperchild: decimal.NewFromFloat(12.12),
-					Costperadult: decimal.NewFromFloat(-50),
-					Maxguests:    10,
-					Offertitle:   "bad adult cost offer",
+				offer: &bookly.Offer{
+					CostPerChild: decimal.NewFromFloat(12.12),
+					CostPerAdult: decimal.NewFromFloat(-50),
+					MaxGuests:    10,
+					OfferTitle:   "bad adult cost offer",
 				},
 			},
 			check: func(t *testing.T, err error) {
@@ -48,10 +50,10 @@ func TestIsCreatedOfferValid(t *testing.T) {
 		{
 			name: "Offer with no title",
 			args: args{
-				offer: &CreateOfferRequest{
-					Costperchild: decimal.NewFromFloat(120.12),
-					Costperadult: decimal.NewFromFloat(500),
-					Maxguests:    10,
+				offer: &bookly.Offer{
+					CostPerChild: decimal.NewFromFloat(120.12),
+					CostPerAdult: decimal.NewFromFloat(500),
+					MaxGuests:    10,
 				},
 			},
 			check: func(t *testing.T, err error) {
@@ -61,11 +63,11 @@ func TestIsCreatedOfferValid(t *testing.T) {
 		{
 			name: "Offer with bad max guests number",
 			args: args{
-				offer: &CreateOfferRequest{
-					Costperchild: decimal.NewFromFloat(120.12),
-					Costperadult: decimal.NewFromFloat(500),
-					Offertitle:   "negative room",
-					Maxguests:    -2137,
+				offer: &bookly.Offer{
+					CostPerChild: decimal.NewFromFloat(120.12),
+					CostPerAdult: decimal.NewFromFloat(500),
+					OfferTitle:   "negative room",
+					MaxGuests:    -2137,
 				},
 			},
 			check: func(t *testing.T, err error) {
@@ -75,11 +77,11 @@ func TestIsCreatedOfferValid(t *testing.T) {
 		{
 			name: "Valid offer",
 			args: args{
-				offer: &CreateOfferRequest{
-					Costperchild: decimal.NewFromFloat(120.12),
-					Costperadult: decimal.NewFromFloat(500),
-					Maxguests:    5,
-					Offertitle:   "Perfectly valid offer",
+				offer: &bookly.Offer{
+					CostPerChild: decimal.NewFromFloat(120.12),
+					CostPerAdult: decimal.NewFromFloat(500),
+					MaxGuests:    5,
+					OfferTitle:   "Perfectly valid offer",
 				},
 			},
 			check: func(t *testing.T, err error) {

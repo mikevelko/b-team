@@ -2,9 +2,10 @@ package postgres
 
 import (
 	"context"
+	"testing"
+
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/stretchr/testify/assert"
-	"testing"
 
 	"github.com/pw-software-engineering/b-team/server/pkg/bookly"
 	"github.com/pw-software-engineering/b-team/server/pkg/testutils"
@@ -101,7 +102,7 @@ func TestOfferStorage_GetAllOffers(t *testing.T) {
 		Rooms:               nil,                               // todo: change it when support for rooms is added
 	})
 	offers = append(offers, &bookly.Offer{
-		IsActive:            true,
+		IsActive:            false,
 		OfferTitle:          "2 Rooms With Private Beach",
 		CostPerChild:        decimal.New(1234, -2),
 		CostPerAdult:        decimal.New(1234, -2),
@@ -119,12 +120,30 @@ func TestOfferStorage_GetAllOffers(t *testing.T) {
 		_, errAdd := storage.CreateOffer(ctx, o, hotelLinks[i])
 		require.NoError(t, errAdd)
 	}
-	result, errGet := storage.GetAllOffers(ctx, 1)
-	require.NoError(t, errGet)
-	assert.Equal(t, 2, len(result))
+	resultAll, errGetAll := storage.GetAllOffers(ctx, 1, nil)
+	require.NoError(t, errGetAll)
+	assert.Equal(t, 2, len(resultAll))
 	for i, o := range offers {
 		if hotelLinks[i] == 1 {
-			assert.Contains(t, result, o)
+			assert.Contains(t, resultAll, o)
+		}
+	}
+	onlyActive := true
+	resultActive, errGetActive := storage.GetAllOffers(ctx, 1, &onlyActive)
+	require.NoError(t, errGetActive)
+	assert.Equal(t, 1, len(resultActive))
+	for i, o := range offers {
+		if hotelLinks[i] == 1 && offers[i].IsActive == onlyActive {
+			assert.Contains(t, resultActive, o)
+		}
+	}
+	onlyInactive := true
+	resultInactive, errGetInactive := storage.GetAllOffers(ctx, 1, &onlyInactive)
+	require.NoError(t, errGetInactive)
+	assert.Equal(t, 1, len(resultInactive))
+	for i, o := range offers {
+		if hotelLinks[i] == 1 && offers[i].IsActive == onlyInactive {
+			assert.Contains(t, resultInactive, o)
 		}
 	}
 }
