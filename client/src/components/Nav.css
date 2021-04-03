@@ -37,3 +37,9 @@
     border-radius: 30px;
     font-weight: 1000;
 }
+
+a
+{
+    color:white;
+    text-decoration: none;
+}

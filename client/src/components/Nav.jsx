@@ -14,7 +14,7 @@ function Nav(props) {
     return (
         <div className="profile-nav">
             <div className="main-navbar-left">
-                <h2>Bookly client</h2>
+                <Link to="/home"><h2>Bookly client</h2></Link>
             </div>
             <div className="main-navbar-right">
                 {!props.isUserAuthenticated ? "" :
