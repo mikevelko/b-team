@@ -65,7 +65,7 @@ function Offers() {
           <Grid item style={{display:'flex',flexDirection:'column'}}>
             <Grid item style={{display:'flex', justifyContent:'space-around', marginBottom:10}}>
               <Button className={classes.editOfferButton} component={Link} to='/offers/edit/:OfferId'>Edit offer</Button>
-              <Button className={classes.deleteOfferButton}>Delete offer</Button>
+              <Button className={classes.deleteOfferButton} >Delete offer</Button>
             </Grid>
             <Grid item>
               <Typography>Room numbers:[list of room numbers]</Typography>

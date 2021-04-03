@@ -58,7 +58,7 @@ export default function App() {
         <Route path='/offers/:offerId' component={OfferDetails}/>
         <Route path='/reservations' component={Reservations}/>
         <Route path='/rooms' component={Rooms}/>
-        <Route path='/logIn' component={LogIn}/>
+        <Route path='/login' component={LogIn}/>
       </Switch>
     </Router>
   );
