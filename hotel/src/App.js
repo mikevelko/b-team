@@ -35,7 +35,6 @@ export default function App() {
     <Router>
     <div className={classes.root}>
       <AppBar position="static">
-
         <Toolbar>
           <Link to='/' style={{color:'white'}}>
             <HomeIcon style={{marginRight:20, fontSize: 30}}/>
