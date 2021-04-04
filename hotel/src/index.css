@@ -16,3 +16,7 @@ code {
   display: flex;
   flex-direction: column;
 }
+Button{
+  text-shadow: 0 0 2px black;
+
+}

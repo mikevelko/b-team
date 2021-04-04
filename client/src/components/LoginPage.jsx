@@ -2,7 +2,7 @@ import React, { Component, useState,useEffect } from 'react';
 import './LoginPage.css';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-import { useHistory } from 'react-router-dom';
+import { Redirect, useHistory } from 'react-router-dom';
 
 function LoginPage(props) {
     const history = useHistory();
@@ -21,7 +21,12 @@ function LoginPage(props) {
 
     useEffect(() => {
         SpellCheck();
-        }, [username,password])
+        if(props.isUserAuthenticated)
+        {
+            let path = `/home`;
+            history.push(path);
+        }
+        }, [username,password,props.isUserAuthenticated])
 
     const handleChangeUsername = (event) => {
         setUsername(event.target.value);
@@ -37,8 +42,8 @@ function LoginPage(props) {
         else setDisabled(true);
     }
 
-
     return (
+        
         <div>
             <div className="nav-inputs">
                 <ul>

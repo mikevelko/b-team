@@ -9,7 +9,7 @@ import (
 	"go.uber.org/zap"
 )
 
-var cfg struct {
+type config struct {
 	App      app.Config
 	Postgres postgres.Config
 }
@@ -19,6 +19,8 @@ func main() {
 	if err != nil {
 		log.Panicf("could not initialize logger: %s", err.Error())
 	}
+	var cfg config
+	app.LoadConfig(logger, &cfg)
 
 	application := app.NewApp(logger, cfg.App)
 	application.Build(func() error {

@@ -29,7 +29,7 @@ class MainPage extends Component {
                         </li>
                         <li className="ul-li-profile">
                             <Route render={({ history }) => (
-                                <button className="btn" onClick={() => { history.push('/reservations') }}>
+                                <button className="btn" onClick={() => { history.push('/client/reservations') }}>
                                     My reservations
                                 </button>
                             )} />

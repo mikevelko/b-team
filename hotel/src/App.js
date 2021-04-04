@@ -14,6 +14,7 @@ import Reservations from './Reservations';
 import Rooms from './Rooms';
 import LogIn from './LogIn';
 import HomeIcon from '@material-ui/icons/Home';
+import CreateOffer from './CreateOffer';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -34,7 +35,6 @@ export default function App() {
     <Router>
     <div className={classes.root}>
       <AppBar position="static">
-
         <Toolbar>
           <Link to='/' style={{color:'white'}}>
             <HomeIcon style={{marginRight:20, fontSize: 30}}/>
@@ -53,10 +53,11 @@ export default function App() {
         <Route path='/' exact component={StartPage}/>
         <Route path='/hotelInfo' component={HotelInfo}/>
         <Route path='/offers' exact component={Offers}/>
+        <Route path='/offers/create' component={CreateOffer}/>
         <Route path='/offers/:offerId' component={OfferDetails}/>
         <Route path='/reservations' component={Reservations}/>
         <Route path='/rooms' component={Rooms}/>
-        <Route path='/logIn' component={LogIn}/>
+        <Route path='/login' component={LogIn}/>
       </Switch>
     </Router>
   );
