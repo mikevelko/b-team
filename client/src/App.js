@@ -39,7 +39,7 @@ function App() {
 
   //if(!isUserAuthenticated) { return <div></div> } 
   return (
-    <Router>
+    <Router basename={process.env.PUBLIC_URL}>
       <Nav isUserAuthenticated={isUserAuthenticated} Logout={Logout} />
       <Switch>
         <Route
@@ -48,8 +48,8 @@ function App() {
           render={() => {
               return (
                 isUserAuthenticated ?
-                  <Redirect to="/client/login" /> :
-                  <Redirect to="/home" />
+                  <Redirect to="/login"/> :
+                  <Redirect to="/home"/>
               )
           }}
         ></Route>
@@ -57,7 +57,7 @@ function App() {
         <PrivateRoute authed={isUserAuthenticated} exact path='/hotels' component={Hotels} />
         <PrivateRoute authed={isUserAuthenticated} exact path='/client' component={Client} />
         <PrivateRoute authed={isUserAuthenticated} exact path='/client/reservations' component={MyReservations} />
-        <Route exact path="/client/login" component={() => <LoginPage Login={Login} isUserAuthenticated={isUserAuthenticated}/>} />
+        <Route exact path="/login" component={() => <LoginPage Login={Login} isUserAuthenticated={isUserAuthenticated}/>} />
       </Switch>
     </Router>
   );

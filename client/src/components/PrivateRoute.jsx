@@ -6,7 +6,7 @@ function PrivateRoute ({component: Component, authed}) {
       <Route
         render={(props) => authed === true
           ? <Component/>
-          : <Redirect to={{pathname: '/client/login'}} />}
+          : <Redirect to={{pathname: '/login'}} />}
       />
     )
   }
