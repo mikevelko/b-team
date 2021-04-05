@@ -16,7 +16,7 @@ type api struct {
 	offerService bookly.OfferService
 }
 
-//todo: those structures below should be moved to other go file for readibility
+// todo: those structures below should be moved to other go file for readibility
 
 // CreateOfferRequest represents deserialized data from CreateOffer request
 type CreateOfferRequest struct {
@@ -32,12 +32,12 @@ type CreateOfferRequest struct {
 	Rooms               []string      `json:"rooms"`
 }
 
-//GetOffersRequest represents deserialized data from GetOffers Request
+// GetOffersRequest represents deserialized data from GetOffers Request
 type GetOffersRequest struct {
 	Isactive *bool `json:"isActive,omitempty"`
 }
 
-//GetOffersResponse represents serialized offers sent back to request
+// GetOffersResponse represents serialized offers sent back to request
 type GetOffersResponse struct {
 	Offers []bookly.Offer `json:"offerPreview"`
 }
@@ -69,6 +69,8 @@ func newAPI(logger *zap.Logger, service bookly.OfferService) *api {
 func (a *api) mount(router chi.Router) {
 	router.Route("/api/v1/hotel", func(r chi.Router) {
 		r.Route("/offers", func(r chi.Router) {
+			// todo: add session middleware here when it's finished
+			// r.With(auth.SessionMiddleware())
 			r.Post("/", a.handlePostOffer)
 			r.Get("/", a.handleGetOffers)
 		})
@@ -76,9 +78,6 @@ func (a *api) mount(router chi.Router) {
 }
 
 func (a *api) handlePostOffer(w http.ResponseWriter, r *http.Request) {
-	// hotelToken := r.Header.Get("x-hotel-token")
-	// todo: check x-hotel-token for correctness
-
 	if !httputils.IsHeaderTypeValid(w, r, "application/json", "Unable to add offer") {
 		return
 	}
@@ -89,8 +88,8 @@ func (a *api) handlePostOffer(w http.ResponseWriter, r *http.Request) {
 		httputils.RespondWithError(w, "Unable to add offer")
 		return
 	}
-	// todo: supply proper hotel token once hotel verification will be available
-	id, err := a.offerService.HandleCreateOffer(r.Context(), decodedRequest.ToOffer(), "")
+
+	id, err := a.offerService.HandleCreateOffer(r.Context(), decodedRequest.ToOffer())
 	if err != nil {
 		httputils.RespondWithError(w, "Unable to add offer")
 		return
@@ -119,7 +118,7 @@ func (a *api) handleGetOffers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// todo: supply proper hotel token once hotel verification will be available
-	offerPreviews, err := a.offerService.GetHotelOfferPreviews(r.Context(), decodedRequest.Isactive, "")
+	offerPreviews, err := a.offerService.GetHotelOfferPreviews(r.Context(), decodedRequest.Isactive)
 	if err != nil {
 		httputils.RespondWithError(w, "Unable to get offers")
 		return
