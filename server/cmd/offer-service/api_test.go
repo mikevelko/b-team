@@ -4,10 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"github.com/pw-software-engineering/b-team/server/pkg/bookly"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/pw-software-engineering/b-team/server/pkg/bookly"
 
 	"github.com/stretchr/testify/require"
 
@@ -48,7 +49,7 @@ func Test_api_handlePostOfferSimple(t *testing.T) {
 			name: "if offer service returns error, internal server error is expected",
 			prepare: func(t *testing.T, f *fields) {
 				f.offerService.EXPECT().
-					HandleCreateOffer(gomock.Any(), gomock.Any(), gomock.Any()).
+					HandleCreateOffer(gomock.Any(), gomock.Any()).
 					Return(int64(0), mockErr)
 			},
 			check: func(t *testing.T, handler http.HandlerFunc) {
@@ -141,7 +142,7 @@ func Test_api_handleGetOffers(t *testing.T) {
 			name: "if offer service returns error, internal server error is expected",
 			prepare: func(t *testing.T, f *fields) {
 				f.offerService.EXPECT().
-					HandleGetOffers(gomock.Any(), gomock.Any(), gomock.Any()).
+					GetHotelOfferPreviews(gomock.Any(), gomock.Any()).
 					Return([]bookly.Offer{}, mockErr)
 			},
 			check: func(t *testing.T, handler http.HandlerFunc) {

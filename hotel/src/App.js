@@ -32,7 +32,7 @@ export default function App() {
   const classes = useStyles();
 
   return (
-    <Router>
+    <Router basename={process.env.PUBLIC_URL}>
     <div className={classes.root}>
       <AppBar position="static">
         <Toolbar>

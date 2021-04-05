@@ -5,10 +5,14 @@ services:
     build:
       context: hotel
       dockerfile: Dockerfile
-    ports:
-      - 8080:80
+      args:
+        PUBLIC_URL: /hotel/
     environment:
       - CHOKIDAR_USEPOLLING=true
+    ports:
+    - 80:80
+    networks:
+      server-vpn:
 
   postgres:
     restart: always
@@ -52,13 +56,32 @@ services:
     image: nginx:stable-alpine
     container_name: api-gateway-nginx
     ports:
-    - 24502:80
+    - 8080:80
     volumes:
       - ./api-gateway/reverse_proxy.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - offer-service
     networks:
       server-vpn:
+
+  auth-service:
+    container_name: auth-service
+    build:
+      context: server
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: auth-service
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: bookly
+      POSTGRES_PASSWORD: bookly
+      POSTGRES_DATABASE: bookly
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - server-vpn
 
 
 networks:

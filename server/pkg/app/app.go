@@ -3,6 +3,8 @@ package app
 import (
 	"net/http"
 
+	"github.com/go-chi/chi/middleware"
+
 	"github.com/kelseyhightower/envconfig"
 	"go.uber.org/zap/zapcore"
 
@@ -22,9 +24,15 @@ func NewApp(logger *zap.Logger, cfg Config) *App {
 		logger.WithOptions(zap.AddStacktrace(zapcore.PanicLevel))
 	}
 
+	router := chi.NewRouter().
+		With(
+			middleware.DefaultLogger,
+			middleware.Recoverer,
+		)
+
 	return &App{
 		Logger: logger,
-		Router: chi.NewRouter(),
+		Router: router,
 		config: cfg,
 	}
 }

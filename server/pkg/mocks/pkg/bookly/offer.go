@@ -12,30 +12,30 @@ import (
 	bookly "github.com/pw-software-engineering/b-team/server/pkg/bookly"
 )
 
-// MockOfferStorage is a mock of OfferStorage interface.
+// MockOfferStorage is a mock of OfferStorage interface
 type MockOfferStorage struct {
 	ctrl     *gomock.Controller
 	recorder *MockOfferStorageMockRecorder
 }
 
-// MockOfferStorageMockRecorder is the mock recorder for MockOfferStorage.
+// MockOfferStorageMockRecorder is the mock recorder for MockOfferStorage
 type MockOfferStorageMockRecorder struct {
 	mock *MockOfferStorage
 }
 
-// NewMockOfferStorage creates a new mock instance.
+// NewMockOfferStorage creates a new mock instance
 func NewMockOfferStorage(ctrl *gomock.Controller) *MockOfferStorage {
 	mock := &MockOfferStorage{ctrl: ctrl}
 	mock.recorder = &MockOfferStorageMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use.
+// EXPECT returns an object that allows the caller to indicate expected use
 func (m *MockOfferStorage) EXPECT() *MockOfferStorageMockRecorder {
 	return m.recorder
 }
 
-// CreateOffer mocks base method.
+// CreateOffer mocks base method
 func (m *MockOfferStorage) CreateOffer(ctx context.Context, offer *bookly.Offer, hotelID int) (int64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateOffer", ctx, offer, hotelID)
@@ -44,28 +44,13 @@ func (m *MockOfferStorage) CreateOffer(ctx context.Context, offer *bookly.Offer,
 	return ret0, ret1
 }
 
-// CreateOffer indicates an expected call of CreateOffer.
+// CreateOffer indicates an expected call of CreateOffer
 func (mr *MockOfferStorageMockRecorder) CreateOffer(ctx, offer, hotelID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateOffer", reflect.TypeOf((*MockOfferStorage)(nil).CreateOffer), ctx, offer, hotelID)
 }
 
-// GetAllOffers mocks base method.
-func (m *MockOfferStorage) GetAllOffers(ctx context.Context, hotelID int) ([]*bookly.Offer, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetAllOffers", ctx, hotelID)
-	ret0, _ := ret[0].([]*bookly.Offer)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetAllOffers indicates an expected call of GetAllOffers.
-func (mr *MockOfferStorageMockRecorder) GetAllOffers(ctx, hotelID interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllOffers", reflect.TypeOf((*MockOfferStorage)(nil).GetAllOffers), ctx, hotelID)
-}
-
-// UpdateOfferStatus mocks base method.
+// UpdateOfferStatus mocks base method
 func (m *MockOfferStorage) UpdateOfferStatus(ctx context.Context, offerID int64, isActive bool) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateOfferStatus", ctx, offerID, isActive)
@@ -73,61 +58,76 @@ func (m *MockOfferStorage) UpdateOfferStatus(ctx context.Context, offerID int64,
 	return ret0
 }
 
-// UpdateOfferStatus indicates an expected call of UpdateOfferStatus.
+// UpdateOfferStatus indicates an expected call of UpdateOfferStatus
 func (mr *MockOfferStorageMockRecorder) UpdateOfferStatus(ctx, offerID, isActive interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateOfferStatus", reflect.TypeOf((*MockOfferStorage)(nil).UpdateOfferStatus), ctx, offerID, isActive)
 }
 
-// MockOfferService is a mock of OfferService interface.
+// GetAllOffers mocks base method
+func (m *MockOfferStorage) GetAllOffers(ctx context.Context, hotelID int, isActive *bool) ([]*bookly.Offer, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAllOffers", ctx, hotelID, isActive)
+	ret0, _ := ret[0].([]*bookly.Offer)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAllOffers indicates an expected call of GetAllOffers
+func (mr *MockOfferStorageMockRecorder) GetAllOffers(ctx, hotelID, isActive interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllOffers", reflect.TypeOf((*MockOfferStorage)(nil).GetAllOffers), ctx, hotelID, isActive)
+}
+
+// MockOfferService is a mock of OfferService interface
 type MockOfferService struct {
 	ctrl     *gomock.Controller
 	recorder *MockOfferServiceMockRecorder
 }
 
-// MockOfferServiceMockRecorder is the mock recorder for MockOfferService.
+// MockOfferServiceMockRecorder is the mock recorder for MockOfferService
 type MockOfferServiceMockRecorder struct {
 	mock *MockOfferService
 }
 
-// NewMockOfferService creates a new mock instance.
+// NewMockOfferService creates a new mock instance
 func NewMockOfferService(ctrl *gomock.Controller) *MockOfferService {
 	mock := &MockOfferService{ctrl: ctrl}
 	mock.recorder = &MockOfferServiceMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use.
+// EXPECT returns an object that allows the caller to indicate expected use
 func (m *MockOfferService) EXPECT() *MockOfferServiceMockRecorder {
 	return m.recorder
 }
 
-// HandleCreateOffer mocks base method.
-func (m *MockOfferService) HandleCreateOffer(ctx context.Context, offer *bookly.Offer, hotelToken string) (int64, error) {
+// HandleCreateOffer mocks base method
+func (m *MockOfferService) HandleCreateOffer(ctx context.Context, offer *bookly.Offer) (int64, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "HandleCreateOffer", ctx, offer, hotelToken)
+	ret := m.ctrl.Call(m, "HandleCreateOffer", ctx, offer)
 	ret0, _ := ret[0].(int64)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// HandleCreateOffer indicates an expected call of HandleCreateOffer.
-func (mr *MockOfferServiceMockRecorder) HandleCreateOffer(ctx, offer, hotelToken interface{}) *gomock.Call {
+// HandleCreateOffer indicates an expected call of HandleCreateOffer
+func (mr *MockOfferServiceMockRecorder) HandleCreateOffer(ctx, offer interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleCreateOffer", reflect.TypeOf((*MockOfferService)(nil).HandleCreateOffer), ctx, offer, hotelToken)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleCreateOffer", reflect.TypeOf((*MockOfferService)(nil).HandleCreateOffer), ctx, offer)
 }
 
-//HandleGetOffers mocks base method
-func (m *MockOfferService) GetHotelOfferPreviews(ctx context.Context, isActive *bool, hotelToken string) ([]bookly.Offer, error) {
+// GetHotelOfferPreviews mocks base method
+func (m *MockOfferService) GetHotelOfferPreviews(ctx context.Context, isActive *bool) ([]bookly.Offer, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetHotelOfferPreviews", ctx, isActive, hotelToken)
+	ret := m.ctrl.Call(m, "GetHotelOfferPreviews", ctx, isActive)
 	ret0, _ := ret[0].([]bookly.Offer)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// HandleCreateOffer indicates an expected call of HandleCreateOffer.
-func (mr *MockOfferServiceMockRecorder) HandleGetOffers(ctx, isActive, hotelToken interface{}) *gomock.Call {
+// GetHotelOfferPreviews indicates an expected call of GetHotelOfferPreviews
+func (mr *MockOfferServiceMockRecorder) GetHotelOfferPreviews(ctx, isActive interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetHotelOfferPreviews", reflect.TypeOf((*MockOfferService)(nil).GetHotelOfferPreviews), ctx, isActive, hotelToken)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetHotelOfferPreviews", reflect.TypeOf((*MockOfferService)(nil).GetHotelOfferPreviews), ctx, isActive)
 }
