@@ -16,9 +16,7 @@ services:
 
   postgres:
     restart: always
-    build:
-      context: .
-      dockerfile: postgres/Dockerfile
+    image: postgres:13.2-alpine
     ports:
       - 5432:5432
     healthcheck:
@@ -30,6 +28,24 @@ services:
       POSTGRES_USER: bookly
       POSTGRES_PASSWORD: bookly
       POSTGRES_DATABASE: bookly
+    networks:
+      server-vpn:
+
+  init-postgres:
+    build:
+      context: postgres
+      dockerfile: Dockerfile.psql
+    volumes:
+      - ./postgres/migration:/usr/local/bin
+    environment:
+      POSTGRES_USER: bookly
+      PGPASSWORD: bookly
+      POSTGRES_DATABASE: bookly
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+    depends_on:
+      postgres:
+        condition: service_healthy
     networks:
       server-vpn:
 
