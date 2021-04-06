@@ -12,7 +12,21 @@ services:
     ports:
     - 80:80
     networks:
-      server-vpn:
+      vpn:
+
+  client:
+    container_name: client
+    build:
+      context: client
+      dockerfile: Dockerfile
+      args:
+        PUBLIC_URL: /client/
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    ports:
+      - 80:80
+    networks:
+      vpn:
 
   postgres:
     restart: always
@@ -29,7 +43,7 @@ services:
       POSTGRES_PASSWORD: bookly
       POSTGRES_DATABASE: bookly
     networks:
-      server-vpn:
+      vpn:
 
   init-postgres:
     build:
@@ -47,7 +61,7 @@ services:
       postgres:
         condition: service_healthy
     networks:
-      server-vpn:
+      vpn:
 
   offer-service:
     container_name: offer-service
@@ -66,7 +80,7 @@ services:
       postgres:
         condition: service_healthy
     networks:
-      - server-vpn
+      - vpn
 
   api-gateway:
     image: nginx:stable-alpine
@@ -78,7 +92,7 @@ services:
     depends_on:
       - offer-service
     networks:
-      server-vpn:
+      vpn:
 
   auth-service:
     container_name: auth-service
@@ -97,9 +111,8 @@ services:
       postgres:
         condition: service_healthy
     networks:
-      - server-vpn
-
+      - vpn
 
 networks:
-  server-vpn:
+  vpn:
 
