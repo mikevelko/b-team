@@ -32,10 +32,10 @@ func (a *api) mount(router chi.Router) {
 }
 
 func (a *api) handleAuthorize(w http.ResponseWriter, r *http.Request) {
-	token := r.Header.Get("x-session-token")
+	// token := r.Header.Get("x-session-token")
 	// todo: check token structure, define it, json.Unmarshall it and pass to real verifier
-
-	session, err := a.verifier.Verify(r.Context(), bookly.Token(token))
+	// todo: fill Token structure
+	session, err := a.verifier.Verify(r.Context(), bookly.Token{})
 	if err != nil {
 		if errors.Is(err, bookly.ErrUserNotAuthenticated) {
 			w.WriteHeader(http.StatusUnauthorized)
