@@ -12,30 +12,30 @@ import (
 	bookly "github.com/pw-software-engineering/b-team/server/pkg/bookly"
 )
 
-// MockSessionVerifier is a mock of SessionVerifier interface
+// MockSessionVerifier is a mock of SessionVerifier interface.
 type MockSessionVerifier struct {
 	ctrl     *gomock.Controller
 	recorder *MockSessionVerifierMockRecorder
 }
 
-// MockSessionVerifierMockRecorder is the mock recorder for MockSessionVerifier
+// MockSessionVerifierMockRecorder is the mock recorder for MockSessionVerifier.
 type MockSessionVerifierMockRecorder struct {
 	mock *MockSessionVerifier
 }
 
-// NewMockSessionVerifier creates a new mock instance
+// NewMockSessionVerifier creates a new mock instance.
 func NewMockSessionVerifier(ctrl *gomock.Controller) *MockSessionVerifier {
 	mock := &MockSessionVerifier{ctrl: ctrl}
 	mock.recorder = &MockSessionVerifierMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockSessionVerifier) EXPECT() *MockSessionVerifierMockRecorder {
 	return m.recorder
 }
 
-// Verify mocks base method
+// Verify mocks base method.
 func (m *MockSessionVerifier) Verify(ctx context.Context, token bookly.Token) (*bookly.Session, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Verify", ctx, token)
@@ -44,59 +44,59 @@ func (m *MockSessionVerifier) Verify(ctx context.Context, token bookly.Token) (*
 	return ret0, ret1
 }
 
-// Verify indicates an expected call of Verify
+// Verify indicates an expected call of Verify.
 func (mr *MockSessionVerifierMockRecorder) Verify(ctx, token interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Verify", reflect.TypeOf((*MockSessionVerifier)(nil).Verify), ctx, token)
 }
 
-// MockSessionStorage is a mock of SessionStorage interface
+// MockSessionStorage is a mock of SessionStorage interface.
 type MockSessionStorage struct {
 	ctrl     *gomock.Controller
 	recorder *MockSessionStorageMockRecorder
 }
 
-// MockSessionStorageMockRecorder is the mock recorder for MockSessionStorage
+// MockSessionStorageMockRecorder is the mock recorder for MockSessionStorage.
 type MockSessionStorageMockRecorder struct {
 	mock *MockSessionStorage
 }
 
-// NewMockSessionStorage creates a new mock instance
+// NewMockSessionStorage creates a new mock instance.
 func NewMockSessionStorage(ctrl *gomock.Controller) *MockSessionStorage {
 	mock := &MockSessionStorage{ctrl: ctrl}
 	mock.recorder = &MockSessionStorageMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockSessionStorage) EXPECT() *MockSessionStorageMockRecorder {
 	return m.recorder
 }
 
-// MockUserVerifier is a mock of UserVerifier interface
+// MockUserVerifier is a mock of UserVerifier interface.
 type MockUserVerifier struct {
 	ctrl     *gomock.Controller
 	recorder *MockUserVerifierMockRecorder
 }
 
-// MockUserVerifierMockRecorder is the mock recorder for MockUserVerifier
+// MockUserVerifierMockRecorder is the mock recorder for MockUserVerifier.
 type MockUserVerifierMockRecorder struct {
 	mock *MockUserVerifier
 }
 
-// NewMockUserVerifier creates a new mock instance
+// NewMockUserVerifier creates a new mock instance.
 func NewMockUserVerifier(ctrl *gomock.Controller) *MockUserVerifier {
 	mock := &MockUserVerifier{ctrl: ctrl}
 	mock.recorder = &MockUserVerifierMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockUserVerifier) EXPECT() *MockUserVerifierMockRecorder {
 	return m.recorder
 }
 
-// Verify mocks base method
+// Verify mocks base method.
 func (m *MockUserVerifier) Verify(email, password string) (bookly.Token, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Verify", email, password)
@@ -105,50 +105,36 @@ func (m *MockUserVerifier) Verify(email, password string) (bookly.Token, error) 
 	return ret0, ret1
 }
 
-// Verify indicates an expected call of Verify
+// Verify indicates an expected call of Verify.
 func (mr *MockUserVerifierMockRecorder) Verify(email, password interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Verify", reflect.TypeOf((*MockUserVerifier)(nil).Verify), email, password)
 }
 
-// MockHasher is a mock of Hasher interface
+// MockHasher is a mock of Hasher interface.
 type MockHasher struct {
 	ctrl     *gomock.Controller
 	recorder *MockHasherMockRecorder
 }
 
-// MockHasherMockRecorder is the mock recorder for MockHasher
+// MockHasherMockRecorder is the mock recorder for MockHasher.
 type MockHasherMockRecorder struct {
 	mock *MockHasher
 }
 
-// NewMockHasher creates a new mock instance
+// NewMockHasher creates a new mock instance.
 func NewMockHasher(ctrl *gomock.Controller) *MockHasher {
 	mock := &MockHasher{ctrl: ctrl}
 	mock.recorder = &MockHasherMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockHasher) EXPECT() *MockHasherMockRecorder {
 	return m.recorder
 }
 
-// Hash mocks base method
-func (m *MockHasher) Hash(password string) string {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Hash", password)
-	ret0, _ := ret[0].(string)
-	return ret0
-}
-
-// Hash indicates an expected call of Hash
-func (mr *MockHasherMockRecorder) Hash(password interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Hash", reflect.TypeOf((*MockHasher)(nil).Hash), password)
-}
-
-// Compare mocks base method
+// Compare mocks base method.
 func (m *MockHasher) Compare(hash, password string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Compare", hash, password)
@@ -156,8 +142,22 @@ func (m *MockHasher) Compare(hash, password string) error {
 	return ret0
 }
 
-// Compare indicates an expected call of Compare
+// Compare indicates an expected call of Compare.
 func (mr *MockHasherMockRecorder) Compare(hash, password interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Compare", reflect.TypeOf((*MockHasher)(nil).Compare), hash, password)
+}
+
+// Hash mocks base method.
+func (m *MockHasher) Hash(password string) string {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Hash", password)
+	ret0, _ := ret[0].(string)
+	return ret0
+}
+
+// Hash indicates an expected call of Hash.
+func (mr *MockHasherMockRecorder) Hash(password interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Hash", reflect.TypeOf((*MockHasher)(nil).Hash), password)
 }

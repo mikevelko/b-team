@@ -143,7 +143,7 @@ func Test_api_handleGetOffers(t *testing.T) {
 			prepare: func(t *testing.T, f *fields) {
 				f.offerService.EXPECT().
 					GetHotelOfferPreviews(gomock.Any(), gomock.Any()).
-					Return([]bookly.Offer{}, mockErr)
+					Return([]*bookly.Offer{}, mockErr)
 			},
 			check: func(t *testing.T, handler http.HandlerFunc) {
 				recorder := httptest.NewRecorder()

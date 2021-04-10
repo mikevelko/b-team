@@ -53,8 +53,13 @@ func (os *offerService) HandleCreateOffer(ctx context.Context, offer *bookly.Off
 }
 
 // GetHotelOfferPreviews handles getting offers for particular hotel
-func (os *offerService) GetHotelOfferPreviews(ctx context.Context, isActive *bool) ([]bookly.Offer, error) {
-	panic("implement me")
+func (os *offerService) GetHotelOfferPreviews(ctx context.Context, isActive *bool) ([]*bookly.Offer, error) {
+	offers, err := os.offerStorage.GetAllOffers(ctx, 1, isActive)
+	if err != nil {
+		return nil, err
+	}
+
+	return offers, err
 }
 
 var _ bookly.OfferService = &offerService{}

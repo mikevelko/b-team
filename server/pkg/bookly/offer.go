@@ -29,5 +29,5 @@ type OfferStorage interface {
 // OfferService is a service which is responsible for actions related to offers
 type OfferService interface {
 	HandleCreateOffer(ctx context.Context, offer *Offer) (int64, error)
-	GetHotelOfferPreviews(ctx context.Context, isActive *bool) ([]Offer, error)
+	GetHotelOfferPreviews(ctx context.Context, isActive *bool) ([]*Offer, error)
 }
