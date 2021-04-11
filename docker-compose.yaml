@@ -35,14 +35,15 @@ services:
     build:
       context: postgres
       dockerfile: Dockerfile.psql
+    entrypoint: ["psql","-f","./load.sql"]
     volumes:
       - ./postgres/migration:/usr/local/bin
     environment:
-      POSTGRES_USER: bookly
       PGPASSWORD: bookly
-      POSTGRES_DATABASE: bookly
-      POSTGRES_HOST: postgres
-      POSTGRES_PORT: 5432
+      PGHOST: postgres
+      PGPORT: 5432
+      PGUSER: bookly
+      PGDATABASE: bookly
     depends_on:
       postgres:
         condition: service_healthy
