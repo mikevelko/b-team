@@ -11,3 +11,32 @@ CREATE TABLE IF NOT EXISTS offers
     offer_preview_picture_url text
 );
 
+CREATE TABLE IF NOT EXISTS hotels
+(
+    id                          bigserial primary key,
+    api_token                   text not null
+);
+
+CREATE TABLE IF NOT EXISTS users
+(
+    id                          bigserial primary key,
+    first_name                  text not null,
+    surname                     text not null,
+    email                       text not null,
+    user_name                   text not null,
+    password                    text not null,
+    hotel_id                    bigint
+);
+
+CREATE TABLE IF NOT EXISTS sessions
+(
+    id                          bigserial primary key,
+    creation_date               text not null,
+    expire_date                 text not null,
+    user_id                     bigint not null
+);
+
+
+
+
+

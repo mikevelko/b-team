@@ -39,7 +39,9 @@ type GetOffersRequest struct {
 
 // GetOffersResponse represents serialized offers sent back to request
 type GetOffersResponse struct {
-	Offers []bookly.Offer `json:"offerPreview"`
+	Offers []*bookly.Offer `json:"offerPreview"`
+	// In case of questions: marshal replace pointers to structures
+	// Example: https://play.golang.org/p/NkPCH21ukj
 }
 
 // ToOffer maps a request to add an offer to model offer

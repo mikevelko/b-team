@@ -8,25 +8,25 @@ import (
 	gomock "github.com/golang/mock/gomock"
 )
 
-// MockUserStorage is a mock of UserStorage interface
+// MockUserStorage is a mock of UserStorage interface.
 type MockUserStorage struct {
 	ctrl     *gomock.Controller
 	recorder *MockUserStorageMockRecorder
 }
 
-// MockUserStorageMockRecorder is the mock recorder for MockUserStorage
+// MockUserStorageMockRecorder is the mock recorder for MockUserStorage.
 type MockUserStorageMockRecorder struct {
 	mock *MockUserStorage
 }
 
-// NewMockUserStorage creates a new mock instance
+// NewMockUserStorage creates a new mock instance.
 func NewMockUserStorage(ctrl *gomock.Controller) *MockUserStorage {
 	mock := &MockUserStorage{ctrl: ctrl}
 	mock.recorder = &MockUserStorageMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockUserStorage) EXPECT() *MockUserStorageMockRecorder {
 	return m.recorder
 }

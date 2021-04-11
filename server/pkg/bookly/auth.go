@@ -3,12 +3,18 @@ package bookly
 import "context"
 
 // Session represents the data attached to user session
-type Session struct { // todo: fill in needed fields, e.g. userID, user role, hotelID etc
+type Session struct {
+	UserID     int
+	HotelToken string
+	Token      Token
 }
 
 // Token represents the session token which is set in the user's browser.
 //	Might change that to json marshallable struct in the future
-type Token string
+type Token struct {
+	ID        int    `json:"id"`
+	CreatedAt string `json:"createdAt"`
+}
 
 // SessionVerifier verifies if token is valid and not expired
 type SessionVerifier interface {
@@ -16,8 +22,8 @@ type SessionVerifier interface {
 }
 
 // SessionStorage persists sessions.
-type SessionStorage interface { // todo: think what's needed here and implement it in postgres. Use it in SessionVerifier
-	// todo: nice to have: in-memory cache so that request latency is lower
+type SessionStorage interface {
+	CreateNew(username string, password string) (Token, error)
 }
 
 // UserVerifier verifies user credentials
