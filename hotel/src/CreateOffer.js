@@ -12,7 +12,6 @@ const useStyles = makeStyles((theme) => ({
     width:'90px',
     borderRadius:10,
     margin:5,
-
   },
   allImages:{
     display:'flex',
@@ -50,7 +49,6 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor:'#ffcc80', 
     color:'white',
     margin:5,
-
   },
   offerImageView:{
     width:'auto', 
@@ -68,7 +66,6 @@ const useStyles = makeStyles((theme) => ({
 function CreateOffer() {
 
   const classes = useStyles();
-  const [previewPicture, setPreviewPicture] = useState();
   return (
     <div className='createOffer'>
       <div className={classes.allImages}>

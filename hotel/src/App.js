@@ -15,7 +15,7 @@ import Rooms from './Rooms';
 import LogIn from './LogIn';
 import HomeIcon from '@material-ui/icons/Home';
 import CreateOffer from './CreateOffer';
-
+import HotelInfoEdit from './HotelInfoEdit';
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -51,7 +51,8 @@ export default function App() {
     </div>
       <Switch>
         <Route path='/' exact component={StartPage}/>
-        <Route path='/hotelInfo' component={HotelInfo}/>
+        <Route path='/hotelInfo' exact component={HotelInfo}/>
+        <Route path='/hotelInfo/edit' exact component={HotelInfoEdit}/>
         <Route path='/offers' exact component={Offers}/>
         <Route path='/offers/create' component={CreateOffer}/>
         <Route path='/offers/:offerId' component={OfferDetails}/>

@@ -1,0 +1,16 @@
+.hotelInfoEdit{
+    display: flex;
+    align-self: center;
+    justify-content:center;
+    width: 60%;
+    flex-basis: 100%;
+    margin: 20px;
+    
+}
+.hotelDetails{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-items:center;
+    margin-left: 100px;
+}
