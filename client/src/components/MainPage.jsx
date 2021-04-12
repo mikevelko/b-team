@@ -12,7 +12,6 @@ class MainPage extends Component {
             <div>
                 <div className="profile-nav">
                     <div className="profile-navbar-left">
-                        <h3>Hello, username</h3>
                     </div>
                     <div className="profile-navbar-right">
                         <Button variant="contained" color="primary" size="large" component={Link} to="/client">My profile</Button>
@@ -20,25 +19,16 @@ class MainPage extends Component {
                 </div>
                 <div>
                     <ul className="ul-profile">
-                        <li className="ul-li-profile">
+                    <li className="ul-li-profile">
                             <Route render={({ history }) => (
-                                <button className="btn" onClick={() => { history.push('/hotels') }}>
-                                    Hotels
-                                </button>
+                                <Button variant="contained" color="primary" style={{fontSize: '42px', maxWidth: '100%', maxHeight: '150px', minWidth: '100%', minHeight: '150px'}}
+                                 size="large" component={Link} exact to="/hotels">Hotels</Button>
                             )} />
                         </li>
                         <li className="ul-li-profile">
                             <Route render={({ history }) => (
-                                <button className="btn" onClick={() => { history.push('/client/reservations') }}>
-                                    My reservations
-                                </button>
-                            )} />
-                        </li>
-                        <li className="ul-li-profile">
-                            <Route render={({ history }) => (
-                                <button className="btn" onClick={() => { history.push('/reviews') }}>
-                                    My reviews
-                                </button>
+                                <Button variant="contained" color="primary" style={{fontSize: '42px', maxWidth: '100%', maxHeight: '150px', minWidth: '100%', minHeight: '150px'}}
+                                 size="large" component={Link} exact to="/client/reservations">My reservations</Button>
                             )} />
                         </li>
                     </ul>
