@@ -1,3 +1,7 @@
+-- clear everything before setting up tables
+DROP SCHEMA public CASCADE;
+CREATE SCHEMA public;
+
 CREATE TABLE IF NOT EXISTS offers
 (
     id                        bigserial primary key,
@@ -5,7 +9,7 @@ CREATE TABLE IF NOT EXISTS offers
     is_active                 bool    not null,
     offer_title               text    not null,
     cost_per_child            decimal not null,
-    cost_par_adult            decimal not null,
+    cost_per_adult            decimal not null,
     max_guests                integer not null,
     description               text    not null,
     offer_preview_picture_url text

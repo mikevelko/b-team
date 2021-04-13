@@ -115,12 +115,8 @@ services:
       - ./swagger:/usr/share/nginx/html/swagger
     environment:
       API_URL: swagger/swagger-api.json
-    ports:
-    - 8055:8080
     networks:
       server-vpn:
-
-
 
 networks:
   server-vpn:
