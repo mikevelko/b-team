@@ -54,9 +54,6 @@ services:
       PGPORT: 5432
       PGUSER: bookly
       PGDATABASE: bookly
-    depends_on:
-      postgres:
-        condition: service_healthy
     networks:
       server-vpn:
 
@@ -73,9 +70,6 @@ services:
       POSTGRES_USER: bookly
       POSTGRES_PASSWORD: bookly
       POSTGRES_DATABASE: bookly
-    depends_on:
-      postgres:
-        condition: service_healthy
     networks:
       - server-vpn
 
@@ -102,9 +96,6 @@ services:
       POSTGRES_USER: bookly
       POSTGRES_PASSWORD: bookly
       POSTGRES_DATABASE: bookly
-    depends_on:
-      postgres:
-        condition: service_healthy
     networks:
       server-vpn:
 
