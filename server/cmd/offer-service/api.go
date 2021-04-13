@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/pw-software-engineering/b-team/server/pkg/auth"
+
 	"github.com/go-chi/chi"
 	"github.com/pw-software-engineering/b-team/server/pkg/bookly"
 	"github.com/pw-software-engineering/b-team/server/pkg/httputils"
@@ -58,7 +60,7 @@ func (c CreateOfferRequest) ToOffer() *bookly.Offer {
 }
 
 type offerIDResponse struct {
-	offerID int64
+	OfferID int64 `json:"offerID"`
 }
 
 func newAPI(logger *zap.Logger, service bookly.OfferService) *api {
@@ -72,7 +74,7 @@ func (a *api) mount(router chi.Router) {
 	router.Route("/api/v1/hotel", func(r chi.Router) {
 		r.Route("/offers", func(r chi.Router) {
 			// todo: add session middleware here when it's finished
-			// r.With(auth.SessionMiddleware())
+			r.With(auth.SessionMiddleware())
 			r.Post("/", a.handlePostOffer)
 			r.Get("/", a.handleGetOffers)
 		})
@@ -88,21 +90,18 @@ func (a *api) handlePostOffer(w http.ResponseWriter, r *http.Request) {
 	err := decoder.Decode(&decodedRequest)
 	if err != nil {
 		httputils.RespondWithError(w, "Unable to add offer")
+		a.logger.Info("handlePostOffer: could not decode", zap.Error(err))
 		return
 	}
 
 	id, err := a.offerService.HandleCreateOffer(r.Context(), decodedRequest.ToOffer())
 	if err != nil {
 		httputils.RespondWithError(w, "Unable to add offer")
+		a.logger.Info("handlePostOffer: could error create offer", zap.Error(err))
 		return
 	}
-	idResponse := offerIDResponse{id}
-	js, err := json.Marshal(idResponse)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	httputils.WriteJSONResponse(w, js)
+	idResponse := &offerIDResponse{id}
+	httputils.WriteJSONResponse(a.logger, w, idResponse)
 }
 
 func (a *api) handleGetOffers(w http.ResponseWriter, r *http.Request) {
@@ -125,11 +124,6 @@ func (a *api) handleGetOffers(w http.ResponseWriter, r *http.Request) {
 		httputils.RespondWithError(w, "Unable to get offers")
 		return
 	}
-	offersResponse := GetOffersResponse{Offers: offerPreviews}
-	js, err := json.Marshal(offersResponse)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	httputils.WriteJSONResponse(w, js)
+	offersResponse := &GetOffersResponse{Offers: offerPreviews}
+	httputils.WriteJSONResponse(a.logger, w, offersResponse)
 }

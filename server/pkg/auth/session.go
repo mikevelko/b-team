@@ -2,28 +2,35 @@ package auth
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 
 	"github.com/pw-software-engineering/b-team/server/pkg/bookly"
 )
 
-type sessionHeaderName string
-
 const (
-	// UserIDHeader is a header name used to store user id in authenticated request
-	UserIDHeader sessionHeaderName = "X-User-ID"
-	// todo: add similar headers for the rest of data
+	// HeaderXSession is a header name. The header is used to store session data
+	HeaderXSession = "X-Session"
 )
 
-// SetSessionHeaders sets headers with data from session
-func SetSessionHeaders(header http.Header, session *bookly.Session) {
-	panic("implement me")
+// SetSessionHeader sets headers with data from session
+func SetSessionHeader(header http.Header, session *bookly.Session) {
+	encoded, err := json.Marshal(session)
+	if err != nil {
+		panic(fmt.Errorf("error marshaling session: %w", err))
+	}
+	header.Set(HeaderXSession, string(encoded))
 }
 
 // getSessionFromHeaders retrieves session from request headers
 func getSessionFromHeaders(header http.Header) (*bookly.Session, error) {
-	panic("implement me")
+	encoded := header.Get(HeaderXSession)
+	var session bookly.Session
+	if err := json.Unmarshal([]byte(encoded), &session); err != nil {
+		return nil, fmt.Errorf("auth: could not unmarshall header")
+	}
+	return &session, nil
 }
 
 // SessionMiddleware creates middleware which adds session data to context. Use SessionFromContext to retrieve it back.

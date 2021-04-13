@@ -29,7 +29,7 @@ func main() {
 		if err != nil {
 			return fmt.Errorf("could not initialize postgres: %w", err)
 		}
-		defer cleanup() // todo: add cleanup handling to app
+		application.AddCleanup(cleanup)
 		service := newOfferService(storage)
 		api := newAPI(application.Logger, service)
 		api.mount(application.Router)

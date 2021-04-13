@@ -290,6 +290,11 @@
   "paths": {
     "/api-hotel/offers": {
       "get": {
+        "security": [
+          {
+            "customTokenSecurityHotel": []
+          }
+        ],
         "description": "List all offers related to hotel",
         "operationId": "GET_offers",
         "produces": [
@@ -323,6 +328,11 @@
         ]
       },
       "post": {
+        "security": [
+          {
+            "customTokenSecurityHotel": []
+          }
+        ],
         "description": "Add new offer",
         "operationId": "POST_offers",
         "produces": [

@@ -7,8 +7,12 @@ function OfferDetails({match}) {
         console.log(match)
     },[]);
   return (
-    <h1>Offer Details {match.params.offerId}</h1>
-  );
+    <>
+        <h1>Offer Details</h1>
+        <h2>{match.params.offerId}</h2>
+    
+    </>
+    );
 }
 
 OfferDetails.propTypes = {

@@ -38,7 +38,7 @@ func (o *OfferStorage) CreateOffer(ctx context.Context, offer *bookly.Offer, hot
         is_active,
         offer_title, 
         cost_per_child, 
-        cost_par_adult, 
+        cost_per_adult, 
         max_guests, 
         description, 
         offer_preview_picture_url,

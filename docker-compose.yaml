@@ -9,8 +9,18 @@ services:
         PUBLIC_URL: /hotel/
     environment:
       - CHOKIDAR_USEPOLLING=true
-    ports:
-    - 80:80
+    networks:
+      server-vpn:
+
+  client:
+    container_name: client
+    build:
+      context: client
+      dockerfile: Dockerfile
+      args:
+        PUBLIC_URL: /client/
+    environment:
+      - CHOKIDAR_USEPOLLING=true
     networks:
       server-vpn:
 
@@ -35,14 +45,15 @@ services:
     build:
       context: postgres
       dockerfile: Dockerfile.psql
+    entrypoint: ["psql","-f","./load.sql"]
     volumes:
       - ./postgres/migration:/usr/local/bin
     environment:
-      POSTGRES_USER: bookly
       PGPASSWORD: bookly
-      POSTGRES_DATABASE: bookly
-      POSTGRES_HOST: postgres
-      POSTGRES_PORT: 5432
+      PGHOST: postgres
+      PGPORT: 5432
+      PGUSER: bookly
+      PGDATABASE: bookly
     depends_on:
       postgres:
         condition: service_healthy
@@ -75,8 +86,6 @@ services:
     - 8080:80
     volumes:
       - ./api-gateway/reverse_proxy.conf:/etc/nginx/conf.d/default.conf
-    depends_on:
-      - offer-service
     networks:
       server-vpn:
 
@@ -97,19 +106,17 @@ services:
       postgres:
         condition: service_healthy
     networks:
-      - server-vpn
+      server-vpn:
 
   swagger-ui:
     image: swaggerapi/swagger-ui
     container_name: swagger-ui
-    ports:
-      - 8055:8080
     volumes:
       - ./swagger:/usr/share/nginx/html/swagger
     environment:
       API_URL: swagger/swagger-api.json
-
-
+    networks:
+      server-vpn:
 
 networks:
   server-vpn:
