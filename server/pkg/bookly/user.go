@@ -6,6 +6,14 @@ import (
 	"gopkg.in/guregu/null.v3"
 )
 
+//predefined string for user roles
+const (
+	UserRoleHotelManager      = "HOTEL_MANAGER"
+	UserRoleHotelStaff        = "HOTEL_STAFF"
+	UserRoleHotelReceptionist = "HOTEL_RECEPTIONIST"
+	UserRoleClientCustomer    = "CLIENT_CUSTOMER"
+)
+
 // User is a domain-level model
 type User struct {
 	ID        int64
@@ -13,6 +21,7 @@ type User struct {
 	Surname   string
 	Email     string
 	UserName  string
+	UserRole  string
 	// Password                    string
 	HotelID null.Int
 }

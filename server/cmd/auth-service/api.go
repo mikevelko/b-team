@@ -59,8 +59,6 @@ func (a *api) handleAuthorize(w http.ResponseWriter, r *http.Request) {
 		a.logger.Info("user unauthorized, because of internal error in verifier", zap.Error(err))
 		return
 	}
-	// todo: remove this after verification is done
-	session.HotelToken = "bla"
 	auth.SetSessionHeader(w.Header(), session)
 	return
 }

@@ -2,21 +2,36 @@ package main
 
 import (
 	"context"
-
 	"github.com/pw-software-engineering/b-team/server/pkg/bookly"
 )
 
-type stubSessionVerifier struct{}
-
-var _ bookly.SessionVerifier = &stubSessionVerifier{}
-
-// Verify is stub implementation of bookly.SessionVerifier
-// it checks if token exists - if it does, it confirms user
-func (s *stubSessionVerifier) Verify(ctx context.Context, token bookly.Token) (*bookly.Session, error) {
-	if token.ID == 0 {
-		return nil, bookly.ErrUserNotAuthenticated
-	}
-	return &bookly.Session{}, nil
+//SessionVerifier implements logic for verifying user sessions
+type SessionVerifier struct {
+	storage bookly.SessionStorage
 }
 
-// todo: create verifier with session storage which would check session validity with database
+var _ bookly.SessionVerifier = &SessionVerifier{}
+
+//NewSessionVerifier is a constructor for SessionVerifier
+func NewSessionVerifier(sessionStorage bookly.SessionStorage) *SessionVerifier {
+	verifier := &SessionVerifier{
+		storage: sessionStorage,
+	}
+	return verifier
+}
+
+// Verify checks if token exists - if it does, it confirms user
+func (s *SessionVerifier) Verify(ctx context.Context, token bookly.Token) (*bookly.Session, error) {
+	err := s.storage.Update(ctx, token)
+	if err != nil {
+		if err == bookly.ErrSessionNotFound {
+			return nil, bookly.ErrUserNotAuthenticated
+		}
+		return nil, err
+	}
+	session, errSession := s.storage.GetSession(ctx, token)
+	if errSession != nil {
+		return nil, err
+	}
+	return session, nil
+}

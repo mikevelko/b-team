@@ -85,7 +85,7 @@ func (u *UserStorage) GetUser(ctx context.Context, userID int64) (bookly.User, e
 		// todo: find better way to ignore pass if exists
 
 		errScan := list.Scan(&user.ID, &user.FirstName, &user.Surname, &user.Email,
-			&user.UserName, &pass, &user.HotelID)
+			&user.UserName, &pass, &user.HotelID, &user.UserRole)
 		if errScan != nil {
 			return bookly.User{}, fmt.Errorf("postgres: could not retrieve user info: %w", err)
 		}
