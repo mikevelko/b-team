@@ -73,6 +73,50 @@ func (m *MockSessionStorage) EXPECT() *MockSessionStorageMockRecorder {
 	return m.recorder
 }
 
+// CreateNew mocks base method.
+func (m *MockSessionStorage) CreateNew(ctx context.Context, userID int64) (bookly.Token, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateNew", ctx, userID)
+	ret0, _ := ret[0].(bookly.Token)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateNew indicates an expected call of CreateNew.
+func (mr *MockSessionStorageMockRecorder) CreateNew(ctx, userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateNew", reflect.TypeOf((*MockSessionStorage)(nil).CreateNew), ctx, userID)
+}
+
+// GetSession mocks base method.
+func (m *MockSessionStorage) GetSession(ctx context.Context, token bookly.Token) (*bookly.Session, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetSession", ctx, token)
+	ret0, _ := ret[0].(*bookly.Session)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetSession indicates an expected call of GetSession.
+func (mr *MockSessionStorageMockRecorder) GetSession(ctx, token interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSession", reflect.TypeOf((*MockSessionStorage)(nil).GetSession), ctx, token)
+}
+
+// Update mocks base method.
+func (m *MockSessionStorage) Update(ctx context.Context, token bookly.Token) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Update", ctx, token)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Update indicates an expected call of Update.
+func (mr *MockSessionStorageMockRecorder) Update(ctx, token interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockSessionStorage)(nil).Update), ctx, token)
+}
+
 // MockUserVerifier is a mock of UserVerifier interface.
 type MockUserVerifier struct {
 	ctrl     *gomock.Controller

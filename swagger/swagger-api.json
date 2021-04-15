@@ -1010,6 +1010,11 @@
     },
     "/api-client/client": {
       "get": {
+        "security": [
+          {
+            "customTokenSecurityClient": []
+          }
+        ],
         "description": "Get logged in client information.",
         "operationId": "GET_client",
         "produces": [
@@ -1036,6 +1041,11 @@
         }
       },
       "patch": {
+        "security": [
+          {
+            "customTokenSecurityClient": []
+          }
+        ],
         "description": "Update currently logged in client's information.",
         "operationId": "PATCH_client",
         "produces": [

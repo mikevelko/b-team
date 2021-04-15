@@ -15,3 +15,16 @@ func WriteJSONResponse(logger *zap.Logger, w http.ResponseWriter, marshallable i
 		RespondWithError(w, "could not encode response JSON")
 	}
 }
+
+// JSONRespondError respond with error code and json struct
+func JSONRespondError(w http.ResponseWriter, err interface{}, code int) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(code)
+
+	errJ := json.NewEncoder(w).Encode(err)
+	if errJ != nil {
+		return errJ
+	}
+
+	return nil
+}

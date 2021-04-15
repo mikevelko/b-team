@@ -2,13 +2,14 @@ package postgres
 
 import (
 	"context"
+	"testing"
+	"time"
+
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/pw-software-engineering/b-team/server/pkg/bookly"
 	"github.com/pw-software-engineering/b-team/server/pkg/testutils"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"testing"
-	"time"
 )
 
 func CleanSessionTestStorage(t *testing.T, pool *pgxpool.Pool, ctx context.Context) {
@@ -98,5 +99,4 @@ func TestSessionStorage_GetSession(t *testing.T) {
 	hotelId, errGet := storage.GetSession(ctx, bookly.Token{ID: traczID, CreatedAt: "ASDASDSA"})
 	require.NoError(t, errGet)
 	assert.Equal(t, int64(1), hotelId.HotelID)
-
 }
