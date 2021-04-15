@@ -26,8 +26,9 @@ func newAPI(logger *zap.Logger, verifier bookly.SessionVerifier) *api {
 
 func (a *api) mount(router chi.Router) {
 	router.Route("/api/v1/", func(r chi.Router) {
-		r.Route("/session", func(r chi.Router) {
-			r.Post("/", a.handleAuthorize)
+		r.Route("/session/", func(r chi.Router) {
+			r.Post("/client/", a.handleAuthorizeClient)
+			r.Post("/hotel/", a.handleAuthorizeHotel)
 		})
 	})
 }
@@ -35,11 +36,25 @@ func (a *api) mount(router chi.Router) {
 const (
 	// HeaderHotelToken is the name for a token received from hotel UI
 	HeaderHotelToken = "x-hotel-token"
+	// HeaderClientToken is the name for a token received from client UI
+	HeaderClientToken = "x-session-token"
 )
 
-func (a *api) handleAuthorize(w http.ResponseWriter, r *http.Request) {
-	// todo: discuss, wether we should have differend endpoint for hotel nad client
+func (a *api) handleAuthorizeClient(w http.ResponseWriter, r *http.Request) {
+	a.logger.Info("Handling client auth")
+	JSONToken := r.Header.Get(HeaderClientToken)
+
+	a.verifyToken(w, r, JSONToken)
+}
+
+func (a *api) handleAuthorizeHotel(w http.ResponseWriter, r *http.Request) {
+	a.logger.Info("Handling hotel auth")
 	JSONToken := r.Header.Get(HeaderHotelToken)
+
+	a.verifyToken(w, r, JSONToken)
+}
+
+func (a *api) verifyToken(w http.ResponseWriter, r *http.Request, JSONToken string) {
 	var token bookly.Token
 	if err := json.Unmarshal([]byte(JSONToken), &token); err != nil {
 		w.WriteHeader(http.StatusUnauthorized)

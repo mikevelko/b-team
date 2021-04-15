@@ -31,8 +31,9 @@ CREATE TABLE IF NOT EXISTS users
     user_name                   text not null,
     password                    text not null,
     hotel_id                    bigint,
-    user_role                   text DEFAULT 'CLIENT_CUSTOMER'
+    user_role                   text DEFAULT 'CLIENT_CUSTOMER' not null
 );
+
 
 CREATE TABLE IF NOT EXISTS sessions
 (
@@ -42,13 +43,6 @@ CREATE TABLE IF NOT EXISTS sessions
     user_id                     bigint not null
 );
 
-INSERT INTO sessions(
-    id,
-    creation_date,
-    expire_date,
-    user_id
-)
-VALUES(99999999,NOW(),'2050-01-01',1);
 
 
 

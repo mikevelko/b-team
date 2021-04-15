@@ -72,9 +72,8 @@ func newAPI(logger *zap.Logger, service bookly.OfferService) *api {
 
 func (a *api) mount(router chi.Router) {
 	router.Route("/api/v1/hotel", func(r chi.Router) {
-		r.Route("/offers", func(r chi.Router) {
+		r.With(auth.SessionMiddleware()).Route("/offers", func(r chi.Router) {
 			// todo: add session middleware here when it's finished
-			r.With(auth.SessionMiddleware())
 			r.Post("/", a.handlePostOffer)
 			r.Get("/", a.handleGetOffers)
 		})

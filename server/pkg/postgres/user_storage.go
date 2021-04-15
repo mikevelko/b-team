@@ -40,9 +40,10 @@ func (u *UserStorage) AddUserForce(ctx context.Context, user bookly.User, passwo
     	email,
     	user_name,
     	password,
-    	hotel_id
+    	hotel_id,
+		user_role
 		)
-    VALUES ($1,$2,$3,$4,$5,$6)
+    VALUES ($1,$2,$3,$4,$5,$6,$7)
     RETURNING id;
 `
 	var id int64
@@ -53,6 +54,7 @@ func (u *UserStorage) AddUserForce(ctx context.Context, user bookly.User, passwo
 		user.UserName,
 		password,
 		user.HotelID,
+		user.UserRole,
 	).Scan(&id)
 	if err != nil {
 		return 0, fmt.Errorf("postgres: could not insert user: %w", err)
@@ -167,7 +169,7 @@ func (u *UserStorage) UserVerify(ctx context.Context, userName string, password 
 		// todo: find better way to ignore pass if exists
 
 		errScan := list.Scan(&user.ID, &user.FirstName, &user.Surname, &user.Email,
-			&user.UserName, &pass, &user.HotelID)
+			&user.UserName, &pass, &user.HotelID, &user.UserRole)
 		if errScan != nil {
 			return false, bookly.User{}, fmt.Errorf("postgres: could not retrieve hotel's offers: %w", err)
 		}

@@ -8,6 +8,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/pw-software-engineering/b-team/server/pkg/auth"
+
 	"github.com/pw-software-engineering/b-team/server/pkg/bookly"
 
 	"github.com/stretchr/testify/require"
@@ -55,6 +57,8 @@ func Test_api_handlePostOfferSimple(t *testing.T) {
 			check: func(t *testing.T, handler http.HandlerFunc) {
 				recorder := httptest.NewRecorder()
 				req := testutils.JSONRequest(t, http.MethodPost, "/api/v1/hotel/offers", exampleRequest)
+				auth.SetSessionHeader(req.Header, &bookly.Session{})
+
 				handler.ServeHTTP(recorder, req)
 				assert.Equal(t, http.StatusBadRequest, recorder.Code)
 				resp := testutils.ErrRespFromBody(t, recorder.Body)
@@ -71,8 +75,8 @@ func Test_api_handlePostOfferSimple(t *testing.T) {
 				err := json.NewEncoder(&body).Encode(exampleRequest)
 				require.NoError(t, err)
 				req, err := http.NewRequest(http.MethodPost, "/api/v1/hotel/offers", &body)
-
 				require.NoError(t, err)
+				auth.SetSessionHeader(req.Header, &bookly.Session{})
 
 				handler.ServeHTTP(recorder, req)
 				assert.Equal(t, http.StatusBadRequest, recorder.Code)
@@ -91,6 +95,7 @@ func Test_api_handlePostOfferSimple(t *testing.T) {
 
 				req, err := http.NewRequest(http.MethodPost, "/api/v1/hotel/offers", &body)
 				require.NoError(t, err)
+				auth.SetSessionHeader(req.Header, &bookly.Session{})
 
 				req.Header.Set("Content-Type", "application/json")
 
@@ -148,6 +153,8 @@ func Test_api_handleGetOffers(t *testing.T) {
 			check: func(t *testing.T, handler http.HandlerFunc) {
 				recorder := httptest.NewRecorder()
 				req := testutils.JSONRequest(t, http.MethodGet, "/api/v1/hotel/offers", exampleRequest)
+				auth.SetSessionHeader(req.Header, &bookly.Session{})
+
 				handler.ServeHTTP(recorder, req)
 				assert.Equal(t, http.StatusBadRequest, recorder.Code)
 				resp := testutils.ErrRespFromBody(t, recorder.Body)
@@ -164,8 +171,8 @@ func Test_api_handleGetOffers(t *testing.T) {
 				err := json.NewEncoder(&body).Encode(exampleRequest)
 				require.NoError(t, err)
 				req, err := http.NewRequest(http.MethodGet, "/api/v1/hotel/offers", &body)
-
 				require.NoError(t, err)
+				auth.SetSessionHeader(req.Header, &bookly.Session{})
 
 				handler.ServeHTTP(recorder, req)
 				assert.Equal(t, http.StatusBadRequest, recorder.Code)
@@ -192,6 +199,7 @@ func Test_api_handleGetOffers(t *testing.T) {
 				require.NoError(t, err)
 
 				req.Header.Set("Content-Type", "application/json")
+				auth.SetSessionHeader(req.Header, &bookly.Session{})
 
 				handler.ServeHTTP(recorder, req)
 				assert.Equal(t, http.StatusBadRequest, recorder.Code)

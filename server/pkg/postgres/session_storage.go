@@ -3,16 +3,17 @@ package postgres
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/jackc/pgx/v4"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/pw-software-engineering/b-team/server/pkg/bookly"
-	"time"
 )
 
 // SessionStorage is responsible for storing and retrieving user sessions
 type SessionStorage struct {
 	connPool *pgxpool.Pool
-	//global token expiration time in minutes
+	// global token expiration time in minutes
 	expirationTime time.Duration
 }
 
@@ -31,7 +32,7 @@ func NewSessionStorage(conf Config, expireTime time.Duration) (*SessionStorage, 
 	return storage, cleanup, nil
 }
 
-//CreateNew update
+// CreateNew update
 func (o *SessionStorage) CreateNew(ctx context.Context, userID int64) (bookly.Token, error) {
 	const query = `
     INSERT INTO sessions(
@@ -48,10 +49,9 @@ func (o *SessionStorage) CreateNew(ctx context.Context, userID int64) (bookly.To
 	}
 	token := bookly.Token{ID: userID, CreatedAt: creationTime.Format(time.RFC3339)}
 	return token, nil
-
 }
 
-//Update updates or closes session if expired
+// Update updates or closes session if expired
 func (o *SessionStorage) Update(ctx context.Context, Token bookly.Token) error {
 	const query = `
     SELECT id,expire_date FROM sessions
@@ -91,7 +91,7 @@ func (o *SessionStorage) Update(ctx context.Context, Token bookly.Token) error {
 	return bookly.ErrSessionExpired
 }
 
-//GetSession gets session data based on token
+// GetSession gets session data based on token
 func (o *SessionStorage) GetSession(ctx context.Context, token bookly.Token) (*bookly.Session, error) {
 	const query = `
     SELECT hotel_id FROM users

@@ -2,17 +2,18 @@ package main
 
 import (
 	"context"
+
 	"github.com/pw-software-engineering/b-team/server/pkg/bookly"
 )
 
-//SessionVerifier implements logic for verifying user sessions
+// SessionVerifier implements logic for verifying user sessions
 type SessionVerifier struct {
 	storage bookly.SessionStorage
 }
 
 var _ bookly.SessionVerifier = &SessionVerifier{}
 
-//NewSessionVerifier is a constructor for SessionVerifier
+// NewSessionVerifier is a constructor for SessionVerifier
 func NewSessionVerifier(sessionStorage bookly.SessionStorage) *SessionVerifier {
 	verifier := &SessionVerifier{
 		storage: sessionStorage,
