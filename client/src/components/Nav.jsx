@@ -8,7 +8,7 @@ function Nav(props) {
 
     const routeChange = () => {
         props.Logout();
-        let path = `/client/login`;
+        let path = `/login`;
         history.push(path);
     }
     return (

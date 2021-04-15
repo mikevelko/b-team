@@ -3,7 +3,7 @@
   "info": {
     "title": "Client API | Hotel API",
     "description": "A merged version hotel-endpoints.raml and client-endpoints.raml from specification. endpoints.raml were omitted, since its basically a copy of hotel-endpoints.raml. Please note that specification might not been converted 100% correctly to OAS 2.0 and there might be errors or misinterpretations. Do not hesitate to contact me if you think there is error in this documentation.",
-    "version": "1.0"
+    "version": "1.1 - 14.04.2021"
   },
   "host": "localhost:8080",
   "schemes": [
@@ -1159,6 +1159,102 @@
         }
       }
     },
+    "/api-client/client/reservations/{reservationID}": {
+      "delete": {
+        "description": "Cancel exisiting reservation provided that it hasn't started",
+        "operationId": "DELETE_client-reservations-reservationID",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "400": {
+            "description": "Reservations cannot be deleted unless they haven't begun",
+            "schema": {
+              "example": {
+                "error": "Reservation is currently underway or already completed"
+              }
+            }
+          },
+          "401": {
+            "description": "Cannot delete reservation becuase of no ownership of a reservation with ID equal to reservationID path parameter"
+          },
+          "404": {
+            "description": "Reservation with ID equal to reservationID path parameter doesn't exist"
+          }
+        }
+      },
+      "parameters": [
+        {
+          "type": "string",
+          "in": "path",
+          "name": "reservationID",
+          "required": true
+        }
+      ]
+    },
+    "/api-client/client/reservations/{reservationID}/review": {
+      "get": {
+        "description": "Pobiera opinię do danej rezerwacji",
+        "operationId": "GET_client-reservations-reservationID-review",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "404": {
+            "description": "Reservation not found"
+          }
+        }
+      },
+      "put": {
+        "description": "Creates/edits a new review related to an offer",
+        "operationId": "PUT_client-reservations-reservationID-review",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "consumes": [
+          "application/json",
+          "responses"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "object"
+            },
+            "in": "body",
+            "name": "body",
+            "required": true
+          }
+        ]
+      },
+      "delete": {
+        "description": "Deletes a client review related to an offer",
+        "operationId": "DELETE_client-reservations-reservationID-review",
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "404": {
+            "description": ""
+          }
+        }
+      },
+      "parameters": [
+        {
+          "type": "string",
+          "in": "path",
+          "name": "reservationID",
+          "required": true
+        }
+      ]
+    },
     "/api-client/hotels": {
       "get": {
         "description": "Returns list of hotels according to filter values",
@@ -1349,54 +1445,6 @@
         }
       ]
     },
-    "/api-client/hotels/{hotelID}/offers/{offerID}/reservations/{reservationID}": {
-      "delete": {
-        "description": "Cancel exisiting reservation provided that it hasn't started",
-        "operationId": "DELETE_hotels-hotelID-offers-offerID-reservations-reservationID",
-        "produces": [
-          "application/json"
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          },
-          "400": {
-            "description": "Reservations cannot be deleted unless they haven't begun",
-            "schema": {
-              "example": {
-                "error": "Reservation is currently underway or already completed"
-              }
-            }
-          },
-          "401": {
-            "description": "Cannot delete reservation becuase of no ownership of a reservation with ID equal to reservationID query parameter"
-          },
-          "404": {
-            "description": "Reservation with ID equal to reservationID query parameter doesn't exist"
-          }
-        }
-      },
-      "parameters": [
-        {
-          "type": "string",
-          "in": "path",
-          "name": "reservationID",
-          "required": true
-        },
-        {
-          "type": "string",
-          "in": "path",
-          "name": "hotelID",
-          "required": true
-        },
-        {
-          "type": "string",
-          "in": "path",
-          "name": "offerID",
-          "required": true
-        }
-      ]
-    },
     "/api-client/hotels/{hotelID}/offers/{offerID}/reviews": {
       "get": {
         "description": "Returns all reviews related to an offer",
@@ -1413,40 +1461,6 @@
           }
         }
       },
-      "post": {
-        "description": "Creates a new review related to an offer",
-        "operationId": "POST_hotels-hotelID-offers-offerID-reviews",
-        "produces": [
-          "application/json"
-        ],
-        "responses": {
-          "200": {
-            "description": "Returns an ID corresponding to a newly created review"
-          },
-          "400": {
-            "description": "Invalid format of the JSON obejct containing data related to a new review",
-            "schema": {
-              "example": "{\n  error: \"[content] property is required and must be a non-empty string\"\n}\n"
-            }
-          },
-          "404": {
-            "description": "Resource not found"
-          }
-        },
-        "consumes": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "schema": {
-              "type": "string"
-            },
-            "in": "body",
-            "name": "body",
-            "required": true
-          }
-        ]
-      },
       "parameters": [
         {
           "type": "string",
@@ -1462,28 +1476,19 @@
         }
       ]
     },
-    "/api-client/hotels/{hotelID}/offers/{offerID}/reviews/{reviewID}": {
-      "delete": {
-        "description": "Deletes a client review related to an offer",
-        "operationId": "DELETE_hotels-hotelID-offers-offerID-reviews-reviewID",
+    "/api-client/hotels/{hotelID}/reviews": {
+      "get": {
+        "description": "Returns all reviews related to a hotel",
+        "operationId": "GET_hotels-hotelID-reviews",
+        "produces": [
+          "application/json"
+        ],
         "responses": {
           "200": {
-            "description": ""
-          },
-          "401": {
-            "description": "Error related to an attempt of review deletion without it's ownership"
+            "description": "An arry of objects containing information related to offer reviews"
           },
           "404": {
-            "description": "Resource not found"
-          }
-        }
-      },
-      "put": {
-        "description": "Edits a client review related to an offer",
-        "operationId": "PUT_hotels-hotelID-offers-offerID-reviews-reviewID",
-        "responses": {
-          "default": {
-            "description": ""
+            "description": "Hotel not found"
           }
         }
       },
@@ -1491,19 +1496,7 @@
         {
           "type": "string",
           "in": "path",
-          "name": "reviewID",
-          "required": true
-        },
-        {
-          "type": "string",
-          "in": "path",
           "name": "hotelID",
-          "required": true
-        },
-        {
-          "type": "string",
-          "in": "path",
-          "name": "offerID",
           "required": true
         }
       ]

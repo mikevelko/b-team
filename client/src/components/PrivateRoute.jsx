@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-d
 function PrivateRoute ({component: Component, authed}) {
     return (
       <Route
-        render={(props) => authed === true
+        render={(props) => authed 
           ? <Component/>
           : <Redirect to={{pathname: '/login'}} />}
       />
