@@ -22,13 +22,13 @@ class MainPage extends Component {
                     <li className="ul-li-profile">
                             <Route render={({ history }) => (
                                 <Button variant="contained" color="primary" style={{fontSize: '42px', maxWidth: '100%', maxHeight: '150px', minWidth: '100%', minHeight: '150px'}}
-                                 size="large" component={Link} exact to="/hotels">Hotels</Button>
+                                 size="large" component={Link} to="/hotels">Hotels</Button>
                             )} />
                         </li>
                         <li className="ul-li-profile">
                             <Route render={({ history }) => (
                                 <Button variant="contained" color="primary" style={{fontSize: '42px', maxWidth: '100%', maxHeight: '150px', minWidth: '100%', minHeight: '150px'}}
-                                 size="large" component={Link} exact to="/client/reservations">My reservations</Button>
+                                 size="large" component={Link} to="/reservations">My reservations</Button>
                             )} />
                         </li>
                     </ul>

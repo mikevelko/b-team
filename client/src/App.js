@@ -11,28 +11,36 @@ import MyReservations from './components/MyReservations';
 
 function App() {
 
-  const [isUserAuthenticated, SetIsUserAuthenticated] = useState(false);
-  const [token, setToken] = useState();
-
+  
+  const [isUserAuthenticated, SetIsUserAuthenticated] = useState(JSON.parse(window.localStorage.getItem("isUserAuthenticated")));
+  const [token, setToken] = useState(JSON.parse(window.localStorage.getItem("token")));
 
   useEffect(() => {
-    const data = (window.localStorage.getItem("isUserAuthenticated"));
-    console.log(JSON.parse(data));
-    SetIsUserAuthenticated(JSON.parse(data));
+    const userAuth =  (window.localStorage.getItem("isUserAuthenticated"));
+    const token2 =  (window.localStorage.getItem("token"));
+    console.log(JSON.parse(userAuth));
+    SetIsUserAuthenticated(JSON.parse(userAuth));
+    setToken(JSON.parse(token2));
     console.log(isUserAuthenticated);
   }, [])
 
+
   useEffect(() => {
     window.localStorage.setItem("isUserAuthenticated", JSON.stringify(isUserAuthenticated));
+    window.localStorage.setItem("token", JSON.stringify(token));
   })
 
   
   function Logout() {
-    SetIsUserAuthenticated(false);
+    window.localStorage.setItem("isUserAuthenticated", null);
+    window.localStorage.setItem("token", null);
+    SetIsUserAuthenticated(null);
+    setToken(null);
   }
 
-  function Login() {
+  function Login(dataToken) {
 
+    setToken(dataToken);
     //response from server here 
     SetIsUserAuthenticated(true);
   }
@@ -54,9 +62,9 @@ function App() {
           }}
         ></Route>
         <PrivateRoute authed={isUserAuthenticated} exact path='/home' component={MainPage} />
-        <PrivateRoute authed={isUserAuthenticated} exact path='/hotels' component={Hotels} />
+        <PrivateRoute authed={token} exact path='/hotels' component={Hotels} />
         <PrivateRoute authed={isUserAuthenticated} exact path='/client' component={Client} />
-        <PrivateRoute authed={isUserAuthenticated} exact path='/client/reservations' component={MyReservations} />
+        <PrivateRoute authed={isUserAuthenticated} exact path='/reservations' component={MyReservations} />
         <Route exact path="/login" component={() => <LoginPage Login={Login} isUserAuthenticated={isUserAuthenticated}/>} />
       </Switch>
     </Router>
