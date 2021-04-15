@@ -7,6 +7,10 @@ import axios from 'axios';
 function Client() {
 
     //first entry to this page by useffect 
+    const [name, setName] = useState("name");
+    const [surname, setSurname] = useState("");
+    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
 
     useEffect(() => {
        fetchItems();
@@ -17,10 +21,15 @@ function Client() {
             'accept': 'application/json',
             'x-session-token': '{id: 1, createdAt: "2021-04-15T18:02:17Z"}'
         };
-
-        axios.get('http://localhost:8080/api-client/client', { headers: { 'accept': 'application/json', 'x-session-token':  '{id: 1, createdAt: "2021-04-15T18:02:17Z"}'} })
+        const url = 'http://localhost:8080/api-client/client';
+        console.log(window.localStorage.getItem("token"));
+        axios.get(url, { headers: { 'accept': 'application/json', 'x-session-token':  window.localStorage.getItem("token") }})
             .then(response => {
-                console.log(response);
+                setName(response.data.name);
+                setSurname(response.data.surname);
+                setUsername(response.data.username);
+                setEmail(response.data.email);
+                console.log(response.data.name);
             })
             .catch(error => {
                 console.error('There was an error!', error);
@@ -32,10 +41,7 @@ function Client() {
     const [IsEditing, setIsEditing] = useState(false);
 
     //valid information, updated after correct data in form 
-    const [name, setName] = useState("name");
-    const [surname, setSurname] = useState("");
-    const [username, setUsername] = useState("");
-    const [email, setEmail] = useState("");
+    
 
 
     //information from the form
@@ -80,16 +86,16 @@ function Client() {
             <div className="nav-inputs">
                 <ul>
                     <li className="li">
-                        <TextField required id="outlined-basic" label="Name" variant="outlined" disabled={!IsEditing} defaultValue={name} onChange={handleChangeName} />
+                        <TextField required id="outlined-basic" label="Name" variant="outlined" disabled={true} value={name} onChange={handleChangeName} />
                     </li>
                     <li className="li">
-                        <TextField required id="outlined-basic" label="Surname" variant="outlined" disabled={!IsEditing} defaultValue={surname} onChange={handleChangeSurname} />
+                        <TextField required id="outlined-basic" label="Surname" variant="outlined" disabled={true} value={surname} onChange={handleChangeSurname} />
                     </li>
                     <li className="li">
-                        <TextField required id="outlined-basic" label="username" variant="outlined" disabled={!IsEditing} defaultValue={username} onChange={handleChangeUsername} />
+                        <TextField required id="outlined-basic" label="username" variant="outlined" disabled={!IsEditing} value={username} onChange={handleChangeUsername} />
                     </li>
                     <li className="li">
-                        <TextField required id="outlined-basic" label="email" variant="outlined" disabled={!IsEditing} defaultValue={email} onChange={handleChangeEmail} />
+                        <TextField required id="outlined-basic" label="email" variant="outlined" disabled={!IsEditing} value={email} onChange={handleChangeEmail} />
                     </li>
                 </ul>
             </div>
