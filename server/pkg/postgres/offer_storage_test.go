@@ -17,6 +17,7 @@ func CleanTestStorage(t *testing.T, pool *pgxpool.Pool, ctx context.Context) {
 	queries := []string{
 		"DELETE FROM offers",
 		"DELETE FROM users",
+		"DELETE FROM rooms",
 	}
 	for _, q := range queries {
 		_, err := pool.Exec(ctx, q)

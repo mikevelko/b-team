@@ -15,6 +15,20 @@ CREATE TABLE IF NOT EXISTS offers
     offer_preview_picture_url text
 );
 
+CREATE TABLE IF NOT EXISTS rooms
+(
+    id                          bigserial primary key,
+    room_number                 text not null,
+    hotel_id                    bigint not null
+);
+
+CREATE TABLE IF NOT EXISTS offers_rooms
+(
+    offer_id                    bigint not null,
+    room_id                     bigint not null
+);
+
+
 CREATE TABLE IF NOT EXISTS hotels
 (
     id                          bigserial primary key,
