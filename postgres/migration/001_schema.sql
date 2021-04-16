@@ -32,7 +32,12 @@ CREATE TABLE IF NOT EXISTS offers_rooms
 CREATE TABLE IF NOT EXISTS hotels
 (
     id                          bigserial primary key,
-    api_token                   text not null
+    api_token                   text,
+    hotel_name                  text not null,
+    hotel_desc                  text,
+    city                        text not null,
+    country                     text not null,
+    preview_picture_url         text
 );
 
 

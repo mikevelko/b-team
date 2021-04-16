@@ -54,10 +54,16 @@ VALUES
 
 INSERT INTO hotels(
     id,
-    api_token
+    hotel_name,
+    hotel_desc,
+    city,
+    country
 )
 VALUES
 (
     99999999,
-    '{"ID": 99999999, "CreatedAt":"2020-01-01"}'
+    '999_999_99 hotel',
+    'Hotel for testing hotel 999',
+    'Moscow',
+    'Russia'
 )
