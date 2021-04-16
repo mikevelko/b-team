@@ -1,4 +1,4 @@
-name: DeployServerApps
+name: deploy
 
 on:
   repository_dispatch:
@@ -10,6 +10,7 @@ on:
     branches: [ main ]
     paths:
     - 'server/**'
+    - 'deploy/**'
 
 env:
   ACR_URL: 'powoeuwacr.azurecr.io'
@@ -30,4 +31,36 @@ jobs:
       env:
         REGISTRY_URL: ${{ env.ACR_URL }}
       run: ./deploy/push-server-images.sh
+
+    deploy:
+      runs-on: ubuntu-latest
+      needs: build
+      defaults:
+        run:
+          shell: bash
+          working-directory: deploy/manifests
+      steps:
+        - uses: actions/checkout@v2
+        - uses: azure/login@v1
+          with:
+            creds: ${{ secrets.AZURE_CREDENTIALS }}
+        - uses: azure/setup-kubectl@v1
+          with:
+            version: 'v1.18.8'
+        - uses: azure/aks-set-context@v1
+          with:
+            creds: '${{ secrets.AZURE_CREDENTIALS }}'
+            cluster-name: ${{ secrets.AKS_NAME }}
+            resource-group: ${{ secrets.AKS_RG_NAME }}
+        - name: Set DOMAIN env variable
+          run: echo "DOMAIN=$(az aks show -g ${{ secrets.AKS_RG_NAME }} -n ${{ secrets.AKS_NAME }} --query addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName -o tsv)" >> $GITHUB_ENV
+        - name: Print DOMAIN
+          run: |
+            echo "${{ env.DOMAIN }}"
+        - name: build kustomizations
+          run: kubectl kustomize . -o output/kustomized.yaml
+        - name: Substitute environment variables in manifests
+          run: envsubst < "output/kustomized.yaml" > "output/manifests.yaml"
+        - name: Deploy manifests to the cluster
+          run: kubectl apply -f output/manifests.yaml --wait
 
