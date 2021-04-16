@@ -6,24 +6,20 @@ import axios from 'axios';
 
 function Client() {
 
-    //first entry to this page by useffect 
-    const [name, setName] = useState("name");
+
+    const [name, setName] = useState("");
     const [surname, setSurname] = useState("");
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
 
+
+    //first entry to this page by useffect
     useEffect(() => {
-       fetchItems();
-     }, []);
+        fetchItems();
+    }, []);
 
     const fetchItems = () => {
-        const headers = {
-            'accept': 'application/json',
-            'x-session-token': '{id: 1, createdAt: "2021-04-15T18:02:17Z"}'
-        };
-        const url = 'http://localhost:8080/api-client/client';
-        console.log(window.localStorage.getItem("token"));
-        axios.get(url, { headers: { 'accept': 'application/json', 'x-session-token':  window.localStorage.getItem("token") }})
+        axios.get('/api-client/client', { headers: { 'accept': 'application/json', 'x-session-token': window.localStorage.getItem("token") } })
             .then(response => {
                 setName(response.data.name);
                 setSurname(response.data.surname);
@@ -41,61 +37,71 @@ function Client() {
     const [IsEditing, setIsEditing] = useState(false);
 
     //valid information, updated after correct data in form 
-    
+    function isValidEmailAddress(address) {
+        return !!address.match(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/);
+    }
+    function isValidUsername(username) 
+    {
+        return username.length > 2;
+    }
 
-
-    //information from the form
-    const [formName, setFormName] = useState("");
-    const handleChangeName = (event) => {
-        setFormName(event.target.value);
-    };
-
-    const [formSurname, setFormSurname] = useState("");
-    const handleChangeSurname = (event) => {
-        setFormSurname(event.target.value);
-    };
-
-    const [formUsername, setFormUsername] = useState("");
     const handleChangeUsername = (event) => {
-        setFormUsername(event.target.value);
+        setUsername(event.target.value);
     };
 
-    const [formEmail, setFormEmail] = useState("");
+    //const [formEmail, setFormEmail] = useState("");
     const handleChangeEmail = (event) => {
-        setFormEmail(event.target.value);
+        setEmail(event.target.value);
     };
 
 
-    function UpdateInformation() {
-        //post method here with validation of response 
-        setIsEditing(false);
+    const UpdateInformation = () => {
+        const body = {
+            username: username,
+            email: email
+        };
+        const headers = {
+            'accept': 'application/json', 
+            'x-session-token': window.localStorage.getItem("token"),
+            'Content-Type': 'application/json'
+        }; 
+        axios.patch('/api-client/client', body, { headers })
+            .then(response => {
+                console.log(response);
+                setIsEditing(false);
+            })
+            .catch(error => {
+                console.error('There was an error!', error.response);
+            });
+
+
+        
     }
     function EditInformation() {
         setIsEditing(true);
     }
 
-
-
-    //for TextField there is an option to show error 
     return (
         <div>
             <div className="nav-buttons">
-                {IsEditing ? <Button variant="contained" color="primary" size="large" onClick={UpdateInformation}>Save profile</Button> :
+                {IsEditing ? <Button variant="contained" color="primary" size="large" onClick={UpdateInformation} disabled={!isValidEmailAddress(email) || !isValidUsername(username)}>Save profile</Button> :
                     <Button variant="contained" color="primary" size="large" onClick={EditInformation}>Edit profile</Button>}
             </div>
             <div className="nav-inputs">
                 <ul>
                     <li className="li">
-                        <TextField required id="outlined-basic" label="Name" variant="outlined" disabled={true} value={name} onChange={handleChangeName} />
+                        <TextField required id="outlined-basic" label="Name" variant="outlined" disabled={true} value={name}/>
                     </li>
                     <li className="li">
-                        <TextField required id="outlined-basic" label="Surname" variant="outlined" disabled={true} value={surname} onChange={handleChangeSurname} />
+                        <TextField required id="outlined-basic" label="Surname" variant="outlined" disabled={true} value={surname}/>
                     </li>
                     <li className="li">
-                        <TextField required id="outlined-basic" label="username" variant="outlined" disabled={!IsEditing} value={username} onChange={handleChangeUsername} />
+                        <TextField required id="outlined-basic" label="username" variant="outlined" disabled={!IsEditing} value={username} onChange={handleChangeUsername} 
+                        error={!isValidUsername(username)} helperText={!isValidUsername(username) ? 'username is too short' : ' '}/>
                     </li>
                     <li className="li">
-                        <TextField required id="outlined-basic" label="email" variant="outlined" disabled={!IsEditing} value={email} onChange={handleChangeEmail} />
+                        <TextField required id="outlined-basic" label="email" variant="outlined" disabled={!IsEditing} value={email} onChange={handleChangeEmail}
+                            error={!isValidEmailAddress(email)} helperText={!isValidEmailAddress(email) ? 'email is not valid' : ' '} />
                     </li>
                 </ul>
             </div>

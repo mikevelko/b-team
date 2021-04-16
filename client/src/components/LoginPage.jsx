@@ -23,14 +23,14 @@ function LoginPage(props) {
         //props.Login(response.data);
 
 
-        axios.post('http://localhost:8080/api-client/client/login', body, { headers })
+        axios.post('/api-client/client/login', body, { headers })
             .then(response => {
                 props.Login(response.data);
                 let path = `/home`;
                 history.push(path);
             })
             .catch(error => {
-                console.error('There was an error!', error);
+                console.error('There was an error!', error.response);
                 setErrorMessage("Bad credentials");
             });
 
