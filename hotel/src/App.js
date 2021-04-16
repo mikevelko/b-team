@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -9,13 +8,13 @@ import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom';
 import StartPage from './StartPage';
 import HotelInfo from './HotelInfo';
 import Offers from './Offers';
-import OfferDetails from './OfferDetails';
 import Reservations from './Reservations';
 import Rooms from './Rooms';
 import LogIn from './LogIn';
 import HomeIcon from '@material-ui/icons/Home';
 import CreateOffer from './CreateOffer';
 import HotelInfoEdit from './HotelInfoEdit';
+import EditOfferDetails from './EditOfferDetails';
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -53,9 +52,13 @@ export default function App() {
         <Route path='/' exact component={StartPage}/>
         <Route path='/hotelInfo' exact component={HotelInfo}/>
         <Route path='/hotelInfo/edit' exact component={HotelInfoEdit}/>
+
+
         <Route path='/offers' exact component={Offers}/>
-        <Route path='/offers/create' component={CreateOffer}/>
-        <Route path='/offers/:offerId' component={OfferDetails}/>
+        <Route path='/offers/create' exact component={CreateOffer}/>
+        <Route path='/offers/edit/:offerId' exact component={EditOfferDetails}/>
+
+
         <Route path='/reservations' component={Reservations}/>
         <Route path='/rooms' component={Rooms}/>
         <Route path='/login' component={LogIn}/>
@@ -63,3 +66,4 @@ export default function App() {
     </Router>
   );
 }
+

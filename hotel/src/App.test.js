@@ -5,7 +5,6 @@ import App from './App';
 import CreateOffer from './CreateOffer';
 import HotelInfo from './HotelInfo';
 import HotelInfoEdit from './HotelInfoEdit';
-import OfferDetails from './OfferDetails';
 import Offers from './Offers';
 import Reservations from './Reservations';
 import Rooms from './Rooms';
@@ -44,12 +43,6 @@ test('Offers',() =>{
 test('CreateOffer',() =>{
   render(<MemoryRouter><CreateOffer/></MemoryRouter>);
   const linkElement = screen.getByText("Create offer");
-  expect(linkElement).toBeInTheDocument();
-});
-
-test('OfferDetails',() =>{
-  render(<MemoryRouter><OfferDetails match={({params:{offerId:'10'}})}/></MemoryRouter>);
-  const linkElement = screen.getByText("Offer Details");
   expect(linkElement).toBeInTheDocument();
 });
 

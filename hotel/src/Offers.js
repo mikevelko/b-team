@@ -1,6 +1,6 @@
 import { Button, ButtonBase, Grid, Typography } from '@material-ui/core';
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import './Offers.css'
 import offerImage from './offer.png';
 import { makeStyles } from '@material-ui/core/styles';
@@ -27,10 +27,17 @@ const useStyles = makeStyles((theme) => ({
   editOfferButton:{
     backgroundColor:'#ffcc80', 
     color:'white',
+    color:'white',
+    '&:hover': {
+      background: "#ffcc80",
+    },
   },
   deleteOfferButton:{
     backgroundColor:'#cc0000',
-     color:'white',
+    color:'white',
+    '&:hover': {
+      background: "#cc0000",
+    },
   },
   offerPreviewImage:{
     width:'150px', 
@@ -50,6 +57,7 @@ function Offers() {
         <Button style={{backgroundColor:'#b4e4e4', color:'white' }}>Inactive offers:[count]</Button>
       </div>
       <div className="offersList">     
+        
         <Grid className={classes.activeOfferItem} container>
           <Grid item className={classes.partOfOfferItem}>
               <ButtonBase>
@@ -64,8 +72,8 @@ function Offers() {
           </Grid>
           <Grid item style={{display:'flex',flexDirection:'column'}}>
             <Grid item style={{display:'flex', justifyContent:'space-around', marginBottom:10}}>
-              <Button className={classes.editOfferButton} component={Link} to='/offers/edit/:OfferId'>Edit offer</Button>
-              <Button className={classes.deleteOfferButton} >Delete offer</Button>
+              <Button className={classes.editOfferButton} component={Link} to='/offers/edit/5' onClick={(event) => {event.stopPropagation()}}>Edit offer</Button>
+              <Button className={classes.deleteOfferButton}  onClick={(event) => {event.stopPropagation()}}>Delete offer</Button>
             </Grid>
             <Grid item>
               <Typography>Room numbers:[list of room numbers]</Typography>
@@ -86,8 +94,8 @@ function Offers() {
           </Grid>
           <Grid item style={{display:'flex',flexDirection:'column'}}>
             <Grid item style={{display:'flex', justifyContent:'space-around', marginBottom:10}}>
-              <Button className={classes.editOfferButton}  component={Link} to='/offers/edit/:OfferId'>Edit offer</Button>
-              <Button className={classes.deleteOfferButton}>Delete offer</Button>
+              <Button className={classes.editOfferButton}  component={Link} to='/offers/edit/:OfferId' onClick={(event) => {event.stopPropagation()}}>Edit offer</Button>
+              <Button className={classes.deleteOfferButton} onClick={(event) => {event.stopPropagation()}}>Delete offer</Button>
             </Grid>
             <Grid item>
               <Typography>Room numbers:[list of room numbers]</Typography>
