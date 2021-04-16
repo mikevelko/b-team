@@ -28,9 +28,17 @@ VALUES
 );
 
 INSERT INTO hotels(
-    api_token
+    id,
+    hotel_name,
+    hotel_desc,
+    city,
+    country
 )
 VALUES
 (
-    '{"ID": 1, "CreatedAt":"2020-01-01"}'
+    1,
+    'hotel',
+    'Hotel for testing hotel operations',
+    'Warsaw',
+    'Poland'
 )
