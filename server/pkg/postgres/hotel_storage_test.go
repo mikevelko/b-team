@@ -2,12 +2,13 @@ package postgres
 
 import (
 	"context"
+	"testing"
+
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/pw-software-engineering/b-team/server/pkg/bookly"
 	"github.com/pw-software-engineering/b-team/server/pkg/testutils"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func CleanHotelTestStorage(t *testing.T, pool *pgxpool.Pool, ctx context.Context) {
@@ -114,7 +115,7 @@ func TestHotelStorage_GetHotelDetails(t *testing.T) {
 
 	details, errDetails := storage.GetHotelDetails(ctx, id)
 	require.NoError(t, errDetails)
-	//todo: tests for pictures
+	// todo: tests for pictures
 	assert.Equal(t, h1.Name, details.Name)
 	assert.Equal(t, h1.Description, details.Description)
 	assert.Equal(t, h1.City, details.City)

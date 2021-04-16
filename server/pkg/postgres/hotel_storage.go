@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"fmt"
+
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/pw-software-engineering/b-team/server/pkg/bookly"
 )
@@ -29,7 +30,7 @@ func NewHotelStorage(conf Config) (*HotelStorage, func(), error) {
 
 // CreateHotel implements business logic of creating hotels in database
 func (o *HotelStorage) CreateHotel(ctx context.Context, hotel bookly.Hotel) (int64, error) {
-	//todo: add pictures
+	// todo: add pictures
 	const query = `
     INSERT INTO hotels(
         hotel_name,
@@ -74,7 +75,7 @@ func (o *HotelStorage) GetHotelPreviews(ctx context.Context, filter bookly.Hotel
 	defer hotelList.Close()
 	for hotelList.Next() {
 		hotel := &bookly.HotelListing{}
-		//todo: also retrieve preview picture when implemented
+		// todo: also retrieve preview picture when implemented
 		errScan := hotelList.Scan(&hotel.HotelID, &hotel.HotelName, &hotel.City, &hotel.Country)
 		if errScan != nil {
 			return nil, fmt.Errorf("postgres: could not retrieve hotels: %w", err)
@@ -90,7 +91,7 @@ func (o *HotelStorage) GetHotelPreviews(ctx context.Context, filter bookly.Hotel
 
 // GetHotelDetails returns details about particular hotel
 func (o *HotelStorage) GetHotelDetails(ctx context.Context, hotelID int64) (*bookly.Hotel, error) {
-	//todo: retrieve pictures when implemented
+	// todo: retrieve pictures when implemented
 	const query = `
     SELECT hotel_name, hotel_desc, city, country
 	FROM hotels
@@ -107,7 +108,7 @@ func (o *HotelStorage) GetHotelDetails(ctx context.Context, hotelID int64) (*boo
 
 // UpdateHotelDetails updates details about existing hotel
 func (o *HotelStorage) UpdateHotelDetails(ctx context.Context, hotelID int64, newHotel bookly.Hotel) error {
-	//todo: update pictures when implemented
+	// todo: update pictures when implemented
 	const query = `
     UPDATE hotels
 	SET 

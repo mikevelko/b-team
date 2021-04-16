@@ -66,4 +66,18 @@ VALUES
     'Hotel for testing hotel 999',
     'Moscow',
     'Russia'
-)
+),
+(
+    99999998,
+    'Grand Arizona Grounds Hotel',
+    'See the Grand Canyon or something, idk',
+    'Berlin',
+    'Germany'
+),
+(
+    99999997,
+    'Grand Budapest Hotel',
+    'Quite good movie btw',
+    'Budapest',
+    'Hungary'
+);

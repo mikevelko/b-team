@@ -2,7 +2,7 @@
   "swagger": "2.0",
   "info": {
     "title": "Client API | Hotel API",
-    "description": "A merged version hotel-endpoints.raml and client-endpoints.raml from specification. endpoints.raml were omitted, since its basically a copy of hotel-endpoints.raml. Please note that specification might not been converted 100% correctly to OAS 2.0 and there might be errors or misinterpretations. Do not hesitate to contact me if you think there is error in this documentation.",
+    "description": "A merged version hotel-endpoints.raml and client-endpoints.raml from specification. endpoints.raml were omitted, since its basically a copy of hotel-endpoints.raml. Please note that specification might not been converted 100% correctly to OAS 2.0 and there might be errors or misinterpretations. Do not hesitate to contact me if you think there is error in this documentation. Tokens for logging: {\"ID\": 99999998, \"CreatedAt\":\"2020-01-01\"}\n{\"ID\": 99999999, \"CreatedAt\":\"2020-01-01\"}",
     "version": "1.1 - 14.04.2021"
   },
   "host": "localhost:8080",
@@ -1257,6 +1257,11 @@
     },
     "/api-client/hotels": {
       "get": {
+        "security": [
+          {
+            "customTokenSecurityClient": []
+          }
+        ],
         "description": "Returns list of hotels according to filter values",
         "operationId": "GET_hotels",
         "produces": [
@@ -1268,12 +1273,6 @@
           }
         },
         "parameters": [
-          {
-            "type": "string",
-            "in": "query",
-            "name": "description",
-            "required": true
-          },
           {
             "type": "string",
             "in": "query",
@@ -1294,6 +1293,11 @@
     },
     "/api-client/hotels/{hotelID}": {
       "get": {
+        "security": [
+          {
+            "customTokenSecurityClient": []
+          }
+        ],
         "description": "Gets detailed information about a hotel",
         "operationId": "GET_hotels-hotelID",
         "produces": [
