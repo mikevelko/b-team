@@ -892,6 +892,11 @@
     },
     "/api-hotel/hotelInfo": {
       "get": {
+        "security": [
+          {
+            "customTokenSecurityHotel": []
+          }
+        ],
         "description": "Show info about hotel",
         "operationId": "GET_hotelInfo",
         "produces": [
@@ -946,6 +951,11 @@
         }
       },
       "patch": {
+        "security": [
+          {
+            "customTokenSecurityHotel": []
+          }
+        ],
         "description": "Update info about hotel",
         "operationId": "PATCH_hotelInfo",
         "produces": [

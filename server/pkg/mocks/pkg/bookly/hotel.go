@@ -118,24 +118,24 @@ func (m *MockHotelService) EXPECT() *MockHotelServiceMockRecorder {
 }
 
 // HandleGetHotelDetails mocks base method.
-func (m *MockHotelService) HandleGetHotelDetails(ctx context.Context, hotelId int64) (*bookly.Hotel, error) {
+func (m *MockHotelService) GetHotelDetails(ctx context.Context, hotelID int64) (*bookly.Hotel, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "HandleGetHotelDetails", ctx, hotelId)
+	ret := m.ctrl.Call(m, "GetHotelDetails", ctx, hotelID)
 	ret0, _ := ret[0].(*bookly.Hotel)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // HandleGetHotelDetails indicates an expected call of HandleGetHotelDetails.
-func (mr *MockHotelServiceMockRecorder) HandleGetHotelDetails(ctx, hotelId interface{}) *gomock.Call {
+func (mr *MockHotelServiceMockRecorder) HandleGetHotelDetails(ctx, hotelID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleGetHotelDetails", reflect.TypeOf((*MockHotelService)(nil).HandleGetHotelDetails), ctx, hotelId)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetHotelDetails", reflect.TypeOf((*MockHotelService)(nil).GetHotelDetails), ctx, hotelID)
 }
 
 // HandleGetHotelPreviews mocks base method.
-func (m *MockHotelService) HandleGetHotelPreviews(ctx context.Context, filter bookly.HotelFilter) ([]*bookly.HotelListing, error) {
+func (m *MockHotelService) GetHotelPreviews(ctx context.Context, filter bookly.HotelFilter) ([]*bookly.HotelListing, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "HandleGetHotelPreviews", ctx, filter)
+	ret := m.ctrl.Call(m, "GetHotelPreviews", ctx, filter)
 	ret0, _ := ret[0].([]*bookly.HotelListing)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
@@ -144,5 +144,19 @@ func (m *MockHotelService) HandleGetHotelPreviews(ctx context.Context, filter bo
 // HandleGetHotelPreviews indicates an expected call of HandleGetHotelPreviews.
 func (mr *MockHotelServiceMockRecorder) HandleGetHotelPreviews(ctx, filter interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HandleGetHotelPreviews", reflect.TypeOf((*MockHotelService)(nil).HandleGetHotelPreviews), ctx, filter)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetHotelPreviews", reflect.TypeOf((*MockHotelService)(nil).GetHotelPreviews), ctx, filter)
+}
+
+// HandleUpdateHotelDetails mocks base method.
+func (m *MockHotelService) UpdateHotelDetails(ctx context.Context, hotelID int64, newHotel bookly.Hotel) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateHotelDetails", ctx, hotelID, newHotel)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// HandleUpdateHotelDetails indicates an expected call of HandleUpdateHotelDetails.
+func (mr *MockHotelServiceMockRecorder) HandleUpdateHotelDetails(ctx, hotelID, newHotel interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateHotelDetails", reflect.TypeOf((*MockHotelService)(nil).UpdateHotelDetails), ctx, hotelID, newHotel)
 }
