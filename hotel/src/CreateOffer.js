@@ -3,6 +3,7 @@ import ClearIcon from '@material-ui/icons/Clear';
 import React, { useState } from 'react';
 import templatePicture from './offer.png'; 
 import './CreateOffer.css'
+import { Link } from 'react-router-dom';
 const useStyles = makeStyles((theme) => ({
   offerPreviewImage:{
     width:'300px', 
@@ -44,6 +45,9 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor:'#80ff80', 
     color:'white',
     margin:5,
+    '&:hover': {
+      background: "#80ff80",
+    },
   },
   setImageButton:{
     backgroundColor:'#ffcc80', 
@@ -109,7 +113,7 @@ function CreateOffer() {
           <Button className={classes.setImageButton}>
             Add image
           </Button>
-          <Button className={classes.saveButton}>
+          <Button className={classes.saveButton} component={Link} to='/offers'>
             Create offer
           </Button>
         </>

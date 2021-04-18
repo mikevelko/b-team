@@ -40,6 +40,7 @@ type HotelStorage interface {
 
 // HotelService is responsible for operations on hotels
 type HotelService interface {
-	HandleGetHotelPreviews(ctx context.Context, filter HotelFilter) ([]*HotelListing, error)
-	HandleGetHotelDetails(ctx context.Context, hotelID int64) (*Hotel, error)
+	GetHotelPreviews(ctx context.Context, filter HotelFilter) ([]*HotelListing, error)
+	GetHotelDetails(ctx context.Context, hotelID int64) (*Hotel, error)
+	UpdateHotelDetails(ctx context.Context, hotelID int64, newHotel Hotel) error
 }

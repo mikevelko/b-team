@@ -10,3 +10,6 @@ var ErrSessionExpired = errors.New("this session has expired")
 
 // ErrSessionNotFound indicates that users session is not found on server (perhaps of incorrect session data)
 var ErrSessionNotFound = errors.New("session not found")
+
+// ErrEmptyHotelName indicates that hotel manager tried to change hotel name to empty string
+var ErrEmptyHotelName = errors.New("hotel name is empty")
