@@ -5,9 +5,9 @@ function HotelsListItem(props) {
     return (
         <div className="container">
             <div className="container-item">
-                <p1>Hotel Name: {props.item.HotelName}</p1>
+                <p>Hotel Name: {props.item.hotelName}</p>
                 <p>City: {props.item.city}</p>
-                <p1>Country: {props.item.country}</p1>
+                <p>Country: {props.item.country}</p>
             </div>
 
 

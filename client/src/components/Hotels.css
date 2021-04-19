@@ -16,3 +16,9 @@
     float: left;
     margin: 30px;
 }
+
+.hotel-link
+{
+    text-decoration: none;
+    color: rgb(42, 46, 50);
+}

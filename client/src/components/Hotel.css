@@ -1,0 +1,16 @@
+.hotel-container
+{
+    text-align: center;
+    width: 95%;
+    margin: auto;
+    margin-bottom: 50px;
+    margin-top: 50px;
+}
+
+
+
+.hotel-container-item
+{
+    display: inline;
+    font-size: 35px;
+}

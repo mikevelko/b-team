@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './Nav.css';
 import Button from '@material-ui/core/Button';
 import { Link, useHistory } from 'react-router-dom';
+import logo from './logo.png';
 
 function Nav(props) {
     const history = useHistory();
@@ -14,7 +15,11 @@ function Nav(props) {
     return (
         <div className="profile-nav">
             <div className="main-navbar-left">
-                <Link to="/home"><h2>Bookly client</h2></Link>
+                <Link to="/home" className="link">
+                    <h2>
+                        <img src={logo} className="photo" alt="Bookly client logo" />
+                    </h2>
+                </Link>
             </div>
             <div className="main-navbar-right">
                 {!props.isUserAuthenticated ? "" :
