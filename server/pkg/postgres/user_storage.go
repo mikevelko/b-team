@@ -106,6 +106,12 @@ func (u *UserStorage) GetUser(ctx context.Context, userID int64) (bookly.User, e
 
 // UpdateUserInformation implements business logic of update user user name ad e-mail
 func (u *UserStorage) UpdateUserInformation(ctx context.Context, id int64, userName string, email string) error {
+
+	user, err := u.GetUser(ctx, id)
+	if err != nil {
+		return fmt.Errorf("postgres: could not update user info: %w", err)
+	}
+
 	const queryName = `
     SELECT *
 	FROM users
@@ -115,7 +121,7 @@ func (u *UserStorage) UpdateUserInformation(ctx context.Context, id int64, userN
 	if err != nil {
 		return fmt.Errorf("postgres: could not update user info: %w", err)
 	}
-	if list.RowsAffected() != 0 {
+	if list.RowsAffected() != 0 && user.UserName != userName {
 		return fmt.Errorf("postgres: could not update user info: There is another user with this user_name")
 	}
 
@@ -128,7 +134,7 @@ func (u *UserStorage) UpdateUserInformation(ctx context.Context, id int64, userN
 	if err != nil {
 		return fmt.Errorf("postgres: could not update user info: %w", err)
 	}
-	if list.RowsAffected() != 0 {
+	if list.RowsAffected() != 0 && user.Email != email {
 		return fmt.Errorf("postgres: could not update user info: There is another user with this email")
 	}
 

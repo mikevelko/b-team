@@ -135,6 +135,12 @@ func TestUserStorage_UpdateUserInformationUser(t *testing.T) {
 
 	err = storage.UpdateUserInformation(ctx, users[0].ID, "adam4", "adam4@rmail.com")
 	require.NoError(t, err)
+
+	err = storage.UpdateUserInformation(ctx, users[0].ID, "adam5", "adam4@rmail.com")
+	require.NoError(t, err)
+
+	err = storage.UpdateUserInformation(ctx, users[0].ID, "adam5", "adam5@rmail.com")
+	require.NoError(t, err)
 }
 
 func TestUserStorage_UserVerify(t *testing.T) {
