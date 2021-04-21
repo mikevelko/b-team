@@ -46,7 +46,7 @@ export async function TryLogIn(login, password){
     return "";
   };
 
-  export async function TryPatchHotelInfo(hotelName,hotelDesc,city,country,hotelPreviewPucture='',hotelPictures=[]){
+  export async function TryPatchHotelInfo(hotelName,hotelDesc,hotelPreviewPucture='',hotelPictures=[]){
     const res = await axios({
       method: 'PATCH',
       url: '/api-hotel/hotelInfo',
@@ -73,4 +73,35 @@ export async function TryLogIn(login, password){
 
     if(res !== undefined) return res;
     return "";
+  };
+
+  export async function TryPostOffer(offerTitle,costPerChild,costPerAdult,maxGuests,activeStatus,rooms,description,pictures=[],previewPicture=''){
+    const res = await axios({
+      method: 'post',
+      url: '/api-hotel/offers',
+      headers: {
+        'accept': 'application/json',
+        'Content-Type': 'application/json',
+        'x-hotel-token': localStorage.getItem(HOTEL_TOKEN_NAME),
+      },
+      data: {
+        "isActive": activeStatus,
+        "offerTitle": offerTitle,
+        "costPerChild": costPerChild,
+        "costPerAdult": costPerAdult,
+        "maxGuests": maxGuests,
+        "description": description,
+        "offerPreviewPicture": previewPicture,
+        "pictures": pictures,
+        "rooms": rooms
+      }, 
+    })
+    .then(function (response) {
+      return response;
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+    if(res !== undefined) return res.data.offerID;
+    return -1;
   };

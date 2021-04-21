@@ -81,20 +81,16 @@ function HotelInfoEdit() {
 
     const [hotelName,setHotelName] = useState('');
     const [hotelDescription,setHotelDescription] = useState('');
-    const [city,setCity] = useState('');
-    const [country,setCountry] = useState('');
 
       // For feature
     const [pictures,setPictures] = useState([]);
     const [previewPicture,setPreviewPicture] = useState('');
-
+  
     function GetHotelInfo(){
       TryGetHotelInfo().then(function(response) {
         if(response!=''){
 
           setHotelName(response.hotelName)
-          setCity(response.city)
-          setCountry(response.country)
           setHotelDescription(response.hotelDesc)
           // For feature
           setPictures(response.hotelPictures)
@@ -102,14 +98,13 @@ function HotelInfoEdit() {
         }
       })
     }
-
     useEffect(()=>{
       GetHotelInfo()
     },[])
     
     function OnClickSaveChangesButton() {
-      if(hotelName !==''&&hotelDescription!==''&&city!==''&&country!==''&& hotelName!==undefined &&  hotelDescription !==undefined && city !== undefined && country !== undefined){
-        TryPatchHotelInfo(hotelName,hotelDescription,city,country).then(function (response) {
+      if(hotelName !==''&&hotelDescription!==''){
+        TryPatchHotelInfo(hotelName,hotelDescription).then(function (response) {
           if(response.status === 200) history.push('/hotelInfo')
         })
       }else{
@@ -169,20 +164,6 @@ function HotelInfoEdit() {
                   Hotel name:
                 </Typography>
                 <TextField size='small' value={hotelName} onChange={(e) =>{setHotelName(e.target.value)}}>
-                </TextField>
-              </div>
-              <div className={classes.fieldRow}>
-              <Typography className={classes.hotelDetailsItem}>
-                Country:
-              </Typography>
-              <TextField size='small' value={country} onChange={(e) =>{setCountry(e.target.value)}}>
-                </TextField>
-              </div>
-              <div className={classes.fieldRow}>
-              <Typography className={classes.hotelDetailsItem}>
-                City:
-              </Typography>
-              <TextField size='small' value={city} onChange={(e) =>{setCity(e.target.value)}}>
                 </TextField>
               </div>
               <div className={classes.fieldRowDescription}>
