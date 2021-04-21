@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom';
+import {BrowserRouter as Router, Switch, Route, Link, useHistory} from 'react-router-dom';
 import StartPage from './StartPage';
 import HotelInfo from './HotelInfo';
 import Offers from './Offers';
@@ -16,6 +16,7 @@ import CreateOffer from './CreateOffer';
 import HotelInfoEdit from './HotelInfoEdit';
 import EditOfferDetails from './EditOfferDetails';
 import { PrivateRoute } from './PrivateRoute';
+import { TryGetHotelInfo } from './FetchUtils';
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -30,6 +31,15 @@ const useStyles = makeStyles((theme) => ({
 
 export default function App() {
   const classes = useStyles();
+
+  const [hotelName, setHotelName] = useState('');
+
+  useEffect(()=>{
+    TryGetHotelInfo().then(function (response) {
+      if(response!=='') setHotelName(response.hotelName)
+    })
+  },[])
+
   function LogOut(){
     localStorage.removeItem("x-hotel-token");
     
@@ -43,7 +53,7 @@ export default function App() {
             <HomeIcon style={{marginRight:20, fontSize: 30}}/>
           </Link>
           <Typography variant="h6" className={classes.title}>
-            Hello, Hotel Name
+            Hello, {hotelName}
           </Typography>
           <div>
             <Button component={Link} to='/HotelInfo' color="inherit" style={{marginRight:20}}>Hotel Info</Button>

@@ -1,6 +1,6 @@
 import { Button, TextField } from '@material-ui/core';
 import React, { useState } from 'react';
-import { TryLogIn } from './FetchUtils';
+import { HOTEL_TOKEN_NAME, TryLogIn } from './FetchUtils';
 import './LogIn.css'
 
 import { useHistory } from "react-router-dom";
@@ -23,7 +23,7 @@ function LogIn() {
     TryLogIn(username, password).then(function(response){
       if(response != ""){
 
-        localStorage.setItem("x-hotel-token", response);
+        localStorage.setItem(HOTEL_TOKEN_NAME, response);
         history.push('/');
       }
     });

@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, makeStyles, Typography, } from '@material-ui/core';
 import templatePicture from './offer.png'; 
 import './HotelInfo.css'
 import { Link } from 'react-router-dom';
+import { TryGetHotelInfo } from './FetchUtils';
 
 const useStyles = makeStyles((theme) => ({
   hotelPreviewPicture:{
@@ -48,6 +49,35 @@ const useStyles = makeStyles((theme) => ({
 function HotelInfo() {
   const classes = useStyles();
 
+  const [hotelName,setHotelName] = useState('');
+  const [hotelDescription,setHotelDescription] = useState('');
+  const [city,setCity] = useState('');
+  const [country,setCountry] = useState('');
+  
+  // For feature
+  const [pictures,setPictures] = useState([]);
+  const [previewPicture,setPreviewPicture] = useState('');
+
+  function GetHotelInfo(){
+
+    TryGetHotelInfo().then(function(response) {
+      if(response!=''){
+
+        setHotelName(response.hotelName)
+        setCity(response.city)
+        setCountry(response.country)
+        setHotelDescription(response.hotelDesc)
+        // For feature
+        setPictures(response.hotelPictures)
+        setPreviewPicture(response.hotelPreviewPicture)
+      }
+    })
+  }
+
+  useEffect(()=>{
+    GetHotelInfo()
+  },[])
+
   return (
     <div className='hotelInfo'>
       <div className={classes.allImages}>
@@ -71,7 +101,7 @@ function HotelInfo() {
               Hotel name:
             </Typography>
             <Typography>
-              [HotelName]
+              {hotelName}
             </Typography>
           </div>
           <div className={classes.fieldRow}>
@@ -79,7 +109,7 @@ function HotelInfo() {
             Country:
           </Typography>
           <Typography>
-              [Country]
+              {country}
             </Typography>
           </div>
           <div className={classes.fieldRow}>
@@ -87,7 +117,7 @@ function HotelInfo() {
             City:
           </Typography>
           <Typography>
-              [City]
+              {city}
             </Typography>
           </div>
           <div className={classes.fieldRowDescription}>
@@ -95,7 +125,7 @@ function HotelInfo() {
             Description:
           </Typography>
             <Typography variant='caption'>
-              [Description]
+              {hotelDescription}
             </Typography>
           </div>
         </div>

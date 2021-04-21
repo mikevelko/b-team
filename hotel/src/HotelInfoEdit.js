@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, ButtonBase, makeStyles, TextField, Typography, } from '@material-ui/core';
 import templatePicture from './offer.png'; 
 import './HotelInfoEdit.css'
-import { Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import ClearIcon from '@material-ui/icons/Clear';
-
+import {TryGetHotelInfo, TryPatchHotelInfo} from './FetchUtils.js';
 
 const useStyles = makeStyles((theme) => ({
     hotelPreviewPicture:{
@@ -76,7 +76,46 @@ const useStyles = makeStyles((theme) => ({
   }));
 function HotelInfoEdit() {
     const classes = useStyles();
+    const history = useHistory()
 
+
+    const [hotelName,setHotelName] = useState('');
+    const [hotelDescription,setHotelDescription] = useState('');
+    const [city,setCity] = useState('');
+    const [country,setCountry] = useState('');
+
+      // For feature
+    const [pictures,setPictures] = useState([]);
+    const [previewPicture,setPreviewPicture] = useState('');
+
+    function GetHotelInfo(){
+      TryGetHotelInfo().then(function(response) {
+        if(response!=''){
+
+          setHotelName(response.hotelName)
+          setCity(response.city)
+          setCountry(response.country)
+          setHotelDescription(response.hotelDesc)
+          // For feature
+          setPictures(response.hotelPictures)
+          setPreviewPicture(response.hotelPreviewPicture)
+        }
+      })
+    }
+
+    useEffect(()=>{
+      GetHotelInfo()
+    },[])
+    
+    function OnClickSaveChangesButton() {
+      if(hotelName !==''&&hotelDescription!==''&&city!==''&&country!==''&& hotelName!==undefined &&  hotelDescription !==undefined && city !== undefined && country !== undefined){
+        TryPatchHotelInfo(hotelName,hotelDescription,city,country).then(function (response) {
+          if(response.status === 200) history.push('/hotelInfo')
+        })
+      }else{
+        alert("fulfil all fields")
+      }
+    } 
     return (
         <div className='hotelInfoEdit'>
             <div className={classes.hotelAllImages}>
@@ -119,7 +158,7 @@ function HotelInfoEdit() {
                 <Button className={classes.setImageButton}>
                     Add image
                 </Button>
-                <Button component={Link} to='/hotelInfo' className={classes.saveHotelInfoButton} >
+                <Button onClick={() => {OnClickSaveChangesButton()}} className={classes.saveHotelInfoButton} >
                     Save changes
                 </Button>
             </>
@@ -129,28 +168,28 @@ function HotelInfoEdit() {
                 <Typography className={classes.hotelDetailsItem}>
                   Hotel name:
                 </Typography>
-                <TextField size='small'>
+                <TextField size='small' value={hotelName} onChange={(e) =>{setHotelName(e.target.value)}}>
                 </TextField>
               </div>
               <div className={classes.fieldRow}>
               <Typography className={classes.hotelDetailsItem}>
                 Country:
               </Typography>
-              <TextField size='small'>
+              <TextField size='small' value={country} onChange={(e) =>{setCountry(e.target.value)}}>
                 </TextField>
               </div>
               <div className={classes.fieldRow}>
               <Typography className={classes.hotelDetailsItem}>
                 City:
               </Typography>
-              <TextField size='small'>
+              <TextField size='small' value={city} onChange={(e) =>{setCity(e.target.value)}}>
                 </TextField>
               </div>
               <div className={classes.fieldRowDescription}>
               <Typography className={classes.hotelDetailsItem}>
                 Description:
               </Typography>
-                <TextField multiline fullWidth >
+                <TextField multiline fullWidth value={hotelDescription} onChange={(e) =>{setHotelDescription(e.target.value)}}>
                 </TextField>
               </div>
             </div>

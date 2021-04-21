@@ -1,10 +1,10 @@
 import React from "react";
 import { Redirect, Route } from "react-router";
-
+import {HOTEL_TOKEN_NAME} from './FetchUtils.js';
 export function PrivateRoute ({component: Component}) {
     function isAuthorised(){
         try{
-            const token = JSON.parse(localStorage.getItem("x-hotel-token"));
+            const token = JSON.parse(localStorage.getItem(HOTEL_TOKEN_NAME));
             return token !== null; 
         }catch(error){
             return false
