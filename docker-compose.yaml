@@ -1,4 +1,3 @@
-version: '3.7'
 services:
   hotel:
     container_name: hotel
@@ -32,7 +31,7 @@ services:
     healthcheck:
       test: [ "CMD", "pg_isready", "-q", "-d", "bookly", "-U", "bookly" ]
       timeout: 45s
-      interval: 10s
+      interval: 5s
       retries: 10
     environment:
       POSTGRES_USER: bookly
@@ -56,6 +55,9 @@ services:
       PGDATABASE: bookly
     networks:
       server-vpn:
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   offer-service:
     container_name: offer-service
@@ -85,6 +87,24 @@ services:
       POSTGRES_USER: bookly
       POSTGRES_PASSWORD: bookly
       POSTGRES_DATABASE: bookly
+    networks:
+      - server-vpn
+  hotel-service:
+    container_name:  hotel-service
+    build:
+      context: server
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: hotel-service
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: bookly
+      POSTGRES_PASSWORD: bookly
+      POSTGRES_DATABASE: bookly
+    depends_on:
+      postgres:
+        condition: service_healthy
     networks:
       - server-vpn
 

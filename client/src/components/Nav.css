@@ -38,8 +38,13 @@
     font-weight: 1000;
 }
 
-a
+.link
 {
     color:white;
     text-decoration: none;
 }
+
+.photo {
+    height: 60px;
+    width: 220px;
+  }

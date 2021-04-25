@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom';
+import {BrowserRouter as Router, Switch, Route, Link, useHistory} from 'react-router-dom';
 import StartPage from './StartPage';
 import HotelInfo from './HotelInfo';
 import Offers from './Offers';
@@ -15,6 +15,8 @@ import HomeIcon from '@material-ui/icons/Home';
 import CreateOffer from './CreateOffer';
 import HotelInfoEdit from './HotelInfoEdit';
 import EditOfferDetails from './EditOfferDetails';
+import { PrivateRoute } from './PrivateRoute';
+import { TryGetHotelInfo } from './FetchUtils';
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -30,6 +32,18 @@ const useStyles = makeStyles((theme) => ({
 export default function App() {
   const classes = useStyles();
 
+  const [hotelName, setHotelName] = useState('');
+
+  useEffect(()=>{
+    TryGetHotelInfo().then(function (response) {
+      if(response!=='') setHotelName(response.hotelName)
+    })
+  },[])
+
+  function LogOut(){
+    localStorage.removeItem("x-hotel-token");
+    
+  }
   return (
     <Router basename={process.env.PUBLIC_URL}>
     <div className={classes.root}>
@@ -39,28 +53,28 @@ export default function App() {
             <HomeIcon style={{marginRight:20, fontSize: 30}}/>
           </Link>
           <Typography variant="h6" className={classes.title}>
-            Hello, Hotel Name
+            Hello, {hotelName}
           </Typography>
           <div>
             <Button component={Link} to='/HotelInfo' color="inherit" style={{marginRight:20}}>Hotel Info</Button>
-            <Button component={Link} to='/LogIn' color="inherit">Log out</Button>
+            <Button component={Link} to='/LogIn' color="inherit" onClick={() => {LogOut()}}>Log out</Button>
           </div>
         </Toolbar>
       </AppBar>
     </div>
       <Switch>
-        <Route path='/' exact component={StartPage}/>
-        <Route path='/hotelInfo' exact component={HotelInfo}/>
-        <Route path='/hotelInfo/edit' exact component={HotelInfoEdit}/>
+        <PrivateRoute path='/' exact component={StartPage}/>
+        <PrivateRoute path='/hotelInfo' exact component={HotelInfo}/>
+        <PrivateRoute path='/hotelInfo/edit' exact component={HotelInfoEdit}/>
 
 
-        <Route path='/offers' exact component={Offers}/>
-        <Route path='/offers/create' exact component={CreateOffer}/>
-        <Route path='/offers/edit/:offerId' exact component={EditOfferDetails}/>
+        <PrivateRoute path='/offers' exact component={Offers}/>
+        <PrivateRoute path='/offers/create' exact component={CreateOffer}/>
+        <PrivateRoute path='/offers/edit/:offerId' exact component={EditOfferDetails}/>
 
 
-        <Route path='/reservations' component={Reservations}/>
-        <Route path='/rooms' component={Rooms}/>
+        <PrivateRoute path='/reservations' component={Reservations}/>
+        <PrivateRoute path='/rooms' component={Rooms}/>
         <Route path='/login' component={LogIn}/>
       </Switch>
     </Router>

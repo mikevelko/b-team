@@ -13,10 +13,9 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func CleanTestStorage(t *testing.T, pool *pgxpool.Pool, ctx context.Context) {
+func CleanTestOfferStorage(t *testing.T, pool *pgxpool.Pool, ctx context.Context) {
 	queries := []string{
 		"DELETE FROM offers",
-		"DELETE FROM users",
 		"DELETE FROM rooms",
 	}
 	for _, q := range queries {
@@ -46,32 +45,6 @@ func TestOfferStorage_CreateGetDeleteOffer(t *testing.T) {
 	require.NoError(t, err)
 
 	// todo: when support for getting offers is added, get it from storage
-	_ = offerID
-}
-
-func TestOfferStorage_AddUpdateOfferStatus(t *testing.T) {
-	testutils.SetIntegration(t)
-	storage, cleanup, err := NewOfferStorage(conf)
-	require.NoError(t, err)
-	t.Cleanup(cleanup)
-	correctOffer := &bookly.Offer{
-		IsActive:            true,
-		OfferTitle:          "Sometitle",
-		CostPerChild:        decimal.New(1234, -2), // it its 12.32
-		CostPerAdult:        decimal.New(4321, -2),
-		MaxGuests:           2,
-		Description:         "dfdfsdfsd",
-		OfferPreviewPicture: "http://localhost:/mypicture123", // todo: change it, when support for pictures is added
-		Pictures:            nil,                              // todo: change it, when support for pictures is added
-		Rooms:               nil,                              // todo: change it when support for rooms is added
-	}
-	ctx := context.Background()
-	CleanTestStorage(t, storage.connPool, ctx)
-	offerID, errAdd := storage.CreateOffer(ctx, correctOffer, 1)
-	require.NoError(t, errAdd)
-	errUpdate := storage.UpdateOfferStatus(ctx, offerID, false)
-	require.NoError(t, errUpdate)
-	// todo: when getting offers is implemented, get changed offer and assert that IsActive is false
 	_ = offerID
 }
 
@@ -114,9 +87,9 @@ func TestOfferStorage_GetAllOffers(t *testing.T) {
 		Pictures:            nil,                            // todo: change it, when support for pictures is added
 		Rooms:               nil,                            // todo: change it when support for rooms is added
 	})
-	hotelLinks := [3]int{1, 2, 1}
+	hotelLinks := [3]int64{1, 2, 1}
 	ctx := context.Background()
-	CleanTestStorage(t, storage.connPool, ctx)
+	CleanTestOfferStorage(t, storage.connPool, ctx)
 
 	for i, o := range offers {
 		_, errAdd := storage.CreateOffer(ctx, o, hotelLinks[i])
@@ -148,4 +121,184 @@ func TestOfferStorage_GetAllOffers(t *testing.T) {
 			assert.Contains(t, resultInactive, o)
 		}
 	}
+}
+
+func TestOfferStorage_GetSpecificOffer(t *testing.T) {
+	testutils.SetIntegration(t)
+	storage, cleanup, err := NewOfferStorage(conf)
+	require.NoError(t, err)
+	t.Cleanup(cleanup)
+	correctOffer := &bookly.Offer{
+		IsActive:            true,
+		OfferTitle:          "Sometitle",
+		CostPerChild:        decimal.New(1234, -2), // it its 12.32
+		CostPerAdult:        decimal.New(4321, -2),
+		MaxGuests:           2,
+		Description:         "dfdfsdfsd",
+		OfferPreviewPicture: "http://localhost:/mypicture123", // todo: change it, when support for pictures is added
+		Pictures:            nil,                              // todo: change it, when support for pictures is added
+		Rooms:               nil,                              // todo: change it when support for rooms is added
+	}
+	ctx := context.Background()
+	CleanTestOfferStorage(t, storage.connPool, ctx)
+	offerID, errAdd := storage.CreateOffer(ctx, correctOffer, 1)
+	require.NoError(t, errAdd)
+	_, errNotExists := storage.GetSpecificOffer(ctx, 10000)
+	require.Error(t, errNotExists)
+	offer, errRetrieve := storage.GetSpecificOffer(ctx, offerID)
+	require.NoError(t, errRetrieve)
+	assert.Equal(t, correctOffer.OfferTitle, offer.OfferTitle)
+}
+
+func TestOfferStorage_UpdateOfferDetails(t *testing.T) {
+	testutils.SetIntegration(t)
+	storage, cleanup, err := NewOfferStorage(conf)
+	require.NoError(t, err)
+	t.Cleanup(cleanup)
+	preOffer := &bookly.Offer{
+		IsActive:            true,
+		OfferTitle:          "Sometitle",
+		CostPerChild:        decimal.New(1234, -2), // it its 12.32
+		CostPerAdult:        decimal.New(4321, -2),
+		MaxGuests:           2,
+		Description:         "dfdfsdfsd",
+		OfferPreviewPicture: "http://localhost:/mypicture123", // todo: change it, when support for pictures is added
+		Pictures:            nil,                              // todo: change it, when support for pictures is added
+		Rooms:               nil,                              // todo: change it when support for rooms is added
+	}
+	newOffer := &bookly.Offer{
+		IsActive:            true,
+		OfferTitle:          "NewSometitle",
+		CostPerChild:        decimal.New(1234, -2), // it its 12.32
+		CostPerAdult:        decimal.New(4321, -2),
+		MaxGuests:           2,
+		Description:         "dfdfsdfsd",
+		OfferPreviewPicture: "http://localhost:/mypicture123", // todo: change it, when support for pictures is added
+		Pictures:            nil,                              // todo: change it, when support for pictures is added
+		Rooms:               nil,                              // todo: change it when support for rooms is added
+	}
+	ctx := context.Background()
+	CleanTestOfferStorage(t, storage.connPool, ctx)
+	offerID, errAdd := storage.CreateOffer(ctx, preOffer, 1)
+	require.NoError(t, errAdd)
+	errUpdate := storage.UpdateOfferDetails(ctx, offerID, *newOffer)
+	require.NoError(t, errUpdate)
+	offer, errRetrieve := storage.GetSpecificOffer(ctx, offerID)
+	require.NoError(t, errRetrieve)
+	assert.Equal(t, newOffer.OfferTitle, offer.OfferTitle)
+}
+
+func TestOfferStorage_IsOfferActive(t *testing.T) {
+	testutils.SetIntegration(t)
+	storage, cleanup, err := NewOfferStorage(conf)
+	require.NoError(t, err)
+	t.Cleanup(cleanup)
+	offerActive := &bookly.Offer{
+		IsActive:            true,
+		OfferTitle:          "Sometitle",
+		CostPerChild:        decimal.New(1234, -2), // it its 12.32
+		CostPerAdult:        decimal.New(4321, -2),
+		MaxGuests:           2,
+		Description:         "dfdfsdfsd",
+		OfferPreviewPicture: "http://localhost:/mypicture123", // todo: change it, when support for pictures is added
+		Pictures:            nil,                              // todo: change it, when support for pictures is added
+		Rooms:               nil,                              // todo: change it when support for rooms is added
+	}
+	offerInactive := &bookly.Offer{
+		IsActive:            false,
+		OfferTitle:          "NewSometitle",
+		CostPerChild:        decimal.New(1234, -2), // it its 12.32
+		CostPerAdult:        decimal.New(4321, -2),
+		MaxGuests:           2,
+		Description:         "dfdfsdfsd",
+		OfferPreviewPicture: "http://localhost:/mypicture123", // todo: change it, when support for pictures is added
+		Pictures:            nil,                              // todo: change it, when support for pictures is added
+		Rooms:               nil,                              // todo: change it when support for rooms is added
+	}
+	ctx := context.Background()
+	CleanTestOfferStorage(t, storage.connPool, ctx)
+	activeID, errAddActive := storage.CreateOffer(ctx, offerActive, 1)
+	require.NoError(t, errAddActive)
+	inactiveID, errAddInactive := storage.CreateOffer(ctx, offerInactive, 1)
+	require.NoError(t, errAddInactive)
+	active1, err1 := storage.IsOfferActive(ctx, activeID)
+	require.NoError(t, err1)
+	assert.Equal(t, true, active1)
+	active2, err2 := storage.IsOfferActive(ctx, inactiveID)
+	require.NoError(t, err2)
+	assert.Equal(t, false, active2)
+	_, errNotFound := storage.IsOfferActive(ctx, 14141231)
+	require.Error(t, errNotFound)
+}
+
+func TestOfferStorage_IsOfferOwnedByHotel(t *testing.T) {
+	testutils.SetIntegration(t)
+	storage, cleanup, err := NewOfferStorage(conf)
+	require.NoError(t, err)
+	t.Cleanup(cleanup)
+	offerActive := &bookly.Offer{
+		IsActive:            true,
+		OfferTitle:          "Sometitle",
+		CostPerChild:        decimal.New(1234, -2), // it its 12.32
+		CostPerAdult:        decimal.New(4321, -2),
+		MaxGuests:           2,
+		Description:         "dfdfsdfsd",
+		OfferPreviewPicture: "http://localhost:/mypicture123", // todo: change it, when support for pictures is added
+		Pictures:            nil,                              // todo: change it, when support for pictures is added
+		Rooms:               nil,                              // todo: change it when support for rooms is added
+	}
+	offerInactive := &bookly.Offer{
+		IsActive:            false,
+		OfferTitle:          "NewSometitle",
+		CostPerChild:        decimal.New(1234, -2), // it its 12.32
+		CostPerAdult:        decimal.New(4321, -2),
+		MaxGuests:           2,
+		Description:         "dfdfsdfsd",
+		OfferPreviewPicture: "http://localhost:/mypicture123", // todo: change it, when support for pictures is added
+		Pictures:            nil,                              // todo: change it, when support for pictures is added
+		Rooms:               nil,                              // todo: change it when support for rooms is added
+	}
+	ctx := context.Background()
+	CleanTestOfferStorage(t, storage.connPool, ctx)
+	ownedID, errAddActive := storage.CreateOffer(ctx, offerActive, 1)
+	require.NoError(t, errAddActive)
+	notOwnedID, errAddInactive := storage.CreateOffer(ctx, offerInactive, 44)
+	require.NoError(t, errAddInactive)
+
+	owned1, err1 := storage.IsOfferOwnedByHotel(ctx, 1, ownedID)
+	require.NoError(t, err1)
+	assert.Equal(t, true, owned1)
+	owned2, err2 := storage.IsOfferOwnedByHotel(ctx, 1, notOwnedID)
+	require.NoError(t, err2)
+	assert.Equal(t, false, owned2)
+	_, errNotFound := storage.IsOfferOwnedByHotel(ctx, 1, 14141231)
+	require.Error(t, errNotFound)
+}
+
+func TestOfferStorage_MarkDeletedOfferAndCheckStatus(t *testing.T) {
+	testutils.SetIntegration(t)
+	storage, cleanup, err := NewOfferStorage(conf)
+	require.NoError(t, err)
+	t.Cleanup(cleanup)
+	offerActive := &bookly.Offer{
+		IsActive:            false,
+		OfferTitle:          "Sometitle",
+		CostPerChild:        decimal.New(1234, -2), // it its 12.32
+		CostPerAdult:        decimal.New(4321, -2),
+		MaxGuests:           2,
+		Description:         "dfdfsdfsd",
+		OfferPreviewPicture: "http://localhost:/mypicture123", // todo: change it, when support for pictures is added
+		Pictures:            nil,                              // todo: change it, when support for pictures is added
+		Rooms:               nil,                              // todo: change it when support for rooms is added
+	}
+	ctx := context.Background()
+	CleanTestOfferStorage(t, storage.connPool, ctx)
+	ID, errAdd := storage.CreateOffer(ctx, offerActive, 1)
+	require.NoError(t, errAdd)
+
+	errMark := storage.SetOfferDeletionStatus(ctx, ID, true)
+	require.NoError(t, errMark)
+	deleted, errCheck := storage.IsOfferMarkedAsDeleted(ctx, ID)
+	require.NoError(t, errCheck)
+	assert.Equal(t, true, deleted)
 }

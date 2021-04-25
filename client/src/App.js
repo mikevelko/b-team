@@ -8,6 +8,7 @@ import Client from './components/Client';
 import PrivateRoute from './components/PrivateRoute'
 import LoginPage from './components/LoginPage';
 import MyReservations from './components/MyReservations';
+import Hotel from './components/Hotel';
 
 function App() {
 
@@ -63,6 +64,7 @@ function App() {
         ></Route>
         <PrivateRoute authed={isUserAuthenticated} exact path='/home' component={MainPage} />
         <PrivateRoute authed={token} exact path='/hotels' component={Hotels} />
+        <PrivateRoute authed={token} exact path='/hotels/:hotelId' component={Hotel} />
         <PrivateRoute authed={isUserAuthenticated} exact path='/client' component={Client} />
         <PrivateRoute authed={isUserAuthenticated} exact path='/reservations' component={MyReservations} />
         <Route exact path="/login" component={() => <LoginPage Login={Login} isUserAuthenticated={isUserAuthenticated}/>} />
