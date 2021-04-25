@@ -12,7 +12,8 @@ CREATE TABLE IF NOT EXISTS offers
     cost_per_adult            decimal not null,
     max_guests                integer not null,
     description               text    not null,
-    offer_preview_picture_url text
+    offer_preview_picture_url text,
+    is_deleted                bool DEFAULT false
 );
 
 CREATE TABLE IF NOT EXISTS rooms

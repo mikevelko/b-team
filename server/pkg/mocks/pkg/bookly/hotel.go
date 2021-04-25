@@ -117,7 +117,7 @@ func (m *MockHotelService) EXPECT() *MockHotelServiceMockRecorder {
 	return m.recorder
 }
 
-// HandleGetHotelDetails mocks base method.
+// GetHotelDetails mocks base method.
 func (m *MockHotelService) GetHotelDetails(ctx context.Context, hotelID int64) (*bookly.Hotel, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetHotelDetails", ctx, hotelID)
@@ -126,13 +126,13 @@ func (m *MockHotelService) GetHotelDetails(ctx context.Context, hotelID int64) (
 	return ret0, ret1
 }
 
-// HandleGetHotelDetails indicates an expected call of HandleGetHotelDetails.
-func (mr *MockHotelServiceMockRecorder) HandleGetHotelDetails(ctx, hotelID interface{}) *gomock.Call {
+// GetHotelDetails indicates an expected call of GetHotelDetails.
+func (mr *MockHotelServiceMockRecorder) GetHotelDetails(ctx, hotelID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetHotelDetails", reflect.TypeOf((*MockHotelService)(nil).GetHotelDetails), ctx, hotelID)
 }
 
-// HandleGetHotelPreviews mocks base method.
+// GetHotelPreviews mocks base method.
 func (m *MockHotelService) GetHotelPreviews(ctx context.Context, filter bookly.HotelFilter) ([]*bookly.HotelListing, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetHotelPreviews", ctx, filter)
@@ -141,13 +141,13 @@ func (m *MockHotelService) GetHotelPreviews(ctx context.Context, filter bookly.H
 	return ret0, ret1
 }
 
-// HandleGetHotelPreviews indicates an expected call of HandleGetHotelPreviews.
-func (mr *MockHotelServiceMockRecorder) HandleGetHotelPreviews(ctx, filter interface{}) *gomock.Call {
+// GetHotelPreviews indicates an expected call of GetHotelPreviews.
+func (mr *MockHotelServiceMockRecorder) GetHotelPreviews(ctx, filter interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetHotelPreviews", reflect.TypeOf((*MockHotelService)(nil).GetHotelPreviews), ctx, filter)
 }
 
-// HandleUpdateHotelDetails mocks base method.
+// UpdateHotelDetails mocks base method.
 func (m *MockHotelService) UpdateHotelDetails(ctx context.Context, hotelID int64, newHotel bookly.Hotel) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateHotelDetails", ctx, hotelID, newHotel)
@@ -155,8 +155,8 @@ func (m *MockHotelService) UpdateHotelDetails(ctx context.Context, hotelID int64
 	return ret0
 }
 
-// HandleUpdateHotelDetails indicates an expected call of HandleUpdateHotelDetails.
-func (mr *MockHotelServiceMockRecorder) HandleUpdateHotelDetails(ctx, hotelID, newHotel interface{}) *gomock.Call {
+// UpdateHotelDetails indicates an expected call of UpdateHotelDetails.
+func (mr *MockHotelServiceMockRecorder) UpdateHotelDetails(ctx, hotelID, newHotel interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateHotelDetails", reflect.TypeOf((*MockHotelService)(nil).UpdateHotelDetails), ctx, hotelID, newHotel)
 }

@@ -387,6 +387,11 @@
     },
     "/api-hotel/offers/{offerID}": {
       "get": {
+        "security": [
+          {
+            "customTokenSecurityHotel": []
+          }
+        ],
         "description": "Gets information related to a specific offer with ID equal to offerID",
         "operationId": "GET_offers-offerID",
         "produces": [
@@ -420,6 +425,11 @@
         }
       },
       "delete": {
+        "security": [
+          {
+            "customTokenSecurityHotel": []
+          }
+        ],
         "description": "Server marks the offer as deleted.",
         "operationId": "DELETE_offers-offerID",
         "produces": [
@@ -446,6 +456,11 @@
         }
       },
       "patch": {
+        "security": [
+          {
+            "customTokenSecurityHotel": []
+          }
+        ],
         "description": "Server modifies offer",
         "operationId": "PATCH_offers-offerID",
         "produces": [

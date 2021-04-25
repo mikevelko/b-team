@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"github.com/jackc/pgx/v4/pgxpool"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -12,6 +13,16 @@ import (
 	"github.com/pw-software-engineering/b-team/server/pkg/testutils"
 	"github.com/stretchr/testify/require"
 )
+
+func CleanTestUserStorage(t *testing.T, pool *pgxpool.Pool, ctx context.Context) {
+	queries := []string{
+		"DELETE FROM users",
+	}
+	for _, q := range queries {
+		_, err := pool.Exec(ctx, q)
+		require.NoError(t, err)
+	}
+}
 
 func TestUserStorage_AddUserForce(t *testing.T) {
 	testutils.SetIntegration(t)
@@ -67,7 +78,6 @@ func TestUserStorage_GetUser(t *testing.T) {
 	})
 
 	ctx := context.Background()
-	CleanTestStorage(t, storage.connPool, ctx)
 
 	for i, u := range users {
 		id, errAdd := storage.AddUserForce(ctx, *u, "abc1")
@@ -119,7 +129,6 @@ func TestUserStorage_UpdateUserInformationUser(t *testing.T) {
 	})
 
 	ctx := context.Background()
-	CleanTestStorage(t, storage.connPool, ctx)
 
 	for i, u := range users {
 		id, errAdd := storage.AddUserForce(ctx, *u, "abc1")
@@ -178,7 +187,7 @@ func TestUserStorage_UserVerify(t *testing.T) {
 	})
 
 	ctx := context.Background()
-	CleanTestStorage(t, storage.connPool, ctx)
+	CleanTestUserStorage(t, storage.connPool, ctx)
 
 	for i, u := range users {
 		id, errAdd := storage.AddUserForce(ctx, *u, "abc1")

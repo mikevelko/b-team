@@ -12,30 +12,30 @@ import (
 	bookly "github.com/pw-software-engineering/b-team/server/pkg/bookly"
 )
 
-// MockUserStorage is a mock of UserStorage interface
+// MockUserStorage is a mock of UserStorage interface.
 type MockUserStorage struct {
 	ctrl     *gomock.Controller
 	recorder *MockUserStorageMockRecorder
 }
 
-// MockUserStorageMockRecorder is the mock recorder for MockUserStorage
+// MockUserStorageMockRecorder is the mock recorder for MockUserStorage.
 type MockUserStorageMockRecorder struct {
 	mock *MockUserStorage
 }
 
-// NewMockUserStorage creates a new mock instance
+// NewMockUserStorage creates a new mock instance.
 func NewMockUserStorage(ctrl *gomock.Controller) *MockUserStorage {
 	mock := &MockUserStorage{ctrl: ctrl}
 	mock.recorder = &MockUserStorageMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockUserStorage) EXPECT() *MockUserStorageMockRecorder {
 	return m.recorder
 }
 
-// AddUserForce mocks base method
+// AddUserForce mocks base method.
 func (m *MockUserStorage) AddUserForce(ctx context.Context, user bookly.User, password string) (int64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AddUserForce", ctx, user, password)
@@ -44,13 +44,13 @@ func (m *MockUserStorage) AddUserForce(ctx context.Context, user bookly.User, pa
 	return ret0, ret1
 }
 
-// AddUserForce indicates an expected call of AddUserForce
+// AddUserForce indicates an expected call of AddUserForce.
 func (mr *MockUserStorageMockRecorder) AddUserForce(ctx, user, password interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddUserForce", reflect.TypeOf((*MockUserStorage)(nil).AddUserForce), ctx, user, password)
 }
 
-// GetUser mocks base method
+// GetUser mocks base method.
 func (m *MockUserStorage) GetUser(ctx context.Context, userID int64) (bookly.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetUser", ctx, userID)
@@ -59,13 +59,13 @@ func (m *MockUserStorage) GetUser(ctx context.Context, userID int64) (bookly.Use
 	return ret0, ret1
 }
 
-// GetUser indicates an expected call of GetUser
+// GetUser indicates an expected call of GetUser.
 func (mr *MockUserStorageMockRecorder) GetUser(ctx, userID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUser", reflect.TypeOf((*MockUserStorage)(nil).GetUser), ctx, userID)
 }
 
-// UpdateUserInformation mocks base method
+// UpdateUserInformation mocks base method.
 func (m *MockUserStorage) UpdateUserInformation(ctx context.Context, id int64, userName, email string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateUserInformation", ctx, id, userName, email)
@@ -73,13 +73,13 @@ func (m *MockUserStorage) UpdateUserInformation(ctx context.Context, id int64, u
 	return ret0
 }
 
-// UpdateUserInformation indicates an expected call of UpdateUserInformation
+// UpdateUserInformation indicates an expected call of UpdateUserInformation.
 func (mr *MockUserStorageMockRecorder) UpdateUserInformation(ctx, id, userName, email interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateUserInformation", reflect.TypeOf((*MockUserStorage)(nil).UpdateUserInformation), ctx, id, userName, email)
 }
 
-// UserVerify mocks base method
+// UserVerify mocks base method.
 func (m *MockUserStorage) UserVerify(ctx context.Context, userName, password string) (bool, bookly.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UserVerify", ctx, userName, password)
@@ -89,36 +89,65 @@ func (m *MockUserStorage) UserVerify(ctx context.Context, userName, password str
 	return ret0, ret1, ret2
 }
 
-// UserVerify indicates an expected call of UserVerify
+// UserVerify indicates an expected call of UserVerify.
 func (mr *MockUserStorageMockRecorder) UserVerify(ctx, userName, password interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UserVerify", reflect.TypeOf((*MockUserStorage)(nil).UserVerify), ctx, userName, password)
 }
 
-// MockUserService is a mock of UserService interface
+// MockUserService is a mock of UserService interface.
 type MockUserService struct {
 	ctrl     *gomock.Controller
 	recorder *MockUserServiceMockRecorder
 }
 
-// MockUserServiceMockRecorder is the mock recorder for MockUserService
+// MockUserServiceMockRecorder is the mock recorder for MockUserService.
 type MockUserServiceMockRecorder struct {
 	mock *MockUserService
 }
 
-// NewMockUserService creates a new mock instance
+// NewMockUserService creates a new mock instance.
 func NewMockUserService(ctrl *gomock.Controller) *MockUserService {
 	mock := &MockUserService{ctrl: ctrl}
 	mock.recorder = &MockUserServiceMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockUserService) EXPECT() *MockUserServiceMockRecorder {
 	return m.recorder
 }
 
-// UserVerify mocks base method
+// GetUser mocks base method.
+func (m *MockUserService) GetUser(ctx context.Context, userID int64) (bookly.User, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUser", ctx, userID)
+	ret0, _ := ret[0].(bookly.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUser indicates an expected call of GetUser.
+func (mr *MockUserServiceMockRecorder) GetUser(ctx, userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUser", reflect.TypeOf((*MockUserService)(nil).GetUser), ctx, userID)
+}
+
+// UpdateUserInformation mocks base method.
+func (m *MockUserService) UpdateUserInformation(ctx context.Context, userName, email string, userID int64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateUserInformation", ctx, userName, email, userID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateUserInformation indicates an expected call of UpdateUserInformation.
+func (mr *MockUserServiceMockRecorder) UpdateUserInformation(ctx, userName, email, userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateUserInformation", reflect.TypeOf((*MockUserService)(nil).UpdateUserInformation), ctx, userName, email, userID)
+}
+
+// UserVerify mocks base method.
 func (m *MockUserService) UserVerify(ctx context.Context, userName, password string) (bool, bookly.Token, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UserVerify", ctx, userName, password)
@@ -128,37 +157,8 @@ func (m *MockUserService) UserVerify(ctx context.Context, userName, password str
 	return ret0, ret1, ret2
 }
 
-// UserVerify indicates an expected call of UserVerify
+// UserVerify indicates an expected call of UserVerify.
 func (mr *MockUserServiceMockRecorder) UserVerify(ctx, userName, password interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UserVerify", reflect.TypeOf((*MockUserService)(nil).UserVerify), ctx, userName, password)
-}
-
-// GetUser mocks base method
-func (m *MockUserService) GetUser(ctx context.Context, userID int64) (bookly.User, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetUser", ctx, userID)
-	ret0, _ := ret[0].(bookly.User)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetUser indicates an expected call of GetUser
-func (mr *MockUserServiceMockRecorder) GetUser(ctx, userID interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUser", reflect.TypeOf((*MockUserService)(nil).GetUser), ctx, userID)
-}
-
-// UpdateUserInformation mocks base method
-func (m *MockUserService) UpdateUserInformation(ctx context.Context, userName, email string, userID int64) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateUserInformation", ctx, userName, email, userID)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// UpdateUserInformation indicates an expected call of UpdateUserInformation
-func (mr *MockUserServiceMockRecorder) UpdateUserInformation(ctx, userName, email, userID interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateUserInformation", reflect.TypeOf((*MockUserService)(nil).UpdateUserInformation), ctx, userName, email, userID)
 }
