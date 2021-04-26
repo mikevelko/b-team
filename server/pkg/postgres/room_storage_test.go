@@ -4,6 +4,8 @@ import (
 	"context"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/pw-software-engineering/b-team/server/pkg/bookly"
 	"github.com/pw-software-engineering/b-team/server/pkg/testutils"
 
@@ -37,6 +39,15 @@ func TestRoomStorage_CreateRoom(t *testing.T) {
 	roomID, err := storage.CreateRoom(ctx, correctRoom, 1)
 	require.NoError(t, err)
 	_ = roomID
+
+	incorrectRoom := bookly.Room{
+		ID:         0,
+		RoomNumber: "12F",
+		HotelID:    0,
+	}
+	roomID, err = storage.CreateRoom(ctx, incorrectRoom, 1)
+	require.Error(t, err)
+	assert.ErrorIs(t, err, bookly.ErrRoomAlreadyExists)
 }
 
 func TestRoomStorage_DeleteRoom(t *testing.T) {
@@ -69,17 +80,16 @@ func TestRoomStorage_DeleteRoom(t *testing.T) {
 	room2, err := storage.CreateRoom(ctx, correctRoom, 2)
 	require.NoError(t, err)
 
-	respond, err := storage.DeleteRoom(ctx, 123, 1)
-	require.NoError(t, err)
-	require.Equal(t, bookly.RoomNotFound, respond)
+	err = storage.DeleteRoom(ctx, 123, 1)
+	require.Error(t, err)
+	assert.ErrorIs(t, err, bookly.ErrRoomNotFound)
 
-	respond, err = storage.DeleteRoom(ctx, room2, 1)
-	require.NoError(t, err)
-	require.Equal(t, bookly.RoomNotBelongToHotel, respond)
+	err = storage.DeleteRoom(ctx, room2, 1)
+	require.Error(t, err)
+	assert.ErrorIs(t, err, bookly.ErrRoomNotBelongToHotel)
 
-	respond, err = storage.DeleteRoom(ctx, room1, 1)
+	err = storage.DeleteRoom(ctx, room1, 1)
 	require.NoError(t, err)
-	require.Equal(t, bookly.RoomSuccess, respond)
 
 	return
 }
@@ -116,5 +126,45 @@ func TestRoomStorage_GetAllHotelRoom(t *testing.T) {
 
 	_, err = storage.GetAllHotelRooms(ctx, 1)
 	require.NoError(t, err)
+	return
+}
+
+func TestRoomStorage_GetRoom(t *testing.T) {
+	testutils.SetIntegration(t)
+	storage, cleanup, err := NewRoomStorage(conf)
+	require.NoError(t, err)
+	t.Cleanup(cleanup)
+	ctx := context.Background()
+	CleanTestRoomStorage(t, storage.connPool, ctx)
+
+	correctRoom1 := bookly.Room{
+		ID:         0,
+		RoomNumber: "12Fa",
+		HotelID:    0,
+	}
+	_, err = storage.CreateRoom(ctx, correctRoom1, 1)
+	require.NoError(t, err)
+	correctRoom2 := bookly.Room{
+		ID:         0,
+		RoomNumber: "13Fa",
+		HotelID:    0,
+	}
+	_, err = storage.CreateRoom(ctx, correctRoom2, 1)
+	require.NoError(t, err)
+	correctRoom3 := bookly.Room{
+		ID:         0,
+		RoomNumber: "14Fa",
+		HotelID:    0,
+	}
+	_, err = storage.CreateRoom(ctx, correctRoom3, 2)
+	require.NoError(t, err)
+
+	_, err = storage.GetRoom(ctx, "14Fa", 1)
+	require.Error(t, err)
+	assert.ErrorIs(t, err, bookly.ErrRoomNotFound)
+
+	_, err = storage.GetRoom(ctx, "14Fa", 2)
+	require.NoError(t, err)
+
 	return
 }

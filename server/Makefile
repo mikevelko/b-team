@@ -13,7 +13,7 @@ install-go-tools:
 
 
 MOCKGEN_DESTINATION := pkg/mocks
-MOCK_SOURCES := pkg/bookly/auth.go pkg/bookly/offer.go pkg/bookly/offer.go pkg/bookly/user.go pkg/bookly/hotel.go
+MOCK_SOURCES := pkg/bookly/auth.go pkg/bookly/offer.go pkg/bookly/offer.go pkg/bookly/user.go  pkg/bookly/hotel.go pkg/bookly/room.go
 
 mocks: ${MOCK_SOURCES}
 	@rm -rf ${MOCKGEN_DESTINATION}/*

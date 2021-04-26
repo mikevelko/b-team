@@ -2,8 +2,9 @@ package postgres
 
 import (
 	"context"
-	"github.com/jackc/pgx/v4/pgxpool"
 	"testing"
+
+	"github.com/jackc/pgx/v4/pgxpool"
 
 	"github.com/stretchr/testify/assert"
 
