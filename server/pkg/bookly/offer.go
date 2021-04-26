@@ -8,6 +8,7 @@ import (
 
 // Offer represents a model for an offer
 type Offer struct {
+	ID                  int64
 	IsActive            bool
 	OfferTitle          string
 	CostPerChild        decimal.Decimal

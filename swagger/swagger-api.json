@@ -39,6 +39,9 @@
     "offerPreview": {
       "type": "object",
       "properties": {
+        "ID": {
+          "type": "integer"
+        },
         "isActive": {
           "type": "boolean"
         },
@@ -62,6 +65,7 @@
         }
       },
       "required": [
+        "Id",
         "isActive",
         "offerTitle",
         "costPerChild",

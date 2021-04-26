@@ -149,12 +149,11 @@ func (o *OfferStorage) GetAllOffers(ctx context.Context, hotelID int64, isActive
 	result := []*bookly.Offer{}
 	defer list.Close()
 	for list.Next() {
-		var id int64
 		var hID int64
 		var deleted bool
 		// todo: find better way to ignore those ids if exists
 		offer := &bookly.Offer{}
-		errScan := list.Scan(&id, &hID, &offer.IsActive, &offer.OfferTitle,
+		errScan := list.Scan(&offer.ID, &hID, &offer.IsActive, &offer.OfferTitle,
 			&offer.CostPerChild, &offer.CostPerAdult, &offer.MaxGuests, &offer.Description, &offer.OfferPreviewPicture, &deleted)
 		if errScan != nil {
 			return nil, fmt.Errorf("postgres: could not retrieve hotel's offers: %w", err)
@@ -207,7 +206,6 @@ func (o *OfferStorage) UpdateOfferDetails(ctx context.Context, offerID int64, ne
 		newOffer.MaxGuests,
 		newOffer.Description,
 	)
-	// todo: update pictures
 	if errUpdate != nil {
 		return fmt.Errorf("postgres: could not update offer details: %w", errUpdate)
 	}

@@ -92,7 +92,8 @@ func TestOfferStorage_GetAllOffers(t *testing.T) {
 	CleanTestOfferStorage(t, storage.connPool, ctx)
 
 	for i, o := range offers {
-		_, errAdd := storage.CreateOffer(ctx, o, hotelLinks[i])
+		id, errAdd := storage.CreateOffer(ctx, o, hotelLinks[i])
+		offers[i].ID = id
 		require.NoError(t, errAdd)
 	}
 	resultAll, errGetAll := storage.GetAllOffers(ctx, 1, nil)
