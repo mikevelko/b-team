@@ -116,7 +116,8 @@ func (a *api) handlePatchManagerHotelDetails(w http.ResponseWriter, r *http.Requ
 		Name:           request.HotelName,
 		Description:    request.HotelDesc,
 		PreviewPicture: request.PreviewPicture,
-		Pictures:       request.Pictures}
+		Pictures:       request.Pictures,
+	}
 	err := a.hotelService.UpdateHotelDetails(r.Context(), session.HotelID, hotel)
 	if err != nil {
 		if err == bookly.ErrEmptyHotelName {

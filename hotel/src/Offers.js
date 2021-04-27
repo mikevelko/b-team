@@ -1,9 +1,10 @@
-import { Button, ButtonBase, Grid, Typography } from '@material-ui/core';
-import React from 'react';
+import { Button, ButtonBase, Grid, List, Typography } from '@material-ui/core';
+import React, { useEffect, useState } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import './Offers.css'
 import offerImage from './offer.png';
 import { makeStyles } from '@material-ui/core/styles';
+import { TryGetHotelOffers } from './FetchUtils';
 const useStyles = makeStyles((theme) => ({
   activeOfferItem:{
     marginBottom:20, 
@@ -47,6 +48,29 @@ const useStyles = makeStyles((theme) => ({
 
 function Offers() {
   const classes = useStyles();
+
+  const [offersList,setOffersList] = useState([    {
+    "IsActive": true,
+    "OfferTitle": "string",
+    "CostPerChild": "0",
+    "CostPerAdult": "0",
+    "MaxGuests": 1,
+    "Description": "string",
+    "OfferPreviewPicture": "string",
+    "Pictures": null,
+    "Rooms": null
+  }]);
+
+  useEffect(()=>{
+    TryGetHotelOffers()
+      .then(function (response) {
+        setOffersList(response)
+      });
+  },[])
+  useEffect(()=>{
+    console.log(offersList.map((item,_) => item))
+  },[offersList])
+
   return (
     <div className="offers">
 
@@ -57,52 +81,59 @@ function Offers() {
         <Button style={{backgroundColor:'#b4e4e4', color:'white' }}>Inactive offers:[count]</Button>
       </div>
       <div className="offersList">     
-        
-        <Grid className={classes.activeOfferItem} container>
+        {offersList.map((item,_) => {
+          return item.IsActive ? 
+          (<Grid className={classes.activeOfferItem} container>
+            <Grid item className={classes.partOfOfferItem}>
+                <ButtonBase>
+                  <img src={offerImage} className={classes.offerPreviewImage}/>
+                </ButtonBase>
+            </Grid>
+            <Grid item className={classes.partOfOfferItem}>
+              <Typography>{item.OfferTitle}</Typography>
+              <Typography>Cost per child:{item.CostPerChild}</Typography>
+              <Typography>Cost per adult:{item.CostPerAdult}</Typography>
+              <Typography>Max guests:{item.MaxGuests}</Typography>
+            </Grid>
+            <Grid item style={{display:'flex',flexDirection:'column'}}>
+              <Grid item style={{display:'flex', justifyContent:'space-around', marginBottom:10}}>
+                <Button className={classes.editOfferButton} component={Link} to='/offers/edit/5' onClick={(event) => {event.stopPropagation()}}>Edit offer</Button>
+                <Button className={classes.deleteOfferButton}  onClick={(event) => {event.stopPropagation()}}>Delete offer</Button>
+              </Grid>
+              <Grid item>
+  
+                <Typography>Room numbers:[list of room numbers]</Typography>
+              </Grid>
+            </Grid>
+            
+          </Grid>) 
+        :
+        (<Grid className={classes.inactiveOfferItem} container>
           <Grid item className={classes.partOfOfferItem}>
               <ButtonBase>
                 <img src={offerImage} className={classes.offerPreviewImage}/>
               </ButtonBase>
           </Grid>
           <Grid item className={classes.partOfOfferItem}>
-            <Typography>[Title offer]</Typography>
-            <Typography>Cost per child:[cost]</Typography>
-            <Typography>Cost per adult:[cost]</Typography>
-            <Typography>Max guests:[count]</Typography>
+            <Typography>{item.OfferTitle}</Typography>
+            <Typography>Cost per child:{item.CostPerChild}</Typography>
+            <Typography>Cost per adult:{item.CostPerAdult}</Typography>
+            <Typography>Max guests:{item.MaxGuests}</Typography>
           </Grid>
+
           <Grid item style={{display:'flex',flexDirection:'column'}}>
             <Grid item style={{display:'flex', justifyContent:'space-around', marginBottom:10}}>
-              <Button className={classes.editOfferButton} component={Link} to='/offers/edit/5' onClick={(event) => {event.stopPropagation()}}>Edit offer</Button>
+              <Button className={classes.editOfferButton} component={Link} to='/offers/edit/' onClick={(event) => {event.stopPropagation()}}>Edit offer</Button>
               <Button className={classes.deleteOfferButton}  onClick={(event) => {event.stopPropagation()}}>Delete offer</Button>
             </Grid>
             <Grid item>
+
               <Typography>Room numbers:[list of room numbers]</Typography>
             </Grid>
           </Grid>
-        </Grid>
-        <Grid className={classes.inactiveOfferItem} container>
-          <Grid item className={classes.partOfOfferItem}>
-              <ButtonBase>
-                <img src={offerImage} className={classes.offerPreviewImage}/>
-              </ButtonBase>
-          </Grid>
-          <Grid item className={classes.partOfOfferItem}>
-            <Typography>[Title offer]</Typography>
-            <Typography>Cost per child:[cost]</Typography>
-            <Typography>Cost per adult:[cost]</Typography>
-            <Typography>Max guests:[count]</Typography>
-          </Grid>
-          <Grid item style={{display:'flex',flexDirection:'column'}}>
-            <Grid item style={{display:'flex', justifyContent:'space-around', marginBottom:10}}>
-              <Button className={classes.editOfferButton}  component={Link} to='/offers/edit/:OfferId' onClick={(event) => {event.stopPropagation()}}>Edit offer</Button>
-              <Button className={classes.deleteOfferButton} onClick={(event) => {event.stopPropagation()}}>Delete offer</Button>
-            </Grid>
-            <Grid item>
-              <Typography>Room numbers:[list of room numbers]</Typography>
-            </Grid>
-          </Grid>
-        </Grid>
           
+        </Grid>)
+        })}
       </div>
     </div>
   );

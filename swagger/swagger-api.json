@@ -39,6 +39,9 @@
     "offerPreview": {
       "type": "object",
       "properties": {
+        "ID": {
+          "type": "integer"
+        },
         "isActive": {
           "type": "boolean"
         },
@@ -62,6 +65,7 @@
         }
       },
       "required": [
+        "Id",
         "isActive",
         "offerTitle",
         "costPerChild",
@@ -702,6 +706,11 @@
     },
     "/api-hotel/rooms": {
       "get": {
+        "security": [
+          {
+            "customTokenSecurityHotel": []
+          }
+        ],
         "description": "Lists all rooms",
         "operationId": "GET_rooms",
         "produces": [
@@ -776,6 +785,11 @@
         ]
       },
       "post": {
+        "security": [
+          {
+            "customTokenSecurityHotel": []
+          }
+        ],
         "description": "Add a room not associated with any offer (HotelRoom table)",
         "operationId": "POST_rooms",
         "produces": [
@@ -820,6 +834,11 @@
     },
     "/api-hotel/rooms/{roomID}": {
       "delete": {
+        "security": [
+          {
+            "customTokenSecurityHotel": []
+          }
+        ],
         "description": "Deletes room with given ID. (entry in HotelRoom table is deleted)",
         "operationId": "DELETE_rooms-roomID",
         "produces": [

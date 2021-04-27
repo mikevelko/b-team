@@ -20,19 +20,30 @@ type RoomStorage struct {
 var _ bookly.RoomStorage = &RoomStorage{}
 
 // NewRoomStorage initializes RoomStorage
-func NewRoomStorage(conf Config) (*RoomStorage, func(), error) {
-	pool, cleanup, err := newPool(conf)
-	if err != nil {
-		return nil, nil, fmt.Errorf("postgres: could not intitialize postgres pool: %w", err)
-	}
-	storage := &RoomStorage{
+func NewRoomStorage(pool *pgxpool.Pool) *RoomStorage {
+	return &RoomStorage{
 		connPool: pool,
 	}
-	return storage, cleanup, nil
 }
 
 // CreateRoom implements business logic of create room
-func (r RoomStorage) CreateRoom(ctx context.Context, room bookly.Room, hotelID int64) (int64, error) {
+func (r *RoomStorage) CreateRoom(ctx context.Context, room bookly.Room, hotelID int64) (int64, error) {
+	const queryCheck = `
+    SELECT *
+	FROM rooms
+	WHERE room_number = $1 AND hotel_id = $2
+`
+	list, err := r.connPool.Exec(ctx, queryCheck,
+		room.RoomNumber,
+		hotelID,
+	)
+	if err != nil {
+		return 0, fmt.Errorf("postgres: could not insert offer: %w", err)
+	}
+	if list.RowsAffected() > 0 {
+		return 0, bookly.ErrRoomAlreadyExists
+	}
+
 	const query = `
     INSERT INTO rooms(
         room_number,
@@ -42,7 +53,7 @@ func (r RoomStorage) CreateRoom(ctx context.Context, room bookly.Room, hotelID i
     RETURNING id;
 `
 	var id int64
-	err := r.connPool.QueryRow(ctx, query,
+	err = r.connPool.QueryRow(ctx, query,
 		room.RoomNumber,
 		hotelID,
 	).Scan(&id)
@@ -53,7 +64,9 @@ func (r RoomStorage) CreateRoom(ctx context.Context, room bookly.Room, hotelID i
 }
 
 // DeleteRoom implements business logic of delete room
-func (r RoomStorage) DeleteRoom(ctx context.Context, roomID int64, hotelID int64) (bookly.DeleteResponse, error) {
+func (r *RoomStorage) DeleteRoom(ctx context.Context, roomID int64, hotelID int64) error {
+	// todo: Add business logic with offers from specification
+
 	const queryCheck = `
     SELECT *
 	FROM rooms
@@ -67,13 +80,13 @@ func (r RoomStorage) DeleteRoom(ctx context.Context, roomID int64, hotelID int64
 	err := row.Scan(&room.ID, &room.RoomNumber, &room.HotelID)
 	if err != nil {
 		if err == pgx.ErrNoRows {
-			return bookly.RoomNotFound, nil
+			return bookly.ErrRoomNotFound
 		}
-		return bookly.RoomError, fmt.Errorf("postgres: could not insert offer: %w", err)
+		return fmt.Errorf("postgres: could not insert offer: %w", err)
 	}
 
 	if room.HotelID != hotelID {
-		return bookly.RoomNotBelongToHotel, nil
+		return bookly.ErrRoomNotBelongToHotel
 	}
 
 	const queryDelete = `
@@ -85,14 +98,14 @@ func (r RoomStorage) DeleteRoom(ctx context.Context, roomID int64, hotelID int64
 		roomID,
 	)
 	if err == pgx.ErrNoRows {
-		return bookly.RoomNotFound, nil
+		return bookly.ErrRoomNotFound
 	}
 
-	return bookly.RoomSuccess, nil
+	return nil
 }
 
 // GetAllHotelRooms implements business logic of getting all ofer belong to hotel
-func (r RoomStorage) GetAllHotelRooms(ctx context.Context, hotelID int) ([]*bookly.Room, error) {
+func (r *RoomStorage) GetAllHotelRooms(ctx context.Context, hotelID int64) ([]*bookly.Room, error) {
 	const query = `
     SELECT *
 	FROM rooms
@@ -111,11 +124,79 @@ func (r RoomStorage) GetAllHotelRooms(ctx context.Context, hotelID int) ([]*book
 	for list.Next() {
 		room := &bookly.Room{}
 		err = list.Scan(&room.ID, &room.RoomNumber, &room.HotelID)
+		if err != nil {
+			return nil, fmt.Errorf("postgres: could not insert offer: %w", err)
+		}
+
+		room.OfferID, err = r.getRoomOffers(ctx, room.ID)
+		if err != nil {
+			return nil, fmt.Errorf("postgres: could not insert offer: %w", err)
+		}
+
 		result = append(result, room)
 	}
 	errFinal := list.Err()
 	if errFinal != nil {
 		return nil, fmt.Errorf("postgres: could not retrieve hotel's offers: %w", err)
+	}
+
+	return result, nil
+}
+
+// GetRoom implements getting one room by roomNumber
+func (r *RoomStorage) GetRoom(ctx context.Context, roomNumber string, hotelID int64) (bookly.Room, error) {
+	const queryCheck = `
+    SELECT *
+	FROM rooms
+	WHERE room_number = $1 AND hotel_id = $2
+`
+
+	row := r.connPool.QueryRow(ctx, queryCheck,
+		roomNumber,
+		hotelID,
+	)
+	room := bookly.Room{}
+	err := row.Scan(&room.ID, &room.RoomNumber, &room.HotelID)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return bookly.Room{}, bookly.ErrRoomNotFound
+		}
+		return bookly.Room{}, fmt.Errorf("postgres: could not insert offer: %w", err)
+	}
+
+	room.OfferID, err = r.getRoomOffers(ctx, room.ID)
+	if err != nil {
+		return bookly.Room{}, fmt.Errorf("postgres: could not insert offer: %w", err)
+	}
+
+	return room, nil
+}
+
+func (r *RoomStorage) getRoomOffers(ctx context.Context, roomID int64) ([]int64, error) {
+	const query = `
+    SELECT *
+	FROM offers_rooms
+	WHERE room_id = $1
+`
+
+	list, err := r.connPool.Query(ctx, query,
+		roomID,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("postgres: could not get offerID: %w", err)
+	}
+
+	result := []int64{}
+	defer list.Close()
+	for list.Next() {
+		var offerID int64
+		var pom int64
+		err = list.Scan(&offerID, &pom)
+		result = append(result, offerID)
+	}
+	errFinal := list.Err()
+	if errFinal != nil {
+		return nil, fmt.Errorf("postgres: could not get offerID: %w", err)
 	}
 
 	return result, nil

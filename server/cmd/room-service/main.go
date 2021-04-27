@@ -33,11 +33,9 @@ func main() {
 		application.AddCleanup(cleanup)
 		application.AddHealthCheck(postgres.NewHealthConfig(pool))
 
-		userStorage := postgres.NewUserStorage(pool)
+		roomStorage := postgres.NewRoomStorage(pool)
 
-		sessionStorage := postgres.NewSessionStorage(pool, cfg.SessionDuration)
-
-		service := newUserService(userStorage, sessionStorage)
+		service := newRoomService(roomStorage)
 		api := newAPI(application.Logger, service)
 		api.mount(application.Router)
 		return nil

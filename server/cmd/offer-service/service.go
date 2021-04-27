@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+
 	"github.com/pw-software-engineering/b-team/server/pkg/bookly"
 	"github.com/pw-software-engineering/b-team/server/pkg/paging"
 )
@@ -88,7 +89,7 @@ func (os *offerService) MarkHotelOfferAsDeleted(ctx context.Context, hotelID int
 	if errActive != nil {
 		return errActive
 	}
-	if !isActive {
+	if isActive {
 		return bookly.ErrOfferStillActive
 	}
 	err := os.offerStorage.SetOfferDeletionStatus(ctx, offerID, true)

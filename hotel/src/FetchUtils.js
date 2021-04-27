@@ -105,3 +105,27 @@ export async function TryLogIn(login, password){
     if(res !== undefined) return res.data.offerID;
     return -1;
   };
+
+  export async function TryGetHotelOffers(pageNumber = 1, pageSize = 10,isActive = null){
+    const res = await axios({
+      method: 'get',
+      url: '/api-hotel/offers',
+      headers: {
+        'accept': 'application/json',
+        'x-hotel-token': localStorage.getItem(HOTEL_TOKEN_NAME)
+      }, 
+      params:{
+        isActive,
+        pageNumber,
+        pageSize,
+      },
+    })
+    .then(function (response) {
+      return response;
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+    if(res !== undefined) return res.data.offerPreview;
+    return "";
+  };

@@ -17,8 +17,8 @@ type Config struct {
 	Password string `required:"true"`
 }
 
-// newPool initializes postgres pool. If error is returned, cleanup is nil.
-func newPool(conf Config) (*pgxpool.Pool, func(), error) {
+// NewPool initializes postgres pool. If error is returned, cleanup is nil.
+func NewPool(conf Config) (*pgxpool.Pool, func(), error) {
 	connURL := url.URL{
 		Scheme: "postgres",
 		User:   url.UserPassword(conf.User, conf.Password),

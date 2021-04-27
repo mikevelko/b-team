@@ -20,16 +20,11 @@ type SessionStorage struct {
 var _ bookly.SessionStorage = &SessionStorage{}
 
 // NewSessionStorage initializes SessionStorage
-func NewSessionStorage(conf Config, expireTime time.Duration) (*SessionStorage, func(), error) {
-	pool, cleanup, err := newPool(conf)
-	if err != nil {
-		return nil, nil, fmt.Errorf("postgres: could not intitialize postgres pool: %w", err)
-	}
-	storage := &SessionStorage{
+func NewSessionStorage(pool *pgxpool.Pool, expireTime time.Duration) *SessionStorage {
+	return &SessionStorage{
 		connPool:       pool,
 		expirationTime: expireTime,
 	}
-	return storage, cleanup, nil
 }
 
 // CreateNew update

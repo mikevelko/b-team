@@ -23,9 +23,7 @@ func CleanHotelTestStorage(t *testing.T, pool *pgxpool.Pool, ctx context.Context
 
 func TestHotelStorage_CreateHotel(t *testing.T) {
 	testutils.SetIntegration(t)
-	storage, cleanup, err := NewHotelStorage(conf)
-	require.NoError(t, err)
-	t.Cleanup(cleanup)
+	storage := NewHotelStorage(initDb(t))
 	hotel := bookly.Hotel{
 		Name:        "Novotel",
 		Description: "Live costam",
@@ -35,15 +33,13 @@ func TestHotelStorage_CreateHotel(t *testing.T) {
 	ctx := context.Background()
 	CleanHotelTestStorage(t, storage.connPool, ctx)
 
-	_, err = storage.CreateHotel(ctx, hotel)
+	_, err := storage.CreateHotel(ctx, hotel)
 	require.NoError(t, err)
 }
 
 func TestHotelStorage_GetHotelPreviews(t *testing.T) {
 	testutils.SetIntegration(t)
-	storage, cleanup, err := NewHotelStorage(conf)
-	require.NoError(t, err)
-	t.Cleanup(cleanup)
+	storage := NewHotelStorage(initDb(t))
 	ctx := context.Background()
 	CleanHotelTestStorage(t, storage.connPool, ctx)
 
@@ -95,9 +91,7 @@ func TestHotelStorage_GetHotelPreviews(t *testing.T) {
 
 func TestHotelStorage_GetHotelDetails(t *testing.T) {
 	testutils.SetIntegration(t)
-	storage, cleanup, err := NewHotelStorage(conf)
-	require.NoError(t, err)
-	t.Cleanup(cleanup)
+	storage := NewHotelStorage(initDb(t))
 	ctx := context.Background()
 	CleanHotelTestStorage(t, storage.connPool, ctx)
 
@@ -124,9 +118,7 @@ func TestHotelStorage_GetHotelDetails(t *testing.T) {
 
 func TestHotelStorage_UpdateHotelDetails(t *testing.T) {
 	testutils.SetIntegration(t)
-	storage, cleanup, err := NewHotelStorage(conf)
-	require.NoError(t, err)
-	t.Cleanup(cleanup)
+	storage := NewHotelStorage(initDb(t))
 	ctx := context.Background()
 	CleanHotelTestStorage(t, storage.connPool, ctx)
 

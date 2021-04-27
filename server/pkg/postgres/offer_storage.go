@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"fmt"
+
 	"github.com/jackc/pgx/v4"
 
 	"github.com/jackc/pgx/v4/pgxpool"
@@ -19,15 +20,10 @@ type OfferStorage struct {
 var _ bookly.OfferStorage = &OfferStorage{}
 
 // NewOfferStorage initializes OfferStorage
-func NewOfferStorage(conf Config) (*OfferStorage, func(), error) {
-	pool, cleanup, err := newPool(conf)
-	if err != nil {
-		return nil, nil, fmt.Errorf("postgres: could not intitialize postgres pool: %w", err)
-	}
-	storage := &OfferStorage{
+func NewOfferStorage(pool *pgxpool.Pool) *OfferStorage {
+	return &OfferStorage{
 		connPool: pool,
 	}
-	return storage, cleanup, nil
 }
 
 // CreateOffer implements business logic of adding new offer to database
@@ -63,7 +59,7 @@ func (o *OfferStorage) CreateOffer(ctx context.Context, offer *bookly.Offer, hot
 	return id, nil
 }
 
-//IsOfferActive checks if offer is still marked as active
+// IsOfferActive checks if offer is still marked as active
 func (o *OfferStorage) IsOfferActive(ctx context.Context, offerID int64) (bool, error) {
 	const queryCheck = `
 	SELECT is_active FROM offers
@@ -74,12 +70,12 @@ func (o *OfferStorage) IsOfferActive(ctx context.Context, offerID int64) (bool, 
 		offerID,
 	).Scan(&isActive)
 	if errCheck != nil {
-		return false, fmt.Errorf("postgres: could not check if offer is active: %w", errCheck)
+		return false, fmt.Errorf("postgres: could not healthCheck if offer is active: %w", errCheck)
 	}
 	return isActive, nil
 }
 
-//IsOfferOwnedByHotel checks if hotel with hotelID is an owner of particular offer
+// IsOfferOwnedByHotel checks if hotel with hotelID is an owner of particular offer
 func (o *OfferStorage) IsOfferOwnedByHotel(ctx context.Context, hotelID int64, offerID int64) (bool, error) {
 	const queryCheck = `
 	SELECT hotel_id FROM offers
@@ -90,12 +86,12 @@ func (o *OfferStorage) IsOfferOwnedByHotel(ctx context.Context, hotelID int64, o
 		offerID,
 	).Scan(&offerHotelID)
 	if errCheck != nil {
-		return false, fmt.Errorf("postgres: could not check ownership of offer: %w", errCheck)
+		return false, fmt.Errorf("postgres: could not healthCheck ownership of offer: %w", errCheck)
 	}
 	return offerHotelID == hotelID, nil
 }
 
-//IsOfferMarkedAsDeleted checks if offer was marked as deleted in 'is_deleted' field
+// IsOfferMarkedAsDeleted checks if offer was marked as deleted in 'is_deleted' field
 func (o *OfferStorage) IsOfferMarkedAsDeleted(ctx context.Context, offerID int64) (bool, error) {
 	const queryCheck = `
 	SELECT is_deleted FROM offers
@@ -106,12 +102,12 @@ func (o *OfferStorage) IsOfferMarkedAsDeleted(ctx context.Context, offerID int64
 		offerID,
 	).Scan(&isDeleted)
 	if errCheck != nil {
-		return false, fmt.Errorf("postgres: could not check deletion status of offer: %w", errCheck)
+		return false, fmt.Errorf("postgres: could not healthCheck deletion status of offer: %w", errCheck)
 	}
 	return isDeleted, nil
 }
 
-//SetOfferDeletionStatus sets flag is_deleted in offer
+// SetOfferDeletionStatus sets flag is_deleted in offer
 func (o *OfferStorage) SetOfferDeletionStatus(ctx context.Context, offerID int64, isDeleted bool) error {
 	const query = `
     UPDATE offers
@@ -148,12 +144,11 @@ func (o *OfferStorage) GetAllOffers(ctx context.Context, hotelID int64, isActive
 	result := []*bookly.Offer{}
 	defer list.Close()
 	for list.Next() {
-		var id int64
 		var hID int64
 		var deleted bool
 		// todo: find better way to ignore those ids if exists
 		offer := &bookly.Offer{}
-		errScan := list.Scan(&id, &hID, &offer.IsActive, &offer.OfferTitle,
+		errScan := list.Scan(&offer.ID, &hID, &offer.IsActive, &offer.OfferTitle,
 			&offer.CostPerChild, &offer.CostPerAdult, &offer.MaxGuests, &offer.Description, &offer.OfferPreviewPicture, &deleted)
 		if errScan != nil {
 			return nil, fmt.Errorf("postgres: could not retrieve hotel's offers: %w", err)
@@ -173,7 +168,7 @@ func (o *OfferStorage) GetSpecificOffer(ctx context.Context, offerID int64) (*bo
     SELECT hotel_id, is_active, offer_title, cost_per_child, cost_per_adult, max_guests, description FROM offers
 	WHERE id=$1
 `
-	//todo: retrieve pictures
+	// todo: retrieve pictures
 	r := bookly.Offer{}
 	var roomHotelID int64
 	err := o.connPool.QueryRow(ctx, query,
@@ -206,7 +201,6 @@ func (o *OfferStorage) UpdateOfferDetails(ctx context.Context, offerID int64, ne
 		newOffer.MaxGuests,
 		newOffer.Description,
 	)
-	//todo: update pictures
 	if errUpdate != nil {
 		return fmt.Errorf("postgres: could not update offer details: %w", errUpdate)
 	}

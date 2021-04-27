@@ -20,15 +20,10 @@ type UserStorage struct {
 var _ bookly.UserStorage = &UserStorage{}
 
 // NewUserStorage initializes UserStorage
-func NewUserStorage(conf Config) (*UserStorage, func(), error) {
-	pool, cleanup, err := newPool(conf)
-	if err != nil {
-		return nil, nil, fmt.Errorf("postgres: could not intitialize postgres pool: %w", err)
-	}
-	storage := &UserStorage{
+func NewUserStorage(pool *pgxpool.Pool) *UserStorage {
+	return &UserStorage{
 		connPool: pool,
 	}
-	return storage, cleanup, nil
 }
 
 // AddUserForce implements force adding without business logic
@@ -106,7 +101,6 @@ func (u *UserStorage) GetUser(ctx context.Context, userID int64) (bookly.User, e
 
 // UpdateUserInformation implements business logic of update user user name ad e-mail
 func (u *UserStorage) UpdateUserInformation(ctx context.Context, id int64, userName string, email string) error {
-
 	user, err := u.GetUser(ctx, id)
 	if err != nil {
 		return fmt.Errorf("postgres: could not update user info: %w", err)
