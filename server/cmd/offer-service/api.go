@@ -78,7 +78,7 @@ func (a *api) handleGetOffers(w http.ResponseWriter, r *http.Request) {
 	}
 	pageNumberStr := r.URL.Query().Get("pageNumber")
 	offersPerPageStr := r.URL.Query().Get("pageSize")
-	isActiveStr := r.URL.Query().Get("IsActive")
+	isActiveStr := r.URL.Query().Get("isActive")
 	pageNumber, errPN := strconv.ParseInt(pageNumberStr, 10, 32)
 	if errPN != nil {
 		pageNumber = 1
