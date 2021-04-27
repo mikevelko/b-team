@@ -20,15 +20,10 @@ type OfferStorage struct {
 var _ bookly.OfferStorage = &OfferStorage{}
 
 // NewOfferStorage initializes OfferStorage
-func NewOfferStorage(conf Config) (*OfferStorage, func(), error) {
-	pool, cleanup, err := newPool(conf)
-	if err != nil {
-		return nil, nil, fmt.Errorf("postgres: could not intitialize postgres pool: %w", err)
-	}
-	storage := &OfferStorage{
+func NewOfferStorage(pool *pgxpool.Pool) *OfferStorage {
+	return &OfferStorage{
 		connPool: pool,
 	}
-	return storage, cleanup, nil
 }
 
 // CreateOffer implements business logic of adding new offer to database
@@ -75,7 +70,7 @@ func (o *OfferStorage) IsOfferActive(ctx context.Context, offerID int64) (bool, 
 		offerID,
 	).Scan(&isActive)
 	if errCheck != nil {
-		return false, fmt.Errorf("postgres: could not check if offer is active: %w", errCheck)
+		return false, fmt.Errorf("postgres: could not healthCheck if offer is active: %w", errCheck)
 	}
 	return isActive, nil
 }
@@ -91,7 +86,7 @@ func (o *OfferStorage) IsOfferOwnedByHotel(ctx context.Context, hotelID int64, o
 		offerID,
 	).Scan(&offerHotelID)
 	if errCheck != nil {
-		return false, fmt.Errorf("postgres: could not check ownership of offer: %w", errCheck)
+		return false, fmt.Errorf("postgres: could not healthCheck ownership of offer: %w", errCheck)
 	}
 	return offerHotelID == hotelID, nil
 }
@@ -107,7 +102,7 @@ func (o *OfferStorage) IsOfferMarkedAsDeleted(ctx context.Context, offerID int64
 		offerID,
 	).Scan(&isDeleted)
 	if errCheck != nil {
-		return false, fmt.Errorf("postgres: could not check deletion status of offer: %w", errCheck)
+		return false, fmt.Errorf("postgres: could not healthCheck deletion status of offer: %w", errCheck)
 	}
 	return isDeleted, nil
 }

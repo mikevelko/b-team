@@ -20,15 +20,10 @@ type UserStorage struct {
 var _ bookly.UserStorage = &UserStorage{}
 
 // NewUserStorage initializes UserStorage
-func NewUserStorage(conf Config) (*UserStorage, func(), error) {
-	pool, cleanup, err := newPool(conf)
-	if err != nil {
-		return nil, nil, fmt.Errorf("postgres: could not intitialize postgres pool: %w", err)
-	}
-	storage := &UserStorage{
+func NewUserStorage(pool *pgxpool.Pool) *UserStorage {
+	return &UserStorage{
 		connPool: pool,
 	}
-	return storage, cleanup, nil
 }
 
 // AddUserForce implements force adding without business logic

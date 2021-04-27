@@ -26,12 +26,16 @@ func main() {
 
 	application := app.NewApp(logger, cfg.App)
 	application.Build(func() error {
-		storage, cleanup, err := postgres.NewSessionStorage(cfg.Postgres, cfg.SessionDuration)
+		pool, cleanup, err := postgres.NewPool(cfg.Postgres)
 		if err != nil {
-			return fmt.Errorf("could not initialize postgres: %w", err)
+			return fmt.Errorf("could not initialize postgres connection pool: %w", err)
 		}
 		application.AddCleanup(cleanup)
-		api := newAPI(application.Logger, NewSessionVerifier(storage))
+		application.AddHealthCheck(postgres.NewHealthConfig(pool))
+
+		sessionStorage := postgres.NewSessionStorage(pool, cfg.SessionDuration)
+
+		api := newAPI(application.Logger, NewSessionVerifier(sessionStorage))
 		api.mount(application.Router)
 		return nil
 	})

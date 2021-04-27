@@ -17,15 +17,10 @@ type HotelStorage struct {
 var _ bookly.HotelStorage = &HotelStorage{}
 
 // NewHotelStorage initializes OfferStorage
-func NewHotelStorage(conf Config) (*HotelStorage, func(), error) {
-	pool, cleanup, err := newPool(conf)
-	if err != nil {
-		return nil, nil, fmt.Errorf("postgres: could not intitialize postgres pool: %w", err)
-	}
-	storage := &HotelStorage{
+func NewHotelStorage(pool *pgxpool.Pool) *HotelStorage {
+	return &HotelStorage{
 		connPool: pool,
 	}
-	return storage, cleanup, nil
 }
 
 // CreateHotel implements business logic of creating hotels in database

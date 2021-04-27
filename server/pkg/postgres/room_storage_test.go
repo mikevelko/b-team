@@ -25,9 +25,8 @@ func CleanTestRoomStorage(t *testing.T, pool *pgxpool.Pool, ctx context.Context)
 
 func TestRoomStorage_CreateRoom(t *testing.T) {
 	testutils.SetIntegration(t)
-	storage, cleanup, err := NewRoomStorage(conf)
-	require.NoError(t, err)
-	t.Cleanup(cleanup)
+	storage := NewRoomStorage(initDb(t))
+
 	ctx := context.Background()
 	CleanTestRoomStorage(t, storage.connPool, ctx)
 
@@ -52,9 +51,7 @@ func TestRoomStorage_CreateRoom(t *testing.T) {
 
 func TestRoomStorage_DeleteRoom(t *testing.T) {
 	testutils.SetIntegration(t)
-	storage, cleanup, err := NewRoomStorage(conf)
-	require.NoError(t, err)
-	t.Cleanup(cleanup)
+	storage := NewRoomStorage(initDb(t))
 	ctx := context.Background()
 	CleanTestRoomStorage(t, storage.connPool, ctx)
 
@@ -63,7 +60,7 @@ func TestRoomStorage_DeleteRoom(t *testing.T) {
 		RoomNumber: "12Fa",
 		HotelID:    0,
 	}
-	_, err = storage.CreateRoom(ctx, correctRoom, 1)
+	_, err := storage.CreateRoom(ctx, correctRoom, 1)
 	require.NoError(t, err)
 	correctRoom = bookly.Room{
 		ID:         0,
@@ -96,9 +93,7 @@ func TestRoomStorage_DeleteRoom(t *testing.T) {
 
 func TestRoomStorage_GetAllHotelRoom(t *testing.T) {
 	testutils.SetIntegration(t)
-	storage, cleanup, err := NewRoomStorage(conf)
-	require.NoError(t, err)
-	t.Cleanup(cleanup)
+	storage := NewRoomStorage(initDb(t))
 	ctx := context.Background()
 	CleanTestRoomStorage(t, storage.connPool, ctx)
 
@@ -107,7 +102,7 @@ func TestRoomStorage_GetAllHotelRoom(t *testing.T) {
 		RoomNumber: "12Fa",
 		HotelID:    0,
 	}
-	_, err = storage.CreateRoom(ctx, correctRoom1, 1)
+	_, err := storage.CreateRoom(ctx, correctRoom1, 1)
 	require.NoError(t, err)
 	correctRoom2 := bookly.Room{
 		ID:         0,
@@ -131,9 +126,8 @@ func TestRoomStorage_GetAllHotelRoom(t *testing.T) {
 
 func TestRoomStorage_GetRoom(t *testing.T) {
 	testutils.SetIntegration(t)
-	storage, cleanup, err := NewRoomStorage(conf)
-	require.NoError(t, err)
-	t.Cleanup(cleanup)
+	storage := NewRoomStorage(initDb(t))
+
 	ctx := context.Background()
 	CleanTestRoomStorage(t, storage.connPool, ctx)
 
@@ -142,7 +136,7 @@ func TestRoomStorage_GetRoom(t *testing.T) {
 		RoomNumber: "12Fa",
 		HotelID:    0,
 	}
-	_, err = storage.CreateRoom(ctx, correctRoom1, 1)
+	_, err := storage.CreateRoom(ctx, correctRoom1, 1)
 	require.NoError(t, err)
 	correctRoom2 := bookly.Room{
 		ID:         0,

@@ -25,9 +25,8 @@ func CleanSessionTestStorage(t *testing.T, pool *pgxpool.Pool, ctx context.Conte
 
 func TestSessionStorage_CreateNew(t *testing.T) {
 	testutils.SetIntegration(t)
-	storage, cleanup, err := NewSessionStorage(conf, time.Duration(10)*time.Minute)
-	require.NoError(t, err)
-	t.Cleanup(cleanup)
+	storage := NewSessionStorage(initDb(t), time.Duration(10)*time.Minute)
+
 	ctx := context.Background()
 	CleanSessionTestStorage(t, storage.connPool, ctx)
 	token, err := storage.CreateNew(ctx, 1)
@@ -37,9 +36,7 @@ func TestSessionStorage_CreateNew(t *testing.T) {
 
 func TestSessionStorage_Update(t *testing.T) {
 	testutils.SetIntegration(t)
-	storage, cleanup, err := NewSessionStorage(conf, time.Duration(10)*time.Minute)
-	require.NoError(t, err)
-	t.Cleanup(cleanup)
+	storage := NewSessionStorage(initDb(t), time.Duration(10)*time.Minute)
 	ctx := context.Background()
 	CleanSessionTestStorage(t, storage.connPool, ctx)
 	const forceAddQuery = `
@@ -66,9 +63,8 @@ func TestSessionStorage_Update(t *testing.T) {
 
 func TestSessionStorage_GetSession(t *testing.T) {
 	testutils.SetIntegration(t)
-	storage, cleanup, err := NewSessionStorage(conf, time.Duration(2000)*time.Minute)
-	require.NoError(t, err)
-	t.Cleanup(cleanup)
+	storage := NewSessionStorage(initDb(t), time.Duration(2000)*time.Minute)
+
 	ctx := context.Background()
 	CleanSessionTestStorage(t, storage.connPool, ctx)
 	const forceAddQuery = `
@@ -90,8 +86,6 @@ func TestSessionStorage_GetSession(t *testing.T) {
 	errHotel := storage.connPool.QueryRow(ctx, forceAddQuery, "Janusz",
 		"Tracz", "tracz.boss@rmail.xd", "Trancjusz", "Plebania1829", 1).Scan(&traczID)
 	require.NoError(t, errHotel)
-
-	_, err = storage.connPool.Exec(ctx, forceAddQuery)
 
 	hotelIdNil, errGetNil := storage.GetSession(ctx, bookly.Token{ID: janID, CreatedAt: "XDDDD"})
 	require.NoError(t, errGetNil)

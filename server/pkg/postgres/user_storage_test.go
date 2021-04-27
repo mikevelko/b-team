@@ -27,9 +27,7 @@ func CleanTestUserStorage(t *testing.T, pool *pgxpool.Pool, ctx context.Context)
 
 func TestUserStorage_AddUserForce(t *testing.T) {
 	testutils.SetIntegration(t)
-	storage, cleanup, err := NewUserStorage(conf)
-	require.NoError(t, err)
-	t.Cleanup(cleanup)
+	storage := NewUserStorage(initDb(t))
 	correctUser := bookly.User{
 		ID:        0,
 		FirstName: "Adam",
@@ -40,15 +38,14 @@ func TestUserStorage_AddUserForce(t *testing.T) {
 		UserRole:  bookly.UserRoleClientCustomer,
 	}
 	ctx := context.Background()
-	_, err = storage.AddUserForce(ctx, correctUser, "haslo")
+	_, err := storage.AddUserForce(ctx, correctUser, "haslo")
 	require.NoError(t, err)
 }
 
 func TestUserStorage_GetUser(t *testing.T) {
 	testutils.SetIntegration(t)
-	storage, cleanup, err := NewUserStorage(conf)
-	require.NoError(t, err)
-	t.Cleanup(cleanup)
+	storage := NewUserStorage(initDb(t))
+
 	var users []*bookly.User
 	users = append(users, &bookly.User{
 		ID:        0,
@@ -97,9 +94,8 @@ func TestUserStorage_GetUser(t *testing.T) {
 
 func TestUserStorage_UpdateUserInformationUser(t *testing.T) {
 	testutils.SetIntegration(t)
-	storage, cleanup, err := NewUserStorage(conf)
-	require.NoError(t, err)
-	t.Cleanup(cleanup)
+	storage := NewUserStorage(initDb(t))
+
 	var users []*bookly.User
 	users = append(users, &bookly.User{
 		ID:        0,
@@ -137,7 +133,7 @@ func TestUserStorage_UpdateUserInformationUser(t *testing.T) {
 		users[i].ID = id
 	}
 
-	err = storage.UpdateUserInformation(ctx, users[0].ID, "adam2", "adam4@rmail.com")
+	err := storage.UpdateUserInformation(ctx, users[0].ID, "adam2", "adam4@rmail.com")
 	require.Error(t, err)
 
 	err = storage.UpdateUserInformation(ctx, users[0].ID, "adam4", "adam2@rmail.com")
@@ -155,9 +151,7 @@ func TestUserStorage_UpdateUserInformationUser(t *testing.T) {
 
 func TestUserStorage_UserVerify(t *testing.T) {
 	testutils.SetIntegration(t)
-	storage, cleanup, err := NewUserStorage(conf)
-	require.NoError(t, err)
-	t.Cleanup(cleanup)
+	storage := NewUserStorage(initDb(t))
 	var users []*bookly.User
 	users = append(users, &bookly.User{
 		ID:        0,

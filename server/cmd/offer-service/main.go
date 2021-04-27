@@ -24,12 +24,15 @@ func main() {
 
 	application := app.NewApp(logger, cfg.App)
 	application.Build(func() error {
-		// we do dependency injection here
-		storage, cleanup, err := postgres.NewOfferStorage(cfg.Postgres)
+		pool, cleanup, err := postgres.NewPool(cfg.Postgres)
 		if err != nil {
-			return fmt.Errorf("could not initialize postgres: %w", err)
+			return fmt.Errorf("could not initialize postgres connection pool: %w", err)
 		}
 		application.AddCleanup(cleanup)
+		application.AddHealthCheck(postgres.NewHealthConfig(pool))
+
+		storage := postgres.NewOfferStorage(pool)
+
 		service := newOfferService(storage)
 		api := newAPI(application.Logger, service)
 		api.mount(application.Router)

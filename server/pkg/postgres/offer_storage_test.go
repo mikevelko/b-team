@@ -26,9 +26,7 @@ func CleanTestOfferStorage(t *testing.T, pool *pgxpool.Pool, ctx context.Context
 
 func TestOfferStorage_CreateGetDeleteOffer(t *testing.T) {
 	testutils.SetIntegration(t)
-	storage, cleanup, err := NewOfferStorage(conf)
-	require.NoError(t, err)
-	t.Cleanup(cleanup)
+	storage := NewOfferStorage(initDb(t))
 	correctOffer := &bookly.Offer{
 		IsActive:            true,
 		OfferTitle:          "Sometitle",
@@ -50,9 +48,7 @@ func TestOfferStorage_CreateGetDeleteOffer(t *testing.T) {
 
 func TestOfferStorage_GetAllOffers(t *testing.T) {
 	testutils.SetIntegration(t)
-	storage, cleanup, err := NewOfferStorage(conf)
-	require.NoError(t, err)
-	t.Cleanup(cleanup)
+	storage := NewOfferStorage(initDb(t))
 	var offers []*bookly.Offer
 	offers = append(offers, &bookly.Offer{
 		IsActive:            true,
@@ -126,9 +122,8 @@ func TestOfferStorage_GetAllOffers(t *testing.T) {
 
 func TestOfferStorage_GetSpecificOffer(t *testing.T) {
 	testutils.SetIntegration(t)
-	storage, cleanup, err := NewOfferStorage(conf)
-	require.NoError(t, err)
-	t.Cleanup(cleanup)
+	storage := NewOfferStorage(initDb(t))
+
 	correctOffer := &bookly.Offer{
 		IsActive:            true,
 		OfferTitle:          "Sometitle",
@@ -153,9 +148,8 @@ func TestOfferStorage_GetSpecificOffer(t *testing.T) {
 
 func TestOfferStorage_UpdateOfferDetails(t *testing.T) {
 	testutils.SetIntegration(t)
-	storage, cleanup, err := NewOfferStorage(conf)
-	require.NoError(t, err)
-	t.Cleanup(cleanup)
+	storage := NewOfferStorage(initDb(t))
+
 	preOffer := &bookly.Offer{
 		IsActive:            true,
 		OfferTitle:          "Sometitle",
@@ -191,9 +185,8 @@ func TestOfferStorage_UpdateOfferDetails(t *testing.T) {
 
 func TestOfferStorage_IsOfferActive(t *testing.T) {
 	testutils.SetIntegration(t)
-	storage, cleanup, err := NewOfferStorage(conf)
-	require.NoError(t, err)
-	t.Cleanup(cleanup)
+	storage := NewOfferStorage(initDb(t))
+
 	offerActive := &bookly.Offer{
 		IsActive:            true,
 		OfferTitle:          "Sometitle",
@@ -234,9 +227,8 @@ func TestOfferStorage_IsOfferActive(t *testing.T) {
 
 func TestOfferStorage_IsOfferOwnedByHotel(t *testing.T) {
 	testutils.SetIntegration(t)
-	storage, cleanup, err := NewOfferStorage(conf)
-	require.NoError(t, err)
-	t.Cleanup(cleanup)
+	storage := NewOfferStorage(initDb(t))
+
 	offerActive := &bookly.Offer{
 		IsActive:            true,
 		OfferTitle:          "Sometitle",
@@ -278,9 +270,8 @@ func TestOfferStorage_IsOfferOwnedByHotel(t *testing.T) {
 
 func TestOfferStorage_MarkDeletedOfferAndCheckStatus(t *testing.T) {
 	testutils.SetIntegration(t)
-	storage, cleanup, err := NewOfferStorage(conf)
-	require.NoError(t, err)
-	t.Cleanup(cleanup)
+	storage := NewOfferStorage(initDb(t))
+
 	offerActive := &bookly.Offer{
 		IsActive:            false,
 		OfferTitle:          "Sometitle",

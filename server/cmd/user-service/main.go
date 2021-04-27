@@ -26,19 +26,16 @@ func main() {
 
 	application := app.NewApp(logger, cfg.App)
 	application.Build(func() error {
-		// we do dependency injection here
-		/*userStorage*/
-		userStorage, cleanupUser, errU := postgres.NewUserStorage(cfg.Postgres)
-		if errU != nil {
-			return fmt.Errorf("could not initialize postgres: %w", err)
+		pool, cleanup, err := postgres.NewPool(cfg.Postgres)
+		if err != nil {
+			return fmt.Errorf("could not initialize postgres connection pool: %w", err)
 		}
-		application.AddCleanup(cleanupUser)
+		application.AddCleanup(cleanup)
+		application.AddHealthCheck(postgres.NewHealthConfig(pool))
 
-		sessionStorage, cleanupSession, errS := postgres.NewSessionStorage(cfg.Postgres, cfg.SessionDuration)
-		if errS != nil {
-			return fmt.Errorf("could not initialize postgres: %w", err)
-		}
-		application.AddCleanup(cleanupSession)
+		userStorage := postgres.NewUserStorage(pool)
+
+		sessionStorage := postgres.NewSessionStorage(pool, cfg.SessionDuration)
 
 		service := newUserService(userStorage, sessionStorage)
 		api := newAPI(application.Logger, service)

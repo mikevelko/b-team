@@ -20,15 +20,10 @@ type RoomStorage struct {
 var _ bookly.RoomStorage = &RoomStorage{}
 
 // NewRoomStorage initializes RoomStorage
-func NewRoomStorage(conf Config) (*RoomStorage, func(), error) {
-	pool, cleanup, err := newPool(conf)
-	if err != nil {
-		return nil, nil, fmt.Errorf("postgres: could not intitialize postgres pool: %w", err)
-	}
-	storage := &RoomStorage{
+func NewRoomStorage(pool *pgxpool.Pool) *RoomStorage {
+	return &RoomStorage{
 		connPool: pool,
 	}
-	return storage, cleanup, nil
 }
 
 // CreateRoom implements business logic of create room
