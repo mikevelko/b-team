@@ -1,10 +1,11 @@
 import { Button, ButtonBase, Grid, List, Typography } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
-import { Link, Redirect } from 'react-router-dom';
+import { Link, matchPath, Redirect, useHistory } from 'react-router-dom';
 import './Offers.css'
 import offerImage from './offer.png';
 import { makeStyles } from '@material-ui/core/styles';
-import { TryGetHotelOffers } from './FetchUtils';
+import { TryDeleteHotelOffer, TryGetHotelOffers } from './FetchUtils';
+
 const useStyles = makeStyles((theme) => ({
   activeOfferItem:{
     marginBottom:20, 
@@ -48,18 +49,8 @@ const useStyles = makeStyles((theme) => ({
 
 function Offers() {
   const classes = useStyles();
-
-  const [offersList,setOffersList] = useState([    {
-    "IsActive": true,
-    "OfferTitle": "string",
-    "CostPerChild": "0",
-    "CostPerAdult": "0",
-    "MaxGuests": 1,
-    "Description": "string",
-    "OfferPreviewPicture": "string",
-    "Pictures": null,
-    "Rooms": null
-  }]);
+  const history = useHistory();
+  const [offersList,setOffersList] = useState([]);
 
   useEffect(()=>{
     TryGetHotelOffers()
@@ -67,10 +58,27 @@ function Offers() {
         setOffersList(response)
       });
   },[])
-  useEffect(()=>{
-    console.log(offersList.map((item,_) => item))
-  },[offersList])
 
+  function EditOfferButton(event, offerID) {
+    console.log("aasfafsasafs")
+
+    event.stopPropagation();
+    history.push(`/offers/edit/${offerID}`)
+  }
+  function OfferDetails(offerID){
+    console.log(offerID)
+    history.push(`/offers/${offerID}`)
+  }
+  function DeleteOfferButton(event,offerID) {
+    event.stopPropagation()
+    TryDeleteHotelOffer(offerID).then(function (response) {
+      TryGetHotelOffers()
+      .then(function (response) {
+        setOffersList(response)
+      });
+    })
+
+  }
   return (
     <div className="offers">
 
@@ -83,7 +91,7 @@ function Offers() {
       <div className="offersList">     
         {offersList.map((item,_) => {
           return item.IsActive ? 
-          (<Grid className={classes.activeOfferItem} container>
+          (<Grid className={classes.activeOfferItem} onClick={() => {OfferDetails(item.ID)}} container key={item.ID}>
             <Grid item className={classes.partOfOfferItem}>
                 <ButtonBase>
                   <img src={offerImage} className={classes.offerPreviewImage}/>
@@ -97,8 +105,9 @@ function Offers() {
             </Grid>
             <Grid item style={{display:'flex',flexDirection:'column'}}>
               <Grid item style={{display:'flex', justifyContent:'space-around', marginBottom:10}}>
-                <Button className={classes.editOfferButton} component={Link} to='/offers/edit/5' onClick={(event) => {event.stopPropagation()}}>Edit offer</Button>
-                <Button className={classes.deleteOfferButton}  onClick={(event) => {event.stopPropagation()}}>Delete offer</Button>
+                <Button className={classes.editOfferButton} onClick={(event) => {EditOfferButton(event,item.ID)}}>Edit offer</Button>
+                <Button className={classes.deleteOfferButton}  onClick={(event) => {DeleteOfferButton(event,item.ID)}}>Delete offer</Button>
+
               </Grid>
               <Grid item>
   
@@ -108,7 +117,7 @@ function Offers() {
             
           </Grid>) 
         :
-        (<Grid className={classes.inactiveOfferItem} container>
+        (<Grid className={classes.inactiveOfferItem} container onClick={() => {OfferDetails(item.ID)}} key={item.ID}>
           <Grid item className={classes.partOfOfferItem}>
               <ButtonBase>
                 <img src={offerImage} className={classes.offerPreviewImage}/>
@@ -123,8 +132,9 @@ function Offers() {
 
           <Grid item style={{display:'flex',flexDirection:'column'}}>
             <Grid item style={{display:'flex', justifyContent:'space-around', marginBottom:10}}>
-              <Button className={classes.editOfferButton} component={Link} to='/offers/edit/' onClick={(event) => {event.stopPropagation()}}>Edit offer</Button>
-              <Button className={classes.deleteOfferButton}  onClick={(event) => {event.stopPropagation()}}>Delete offer</Button>
+            <Button className={classes.editOfferButton} onClick={(event) => {EditOfferButton(event,item.ID)}}>Edit offer</Button>
+                <Button className={classes.deleteOfferButton}  onClick={(event) => {DeleteOfferButton(event,item.ID)}}>Delete offer</Button>
+
             </Grid>
             <Grid item>
 

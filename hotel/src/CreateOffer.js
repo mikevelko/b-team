@@ -91,6 +91,8 @@ function CreateOffer() {
   const [previewPicture,setPreviewPicture] = useState('');
   const history = useHistory();
 
+  
+
   function OnClickCreateOfferButton() {
     if(offerTitle != '' && costPerChild >0 && costPerAdult > 0 && maxGuests >0 && rooms.length > 0){
       TryPostOffer(offerTitle,costPerChild,costPerAdult,maxGuests,activeStatus,rooms,description,pictures,previewPicture).then(function (response) {

@@ -14,9 +14,10 @@ import LogIn from './LogIn';
 import HomeIcon from '@material-ui/icons/Home';
 import CreateOffer from './CreateOffer';
 import HotelInfoEdit from './HotelInfoEdit';
-import EditOfferDetails from './EditOfferDetails';
+import EditOffer from './EditOffer';
 import { PrivateRoute } from './PrivateRoute';
 import { TryGetHotelInfo } from './FetchUtils';
+import OfferDetails from './OfferDetails';
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -70,7 +71,8 @@ export default function App() {
 
         <PrivateRoute path='/offers' exact component={Offers}/>
         <PrivateRoute path='/offers/create' exact component={CreateOffer}/>
-        <PrivateRoute path='/offers/edit/:offerId' exact component={EditOfferDetails}/>
+        <PrivateRoute path='/offers/:offerId' exact component={OfferDetails}/>
+        <PrivateRoute path='/offers/edit/:offerId' exact component={EditOffer}/>
 
 
         <PrivateRoute path='/reservations' component={Reservations}/>
