@@ -133,7 +133,7 @@ func TestRoomService_GetAllHotelRooms(t *testing.T) {
 			name: "if user storage returns error, error is expected",
 			prepare: func(t *testing.T, f *fields) {
 				// f.roomStorage.EXPECT().GetAllHotelRooms(gomock.Any(), gomock.Any()).Return(nil, mockErr)
-				f.roomStorage.EXPECT().GetRoom(gomock.Any(), gomock.Any(), gomock.Any()).Return(bookly.Room{}, mockErr)
+				f.roomStorage.EXPECT().GetRoomByName(gomock.Any(), gomock.Any(), gomock.Any()).Return(bookly.Room{}, mockErr)
 			},
 			check: func(t *testing.T, service *roomService, f *fields) {
 				_, err := service.GetAllHotelRooms(nil, 0, 0, 0, "12")

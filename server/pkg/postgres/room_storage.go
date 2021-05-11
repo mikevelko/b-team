@@ -65,8 +65,6 @@ func (r *RoomStorage) CreateRoom(ctx context.Context, room bookly.Room, hotelID 
 
 // DeleteRoom implements business logic of delete room
 func (r *RoomStorage) DeleteRoom(ctx context.Context, roomID int64, hotelID int64) error {
-	// todo: Add business logic with offers from specification
-
 	const queryCheck = `
     SELECT *
 	FROM rooms
@@ -82,11 +80,19 @@ func (r *RoomStorage) DeleteRoom(ctx context.Context, roomID int64, hotelID int6
 		if err == pgx.ErrNoRows {
 			return bookly.ErrRoomNotFound
 		}
-		return fmt.Errorf("postgres: could not insert offer: %w", err)
+		return fmt.Errorf("postgres: could not find room with delete func: %w", err)
 	}
 
 	if room.HotelID != hotelID {
 		return bookly.ErrRoomNotBelongToHotel
+	}
+
+	offers, err := r.OffersRelatedWithRoom(ctx, room.ID)
+	if err != nil {
+		return fmt.Errorf("postgres: could not find rooms relation with offer with delete func: %w", err)
+	}
+	if len(offers) != 0 {
+		return bookly.ErrRoomIsRelatedWithOffer
 	}
 
 	const queryDelete = `
@@ -97,8 +103,11 @@ func (r *RoomStorage) DeleteRoom(ctx context.Context, roomID int64, hotelID int6
 	_, err = r.connPool.Exec(ctx, queryDelete,
 		roomID,
 	)
-	if err == pgx.ErrNoRows {
-		return bookly.ErrRoomNotFound
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return bookly.ErrRoomNotFound
+		}
+		return fmt.Errorf("postgres: could not delete room: %w", err)
 	}
 
 	return nil
@@ -128,7 +137,7 @@ func (r *RoomStorage) GetAllHotelRooms(ctx context.Context, hotelID int64) ([]*b
 			return nil, fmt.Errorf("postgres: could not insert offer: %w", err)
 		}
 
-		room.OfferID, err = r.getRoomOffers(ctx, room.ID)
+		room.OfferID, err = r.OffersRelatedWithRoom(ctx, room.ID)
 		if err != nil {
 			return nil, fmt.Errorf("postgres: could not insert offer: %w", err)
 		}
@@ -143,8 +152,8 @@ func (r *RoomStorage) GetAllHotelRooms(ctx context.Context, hotelID int64) ([]*b
 	return result, nil
 }
 
-// GetRoom implements getting one room by roomNumber
-func (r *RoomStorage) GetRoom(ctx context.Context, roomNumber string, hotelID int64) (bookly.Room, error) {
+// GetRoomByName implements getting one room by roomNumber
+func (r *RoomStorage) GetRoomByName(ctx context.Context, roomNumber string, hotelID int64) (bookly.Room, error) {
 	const queryCheck = `
     SELECT *
 	FROM rooms
@@ -161,10 +170,10 @@ func (r *RoomStorage) GetRoom(ctx context.Context, roomNumber string, hotelID in
 		if err == pgx.ErrNoRows {
 			return bookly.Room{}, bookly.ErrRoomNotFound
 		}
-		return bookly.Room{}, fmt.Errorf("postgres: could not insert offer: %w", err)
+		return bookly.Room{}, fmt.Errorf("postgres: could not get room: %w", err)
 	}
 
-	room.OfferID, err = r.getRoomOffers(ctx, room.ID)
+	room.OfferID, err = r.OffersRelatedWithRoom(ctx, room.ID)
 	if err != nil {
 		return bookly.Room{}, fmt.Errorf("postgres: could not insert offer: %w", err)
 	}
@@ -172,7 +181,31 @@ func (r *RoomStorage) GetRoom(ctx context.Context, roomNumber string, hotelID in
 	return room, nil
 }
 
-func (r *RoomStorage) getRoomOffers(ctx context.Context, roomID int64) ([]int64, error) {
+// GetRoom implements database feat to get room by ID
+func (r *RoomStorage) GetRoom(ctx context.Context, roomID int64) (bookly.Room, error) {
+	const queryCheck = `
+    SELECT *
+	FROM rooms
+	WHERE id = $1
+`
+
+	row := r.connPool.QueryRow(ctx, queryCheck,
+		roomID,
+	)
+	room := bookly.Room{}
+	err := row.Scan(&room.ID, &room.RoomNumber, &room.HotelID)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return bookly.Room{}, bookly.ErrRoomNotFound
+		}
+		return bookly.Room{}, fmt.Errorf("postgres: could not get room: %w", err)
+	}
+
+	return room, nil
+}
+
+// OffersRelatedWithRoom implements database feat to get offers IDs related with room
+func (r *RoomStorage) OffersRelatedWithRoom(ctx context.Context, roomID int64) ([]int64, error) {
 	const query = `
     SELECT *
 	FROM offers_rooms
@@ -183,21 +216,120 @@ func (r *RoomStorage) getRoomOffers(ctx context.Context, roomID int64) ([]int64,
 		roomID,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("postgres: could not get offerID: %w", err)
+		return nil, fmt.Errorf("postgres: could not get offers related with room: %w", err)
 	}
 
 	result := []int64{}
 	defer list.Close()
 	for list.Next() {
 		var offerID int64
-		var pom int64
-		err = list.Scan(&offerID, &pom)
+		var _roomID int64
+		err = list.Scan(&offerID, &_roomID)
 		result = append(result, offerID)
 	}
 	errFinal := list.Err()
 	if errFinal != nil {
-		return nil, fmt.Errorf("postgres: could not get offerID: %w", err)
+		return nil, fmt.Errorf("postgres: could not get offers related with room: %w", err)
 	}
 
 	return result, nil
+}
+
+// RoomsRelatedWithRoom implements database feat to get rooms IDs related with offer
+func (r *RoomStorage) RoomsRelatedWithRoom(ctx context.Context, offerID int64) ([]int64, error) {
+	const query = `
+    SELECT *
+	FROM offers_rooms
+	WHERE offer_id = $1
+`
+
+	list, err := r.connPool.Query(ctx, query,
+		offerID,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("postgres: could not get rooms related with offer: %w", err)
+	}
+
+	result := []int64{}
+	defer list.Close()
+	for list.Next() {
+		var _offerID int64
+		var roomID int64
+		err = list.Scan(&_offerID, &roomID)
+		result = append(result, roomID)
+	}
+	errFinal := list.Err()
+	if errFinal != nil {
+		return nil, fmt.Errorf("postgres: could not get rooms related with offer: %w", err)
+	}
+
+	return result, nil
+}
+
+// IsExistLinkWithRoomAndOffer implements database feat to check link with room and offer
+func (r *RoomStorage) IsExistLinkWithRoomAndOffer(ctx context.Context, offerID int64, roomID int64) (bool, error) {
+	const queryCheck = `
+    SELECT *
+	FROM offers_rooms
+	WHERE offer_id = $1 AND room_id = $2
+`
+
+	row := r.connPool.QueryRow(ctx, queryCheck,
+		offerID,
+		roomID,
+	)
+	var _offerID, _roomID int64
+	err := row.Scan(&_offerID, &_roomID)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return false, nil
+		}
+		return false, fmt.Errorf("postgres: could not find link with offer and room: %w", err)
+	}
+	return true, nil
+}
+
+// AddLinkWithRoomAndOffer implements database feat to add link with room and offer
+func (r *RoomStorage) AddLinkWithRoomAndOffer(ctx context.Context, offerID int64, roomID int64) error {
+	const query = `
+    INSERT INTO offers_rooms(
+        offer_id,
+		room_id
+        )
+    VALUES ($1,$2)
+    RETURNING offer_id;
+`
+	var id int64
+	err := r.connPool.QueryRow(ctx, query,
+		offerID,
+		roomID,
+	).Scan(&id)
+	if err != nil {
+		return fmt.Errorf("postgres: could not insert offer: %w", err)
+	}
+	return nil
+}
+
+// DeleteLinkWithRoomAndOffer implements database feat to delete link with room and offer
+func (r *RoomStorage) DeleteLinkWithRoomAndOffer(ctx context.Context, offerID int64, roomID int64) error {
+	const queryDelete = `
+    DELETE
+	FROM offers_rooms
+	WHERE offer_id = $1 AND room_id = $2
+`
+	rows, err := r.connPool.Exec(ctx, queryDelete,
+		offerID,
+		roomID,
+	)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return bookly.ErrLinkOfferRoomNotFound
+		}
+		return fmt.Errorf("postgres: could not delete record from offers_rooms: %w", err)
+	}
+	if rows.RowsAffected() == 0 {
+		return bookly.ErrLinkOfferRoomNotFound
+	}
+
+	return nil
 }
