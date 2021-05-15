@@ -129,3 +129,71 @@ export async function TryLogIn(login, password){
     if(res !== undefined) return res.data.offerPreview;
     return "";
   };
+
+  export async function TryGetHotelOffer(offerID){
+    const res = await axios({
+      method: 'get',
+      url: '/api-hotel/offers/'+offerID,
+      headers: {
+        'accept': 'application/json',
+        'x-hotel-token': localStorage.getItem(HOTEL_TOKEN_NAME)
+      }, 
+    })
+    .then(function (response) {
+      console.log(response)
+      return response;
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+    if(res !== undefined) return res.data;
+    return "";
+  };
+
+  export async function TryDeleteHotelOffer(offerID){
+    const res = await axios({
+      method: 'delete',
+      url: '/api-hotel/offers/'+offerID,
+      headers: {
+        'accept': 'application/json',
+        'x-hotel-token': localStorage.getItem(HOTEL_TOKEN_NAME)
+      }, 
+    })
+    .then(function (response) {
+      console.log(response)
+      return response;
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+    if(res !== undefined) return res.data;
+    return "";
+  };
+  export async function TryEditHotelOffer(offerID,offerTitle,maxGuests,activeStatus,description,pictures=[],previewPicture=''){
+    const res = await axios({
+      method: 'PATCH',
+      url: '/api-hotel/offers/'+offerID,
+      headers: {
+        'accept': 'application/json',
+        'x-hotel-token': localStorage.getItem(HOTEL_TOKEN_NAME),
+        'Content-Type': 'application/json',
+      }, 
+      data:{
+        "isActive": activeStatus,
+        "offerTitle": offerTitle,
+        "maxGuests": maxGuests,
+        "description": description,
+        "offerPreviewPicture": previewPicture,
+        "offerPictures": pictures,
+      }
+    })
+    .then(function (response) {
+      console.log(response)
+      return response;
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+    if(res !== undefined) return res.status;
+    return "";
+  };

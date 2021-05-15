@@ -3,7 +3,7 @@ module github.com/pw-software-engineering/b-team/server
 go 1.16
 
 require (
-	github.com/AppsFlyer/go-sundheit v0.3.1 // indirect
+	github.com/AppsFlyer/go-sundheit v0.3.1
 	github.com/go-chi/chi v1.5.4
 	github.com/golang/mock v1.5.0
 	github.com/golangci/golangci-lint v1.38.0

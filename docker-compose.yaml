@@ -90,24 +90,6 @@ services:
       POSTGRES_DATABASE: bookly
     networks:
       - server-vpn
-  hotel-service:
-    container_name:  hotel-service
-    build:
-      context: server
-      dockerfile: Dockerfile
-      args:
-        SERVICE_NAME: hotel-service
-    environment:
-      POSTGRES_HOST: postgres
-      POSTGRES_PORT: 5432
-      POSTGRES_USER: bookly
-      POSTGRES_PASSWORD: bookly
-      POSTGRES_DATABASE: bookly
-    depends_on:
-      postgres:
-        condition: service_healthy
-    networks:
-      - server-vpn
 
   room-service:
     container_name: room-service
@@ -179,4 +161,3 @@ services:
 
 networks:
   server-vpn:
-

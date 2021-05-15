@@ -35,7 +35,7 @@ func (r *roomService) DeleteRoom(ctx context.Context, roomID int64, hotelID int6
 // GetAllHotelRooms implements split rooms into pages and business logic of API params
 func (r *roomService) GetAllHotelRooms(ctx context.Context, hotelID int64, pageNumber int, pageSize int, filter string) ([]*bookly.Room, error) {
 	if filter != "" {
-		room, err := r.roomStorage.GetRoom(ctx, filter, hotelID)
+		room, err := r.roomStorage.GetRoomByName(ctx, filter, hotelID)
 		if err != nil {
 			return nil, err
 		}
