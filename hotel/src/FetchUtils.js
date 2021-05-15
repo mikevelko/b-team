@@ -25,6 +25,22 @@ export async function TryLogIn(login, password){
     return "";
   };
 
+  export async function CheckToken(token){
+    const res = await axios({
+      method: 'get',
+      url: '/api-hotel/offers',
+      headers: {
+        'accept': 'application/json',
+        'x-hotel-token': token
+      }
+    })
+    .then(function (response) {
+      return response;
+    })
+    .catch(function (error) {
+    });
+    return res;
+  };
 
   export async function TryGetHotelInfo(){
     const res = await axios({
