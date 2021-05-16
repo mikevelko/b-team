@@ -1439,6 +1439,12 @@
           "in": "path",
           "name": "hotelID",
           "required": true
+        },
+        {
+          "$ref": "#/parameters/pageNumber"
+        },
+        {
+          "$ref": "#/parameters/pageSize"
         }
       ]
     },
