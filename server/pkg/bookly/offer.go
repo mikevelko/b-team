@@ -2,6 +2,7 @@ package bookly
 
 import (
 	"context"
+	"time"
 
 	"github.com/shopspring/decimal"
 )
@@ -18,6 +19,39 @@ type Offer struct {
 	OfferPreviewPicture string
 	Pictures            []*Picture
 	Rooms               []*Room
+}
+
+// OfferClientDetails represents offer details shown to client
+type OfferClientDetails struct {
+	IsActive     bool            `json:"isActive"`
+	IsDeleted    bool            `json:"isDeleted"`
+	OfferTitle   string          `json:"offerTitle"`
+	CostPerChild decimal.Decimal `json:"costPerChild"`
+	CostPerAdult decimal.Decimal `json:"costPerAdult"`
+	MaxGuests    int             `json:"maxGuests"`
+	Description  string          `json:"offerDescription"`
+	Pictures     []*Picture      `json:"offerPictures"`
+	// todo: update this as soon as specification will clarify
+	AvailabilityTimeIntervals []*interface{} `json:"availabilityTimeIntervals"`
+}
+
+// OfferClientFilter holds information about filtering offers for client
+type OfferClientFilter struct {
+	FromTime  time.Time
+	ToTime    time.Time
+	MinGuests int
+	CostMin   decimal.Decimal
+	CostMax   decimal.Decimal
+}
+
+// OfferClientPreview holds previews for offers client searched for
+type OfferClientPreview struct {
+	OfferTitle   string          `json:"OfferTitle"`
+	CostPerChild decimal.Decimal `json:"costPerChild"`
+	CostPerAdult decimal.Decimal `json:"costPerAdult"`
+	MaxGuests    int             `json:"maxGuests"`
+	// todo: pictures will probably need different struct, reimplement it as soon as they are implemented
+	OfferPreviewPicture string `json:"offerPreviewPicture"`
 }
 
 // OfferStorage is responsible for persisting offers
@@ -39,4 +73,6 @@ type OfferService interface {
 	GetHotelOfferDetails(ctx context.Context, hotelID int64, offerID int64) (*Offer, error)
 	UpdateHotelOffer(ctx context.Context, hotelID int64, offerID int64, offer Offer) error
 	MarkHotelOfferAsDeleted(ctx context.Context, hotelID int64, offerID int64) error
+	GetFilteredHotelOfferClientPreviews(ctx context.Context, hotelID int64, filter OfferClientFilter, pageNumber int, itemsPerPage int) ([]*OfferClientPreview, error)
+	GetClientHotelOfferDetails(ctx context.Context, hotelID int64, offerID int64) (*OfferClientDetails, error)
 }

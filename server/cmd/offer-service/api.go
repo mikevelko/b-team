@@ -6,6 +6,9 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/pw-software-engineering/b-team/server/pkg/parseutils"
+	"github.com/shopspring/decimal"
+
 	"github.com/pw-software-engineering/b-team/server/pkg/auth"
 
 	"github.com/go-chi/chi"
@@ -38,6 +41,62 @@ func (a *api) mount(router chi.Router) {
 			r.Patch("/{offerID}", a.handleUpdateOfferDetails)
 		})
 	})
+	router.Route("/api/v1/client", func(r chi.Router) {
+		r.With(auth.SessionMiddleware()).Route("/hotels", func(r chi.Router) {
+			r.Get("/{hotelID}/offers", a.handleGetClientHotelOffers)
+			r.Get("/{hotelID}/offers/{offerID}", a.handleGetClientHotelOfferDetails)
+		})
+	})
+}
+
+func (a *api) handleGetClientHotelOffers(w http.ResponseWriter, r *http.Request) {
+	filter := bookly.OfferClientFilter{}
+	filter.CostMin = parseutils.ParseDecimalWithDefault(r.URL.Query().Get("costMin"), decimal.NewFromInt(0))
+	filter.CostMax = parseutils.ParseDecimalWithDefault(r.URL.Query().Get("costMax"), decimal.NewFromInt(2100000000))
+	filter.MinGuests = parseutils.ParseIntWithDefault(r.URL.Query().Get("minGuests"), 1)
+
+	hotelIDStr := chi.URLParam(r, "hotelID")
+	hotelID, errConvert := strconv.ParseInt(hotelIDStr, 10, 64)
+	if errConvert != nil {
+		a.logger.Info("Unable to get client hotel offers, due to bad hotelID parameter", zap.Error(errConvert))
+		httputils.RespondWithCode(w, http.StatusBadRequest)
+		return
+	}
+
+	pageNumber := parseutils.ParseIntWithDefault(r.URL.Query().Get("pageNumber"), 1)
+	offersPerPage := parseutils.ParseIntWithDefault(r.URL.Query().Get("pageSize"), 1)
+	a.logger.Info("Get Offers", zap.Int("pageNumber", pageNumber), zap.Int("itemsPerPage", offersPerPage))
+	offerPreviews, err := a.offerService.GetFilteredHotelOfferClientPreviews(r.Context(), hotelID, filter, pageNumber, offersPerPage)
+	if err != nil {
+		a.logger.Info("Unable to get client hotel offers, due to internal error", zap.Error(err))
+		httputils.RespondWithError(w, "Unable to get offers")
+		return
+	}
+	httputils.WriteJSONResponse(a.logger, w, offerPreviews)
+}
+
+func (a *api) handleGetClientHotelOfferDetails(w http.ResponseWriter, r *http.Request) {
+	hotelIDStr := chi.URLParam(r, "hotelID")
+	hotelID, errConvert := strconv.ParseInt(hotelIDStr, 10, 64)
+	if errConvert != nil {
+		a.logger.Info("Unable to get client hotel offer details, due to bad hotelID parameter", zap.Error(errConvert))
+		httputils.RespondWithCode(w, http.StatusBadRequest)
+		return
+	}
+	offerIDStr := chi.URLParam(r, "offerID")
+	offerID, errConvertOf := strconv.ParseInt(offerIDStr, 10, 64)
+	if errConvertOf != nil {
+		a.logger.Info("Unable to get client hotel offer details, due to bad offerID parameter", zap.Error(errConvertOf))
+		httputils.RespondWithCode(w, http.StatusBadRequest)
+		return
+	}
+	result, err := a.offerService.GetClientHotelOfferDetails(r.Context(), hotelID, offerID)
+	if err != nil {
+		a.logger.Info("Unable to get client hotel offer details, due to internal error", zap.Error(err))
+		httputils.RespondWithCode(w, http.StatusNotFound)
+		return
+	}
+	httputils.WriteJSONResponse(a.logger, w, result)
 }
 
 func (a *api) handlePostOffer(w http.ResponseWriter, r *http.Request) {

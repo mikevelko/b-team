@@ -1367,6 +1367,11 @@
     },
     "/api-client/hotels/{hotelID}/offers": {
       "get": {
+        "security": [
+          {
+            "customTokenSecurityClient": []
+          }
+        ],
         "description": "Returns list of offers according to filter values",
         "operationId": "GET_hotels-hotelID-offers",
         "responses": {
@@ -1404,6 +1409,12 @@
             "type": "integer",
             "in": "query",
             "name": "costMin"
+          },
+          {
+            "$ref": "#/parameters/pageNumber"
+          },
+          {
+            "$ref": "#/parameters/pageSize"
           }
         ]
       },
@@ -1418,6 +1429,11 @@
     },
     "/api-client/hotels/{hotelID}/offers/{offerID}": {
       "get": {
+        "security": [
+          {
+            "customTokenSecurityClient": []
+          }
+        ],
         "description": "Returns detailed information about an offer",
         "operationId": "GET_hotels-hotelID-offers-offerID",
         "responses": {

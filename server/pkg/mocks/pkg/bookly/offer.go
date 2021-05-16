@@ -191,6 +191,36 @@ func (mr *MockOfferServiceMockRecorder) CreateOffer(ctx, hotelID, offer interfac
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateOffer", reflect.TypeOf((*MockOfferService)(nil).CreateOffer), ctx, hotelID, offer)
 }
 
+// GetClientHotelOfferDetails mocks base method.
+func (m *MockOfferService) GetClientHotelOfferDetails(ctx context.Context, hotelID, offerID int64) (*bookly.OfferClientDetails, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetClientHotelOfferDetails", ctx, hotelID, offerID)
+	ret0, _ := ret[0].(*bookly.OfferClientDetails)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetClientHotelOfferDetails indicates an expected call of GetClientHotelOfferDetails.
+func (mr *MockOfferServiceMockRecorder) GetClientHotelOfferDetails(ctx, hotelID, offerID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetClientHotelOfferDetails", reflect.TypeOf((*MockOfferService)(nil).GetClientHotelOfferDetails), ctx, hotelID, offerID)
+}
+
+// GetFilteredHotelOfferClientPreviews mocks base method.
+func (m *MockOfferService) GetFilteredHotelOfferClientPreviews(ctx context.Context, hotelID int64, filter bookly.OfferClientFilter, pageNumber, itemsPerPage int) ([]*bookly.OfferClientPreview, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetFilteredHotelOfferClientPreviews", ctx, hotelID, filter, pageNumber, itemsPerPage)
+	ret0, _ := ret[0].([]*bookly.OfferClientPreview)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetFilteredHotelOfferClientPreviews indicates an expected call of GetFilteredHotelOfferClientPreviews.
+func (mr *MockOfferServiceMockRecorder) GetFilteredHotelOfferClientPreviews(ctx, hotelID, filter, pageNumber, itemsPerPage interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFilteredHotelOfferClientPreviews", reflect.TypeOf((*MockOfferService)(nil).GetFilteredHotelOfferClientPreviews), ctx, hotelID, filter, pageNumber, itemsPerPage)
+}
+
 // GetHotelOfferDetails mocks base method.
 func (m *MockOfferService) GetHotelOfferDetails(ctx context.Context, hotelID, offerID int64) (*bookly.Offer, error) {
 	m.ctrl.T.Helper()
