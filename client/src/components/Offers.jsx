@@ -11,11 +11,11 @@ function Offers(props) {
     let hotelId = props.match.params.hotelId;
     let temp = [{
         "offerID": 5,
-        "offerTitle": 'string',
-        "offerPreviewPicture": null,
+        "offerTitle": 'cozy apartment',
+        "offerPreviewPicture": 'https://images.all-free-download.com/images/graphiclarge/simple_room_picture_167607.jpg',
         "maxGuests": 2,
-        "costPerChild": 2.0,
-        "costPerAdult": 3.4
+        "costPerChild": 10.0,
+        "costPerAdult": 15.0
       }];
 
     useEffect(() => {
@@ -89,6 +89,15 @@ function Offers(props) {
 
 
     const fetchItems = () => {
+        axios.get(`/api-client/hotels/${hotelId}/offers`, { headers: { 'accept': 'application/json', 'x-session-token': window.localStorage.getItem("token") } })
+            .then(response => {
+                setItems(response.data);
+                console.log(response);
+            })
+            .catch(error => {
+                console.error('There was an error!', error);
+            });
+        console.log(items);
 
     }
 
@@ -120,7 +129,7 @@ function Offers(props) {
             </div>
             <div>
                 {
-                    items.map(item =>
+                    temp.map(item =>
                         (<Link key={item.offerID} to={`/hotels/${hotelId}/offers/${item.offerID}`} className="hotel-link"><OffersListItem item={item}></OffersListItem></Link>))
                 }
             </div>

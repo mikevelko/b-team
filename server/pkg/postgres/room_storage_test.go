@@ -84,7 +84,7 @@ func TestRoomStorage_DeleteRoom(t *testing.T) {
 
 	err = storage.DeleteRoom(ctx, room2, 1)
 	require.Error(t, err)
-	assert.ErrorIs(t, err, bookly.ErrRoomNotBelongToHotel)
+	assert.ErrorIs(t, err, bookly.ErrRoomNotOwnedByHotel)
 
 	err = storage.DeleteRoom(ctx, room1, 1)
 	require.NoError(t, err)
@@ -203,6 +203,46 @@ func TestRoomStorage_GetRoom(t *testing.T) {
 	return
 }
 
+func TestRoomStorage_IsRoomBelongToHotel(t *testing.T) {
+	testutils.SetIntegration(t)
+	storage := NewRoomStorage(initDb(t))
+
+	ctx := context.Background()
+	CleanTestRoomStorage(t, storage.connPool, ctx)
+
+	correctRoom1 := bookly.Room{
+		ID:         0,
+		RoomNumber: "12Fa",
+		HotelID:    0,
+	}
+	id, err := storage.CreateRoom(ctx, correctRoom1, 1)
+	require.NoError(t, err)
+	correctRoom2 := bookly.Room{
+		ID:         0,
+		RoomNumber: "13Fa",
+		HotelID:    0,
+	}
+	_, err = storage.CreateRoom(ctx, correctRoom2, 1)
+	require.NoError(t, err)
+	correctRoom3 := bookly.Room{
+		ID:         0,
+		RoomNumber: "14Fa",
+		HotelID:    0,
+	}
+	_, err = storage.CreateRoom(ctx, correctRoom3, 2)
+	require.NoError(t, err)
+
+	res, err := storage.IsRoomOwnedByHotel(ctx, id, 2)
+	require.NoError(t, err)
+	assert.Equal(t, false, res)
+
+	res, err = storage.IsRoomOwnedByHotel(ctx, id, 1)
+	require.NoError(t, err)
+	assert.Equal(t, true, res)
+
+	return
+}
+
 func TestRoomStorage_AddLinkWithRoomAndOffer(t *testing.T) {
 	testutils.SetIntegration(t)
 	storage := NewRoomStorage(initDb(t))
@@ -273,11 +313,11 @@ func TestRoomStorage_OffersRelatedWithRoom(t *testing.T) {
 	err = storage.AddLinkWithRoomAndOffer(ctx, 4, 1)
 	require.NoError(t, err)
 
-	list, err := storage.OffersRelatedWithRoom(ctx, 2)
+	list, err := storage.GetOffersRelatedWithRoom(ctx, 2)
 	require.NoError(t, err)
 	assert.Equal(t, 0, len(list))
 
-	list, err = storage.OffersRelatedWithRoom(ctx, 1)
+	list, err = storage.GetOffersRelatedWithRoom(ctx, 1)
 	require.NoError(t, err)
 	assert.Equal(t, 4, len(list))
 
@@ -300,11 +340,11 @@ func TestRoomStorage_RoomsRelatedWithOffer(t *testing.T) {
 	err = storage.AddLinkWithRoomAndOffer(ctx, 1, 4)
 	require.NoError(t, err)
 
-	list, err := storage.RoomsRelatedWithRoom(ctx, 2)
+	list, err := storage.GetRoomsRelatedWithOffer(ctx, 2)
 	require.NoError(t, err)
 	assert.Equal(t, 0, len(list))
 
-	list, err = storage.RoomsRelatedWithRoom(ctx, 1)
+	list, err = storage.GetRoomsRelatedWithOffer(ctx, 1)
 	require.NoError(t, err)
 	assert.Equal(t, 4, len(list))
 

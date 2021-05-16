@@ -81,3 +81,56 @@ VALUES
     'Budapest',
     'Hungary'
 );
+
+INSERT INTO offers
+(
+    hotel_id,
+    is_active,
+    offer_title,
+    cost_per_child,
+    cost_per_adult,
+    max_guests,
+    description,
+    is_deleted
+)
+VALUES
+(
+    1,
+    true,
+    'Sample offer',
+    20.00,
+    35.50,
+    5,
+    'Sample description',
+    false
+),
+(
+    1,
+    true,
+    'Sample rich offer',
+    500.00,
+    500.50,
+    4,
+    'Sample rich description',
+    false
+),
+(
+    1,
+    true,
+    'Sample big offer',
+    50.00,
+    20.50,
+    40,
+    'Sample rich description',
+    false
+),
+(
+    1,
+    false,
+    'Sample inactive offer',
+    500.00,
+    500.50,
+    4,
+    'If you can see this offer in listing, contact Michal',
+    false
+)
