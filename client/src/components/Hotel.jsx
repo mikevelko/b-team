@@ -115,10 +115,10 @@ function Hotel(props) {
                 <Button variant="contained" color="primary" style={{ fontSize: '20px', maxWidth: '30%', maxHeight: '70px', minWidth: '30%', minHeight: '70px' }}
                     size="large" onClick={CheckOffers}>Check offers</Button>
                 <div className={classes.root}>
-                    <GridList className={classes.gridList} cols={3} cellHeight='auto'>
+                    <GridList className={classes.gridList} cols={3} cellHeight='300'>
                         {tileData.map((tile) => (
                             <GridListTile key={tile.img}>
-                                    <img src={tile.img} alt={tile.title} />
+                                    <img src={tile.img} alt={tile.title}/>
                                 <GridListTileBar
                                     classes={{
                                         root: classes.titleBar,
