@@ -63,6 +63,67 @@ func (os *offerService) GetHotelOfferPreviews(ctx context.Context, hotelID int64
 	return offers[start:end], err
 }
 
+// GetFilteredHotelOfferPreviews handles getting offers for particular hotel filtered by client requirements
+func (os *offerService) GetFilteredHotelOfferClientPreviews(ctx context.Context, hotelID int64, filter bookly.OfferClientFilter, pageNumber int, itemsPerPage int) ([]*bookly.OfferClientPreview, error) {
+	active := true
+	offers, err := os.offerStorage.GetAllOffers(ctx, hotelID, &active)
+	if err != nil {
+		return nil, err
+	}
+	candidates := []*bookly.OfferClientPreview{}
+	// todo: include fromDate and toDate in filter when reservations will be available
+	for i := range offers {
+		if offers[i].MaxGuests < filter.MinGuests {
+			continue
+		}
+		if offers[i].CostPerChild.LessThan(filter.CostMin) || offers[i].CostPerChild.GreaterThan(filter.CostMax) {
+			continue
+		}
+		if offers[i].CostPerAdult.LessThan(filter.CostMin) || offers[i].CostPerAdult.GreaterThan(filter.CostMax) {
+			continue
+		}
+		addedPreview := bookly.OfferClientPreview{
+			OfferTitle:          offers[i].OfferTitle,
+			OfferPreviewPicture: offers[i].OfferPreviewPicture,
+			CostPerChild:        offers[i].CostPerChild,
+			CostPerAdult:        offers[i].CostPerAdult,
+			MaxGuests:           offers[i].MaxGuests,
+		}
+		candidates = append(candidates, &addedPreview)
+	}
+	start, end := paging.GetPageItems(pageNumber, itemsPerPage, len(candidates))
+	return candidates[start:end], err
+}
+
+// GetClientHotelOfferDetails handles getting offer details for particular hotel for client eyes
+func (os *offerService) GetClientHotelOfferDetails(ctx context.Context, hotelID int64, offerID int64) (*bookly.OfferClientDetails, error) {
+	isOwned, errOwner := os.offerStorage.IsOfferOwnedByHotel(ctx, hotelID, offerID)
+	if errOwner != nil {
+		return nil, errOwner
+	}
+	if !isOwned {
+		return nil, bookly.ErrOfferNotOwned
+	}
+	isDeleted, errDeleted := os.offerStorage.IsOfferMarkedAsDeleted(ctx, offerID)
+	if errDeleted != nil {
+		return nil, errDeleted
+	}
+	offer, err := os.offerStorage.GetSpecificOffer(ctx, offerID)
+	if err != nil {
+		return nil, err
+	}
+	result := &bookly.OfferClientDetails{
+		OfferTitle:   offer.OfferTitle,
+		IsActive:     offer.IsActive,
+		IsDeleted:    isDeleted,
+		CostPerChild: offer.CostPerChild,
+		CostPerAdult: offer.CostPerAdult,
+		MaxGuests:    offer.MaxGuests,
+		Description:  offer.Description,
+	}
+	return result, err
+}
+
 // GetHotelOfferDetails handles getting offer details for particular hotel
 func (os *offerService) GetHotelOfferDetails(ctx context.Context, hotelID int64, offerID int64) (*bookly.Offer, error) {
 	isOwned, errOwner := os.offerStorage.IsOfferOwnedByHotel(ctx, hotelID, offerID)
@@ -111,6 +172,13 @@ func (os *offerService) UpdateHotelOffer(ctx context.Context, hotelID int64, off
 	}
 	if isDeleted {
 		return bookly.ErrOfferDeleted
+	}
+	offerOld, errGet := os.offerStorage.GetSpecificOffer(ctx, offerID)
+	if errGet != nil {
+		return errGet
+	}
+	if offer.MaxGuests == 0 {
+		offer.MaxGuests = offerOld.MaxGuests
 	}
 	errValidation := IsCreatedOfferValid(&offer)
 	if errValidation != nil {
