@@ -91,6 +91,7 @@ INSERT INTO offers
     cost_per_adult,
     max_guests,
     description,
+    offer_preview_picture_url,
     is_deleted
 )
 VALUES
@@ -102,6 +103,7 @@ VALUES
     35.50,
     5,
     'Sample description',
+    'qwehasihdl.cop',
     false
 ),
 (
@@ -112,6 +114,7 @@ VALUES
     500.50,
     4,
     'Sample rich description',
+    'qwehasihdl.cop',
     false
 ),
 (
@@ -122,6 +125,7 @@ VALUES
     20.50,
     40,
     'Sample rich description',
+    'qwehasihdl.cop',
     false
 ),
 (
@@ -132,5 +136,6 @@ VALUES
     500.50,
     4,
     'If you can see this offer in listing, contact Michal',
+    'qwehasihdl.cop',
     false
 )

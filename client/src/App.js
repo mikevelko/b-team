@@ -10,6 +10,7 @@ import LoginPage from './components/LoginPage';
 import MyReservations from './components/MyReservations';
 import Hotel from './components/Hotel';
 import Offers from './components/Offers';
+import Offer from './components/Offer';
 
 function App() {
 
@@ -59,6 +60,7 @@ function App() {
         <PrivateRoute authed={token} exact path='/hotels' component={Hotels} />
         <PrivateRoute authed={token} exact path='/hotels/:hotelId' component={Hotel} />
         <PrivateRoute authed={token} exact path='/hotels/:hotelId/offers' component={Offers} />
+        <PrivateRoute authed={token} exact path='/hotels/:hotelId/offers/:offerId' component={Offer} />
         <PrivateRoute authed={token} exact path='/client' component={Client} />
         <PrivateRoute authed={token} exact path='/reservations' component={MyReservations} />
         

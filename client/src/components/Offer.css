@@ -1,0 +1,14 @@
+.offer-container
+{
+    align-items: center;
+    text-align: center;
+    width: 95%;
+    margin: auto;
+    margin-bottom: 50px;
+    margin-top: 50px;
+}
+.offer-container-item
+{
+    display: inline;
+    font-size: 35px;
+}
