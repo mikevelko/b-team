@@ -105,7 +105,7 @@ function MyReservations (){
         return (
             <div>
                 <div className="reservations-container">
-                <h3>My reservations:</h3>
+                
                 {
                     data.map(item =>
                     (<MyReservationsListItem key={item.id} item={item}></MyReservationsListItem>)) 

@@ -46,7 +46,7 @@ function LoginPage(props) {
 
     useEffect(() => {
         SpellCheck();
-        if (props.isUserAuthenticated) {
+        if (props.token) {
             let path = `/home`;
             history.push(path);
         }
