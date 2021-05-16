@@ -548,6 +548,11 @@
     },
     "/api-hotel/offers/{offerID}/rooms": {
       "get": {
+        "security": [
+          {
+            "customTokenSecurityHotel": []
+          }
+        ],
         "description": "Lists all rooms related to the hotel offer",
         "operationId": "GET_offers-offerID-rooms",
         "produces": [
@@ -624,6 +629,11 @@
         ]
       },
       "post": {
+        "security": [
+          {
+            "customTokenSecurityHotel": []
+          }
+        ],
         "description": "Add a room associated with hotel offer",
         "operationId": "POST_offers-offerID-rooms",
         "produces": [
@@ -675,6 +685,11 @@
     },
     "/api-hotel/offers/{offerID}/rooms/{roomID}": {
       "delete": {
+        "security": [
+          {
+            "customTokenSecurityHotel": []
+          }
+        ],
         "description": "Removes room from the offer",
         "operationId": "DELETE_offers-offerID-rooms-roomID",
         "responses": {

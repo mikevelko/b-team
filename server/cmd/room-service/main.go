@@ -34,8 +34,9 @@ func main() {
 		application.AddHealthCheck(postgres.NewHealthConfig(pool))
 
 		roomStorage := postgres.NewRoomStorage(pool)
+		offerStorage := postgres.NewOfferStorage(pool)
 
-		service := newRoomService(roomStorage)
+		service := newRoomService(roomStorage, offerStorage)
 		api := newAPI(application.Logger, service)
 		api.mount(application.Router)
 		return nil

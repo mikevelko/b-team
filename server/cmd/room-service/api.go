@@ -39,6 +39,11 @@ func (a *api) mount(router chi.Router) {
 			r.Post("/", a.handlePostRoom)
 			r.Delete("/{roomID}", a.handleDeleteRoom)
 		})
+		r.With(auth.SessionMiddleware()).Route("/offers/{offerID}/rooms", func(r chi.Router) {
+			r.Get("/", a.handleGetRoomsRelatedWithOffer)
+			r.Post("/", a.handlePostRoomToOffer)
+			r.Delete("/{roomID}", a.handleDeleteRoomFromOffer)
+		})
 	})
 }
 
@@ -127,15 +132,142 @@ func (a *api) handleDeleteRoom(w http.ResponseWriter, r *http.Request) {
 
 	err := a.roomService.DeleteRoom(r.Context(), roomID, session.HotelID)
 	if err != nil {
-		a.logger.Info("Unable to delete offer, due to internal server error", zap.Error(err))
+		a.logger.Info("Unable to delete room, due to internal server error", zap.Error(err))
 		if errors.Is(err, bookly.ErrRoomNotFound) {
 			httputils.RespondWithCode(w, http.StatusNotFound)
-		} else if errors.Is(err, bookly.ErrRoomNotBelongToHotel) {
+		} else if errors.Is(err, bookly.ErrRoomNotOwnedByHotel) {
 			httputils.RespondWithCode(w, http.StatusUnauthorized)
 
-			// todo: Add Error if room is occupy
+			// todo: Add Error if room is occupy by reservation
 		} else {
 			httputils.RespondWithError(w, "Unable to delete room (Service Error)")
+		}
+		return
+	}
+	httputils.RespondWithCode(w, http.StatusOK)
+	return
+}
+
+func (a *api) handleGetRoomsRelatedWithOffer(w http.ResponseWriter, r *http.Request) {
+	session := auth.SessionFromContext(r.Context())
+	if session.HotelID == 0 {
+		a.logger.Info("Unable to get rooms related with offer, since logged person doesnt have assigned hotel", zap.Int64("UserID", session.UserID))
+		httputils.RespondWithError(w, "User is not a manager of any hotel")
+		return
+	}
+
+	offerIDStr := chi.URLParam(r, "offerID")
+	offerID, errConvert := strconv.ParseInt(offerIDStr, 10, 64)
+	if errConvert != nil {
+		a.logger.Info("Unable to get room related with offer, due bad parameter", zap.Error(errConvert))
+		httputils.RespondWithError(w, "Unable to get room related with offer from offer (Conv Error)")
+		return
+	}
+
+	pageNumberStr := r.URL.Query().Get("pageNumber")
+	offersPerPageStr := r.URL.Query().Get("pageSize")
+	roomNumber := r.URL.Query().Get("roomNumber")
+	pageNumber, err := strconv.ParseInt(pageNumberStr, 10, 32)
+	if err != nil {
+		pageNumber = 1
+	}
+	pageSize, err := strconv.ParseInt(offersPerPageStr, 10, 32)
+	if err != nil {
+		pageSize = 10
+	}
+
+	a.logger.Info("Get Rooms From Offer", zap.Int64("pageNumber", pageNumber), zap.Int64("itemsPerPage", pageSize))
+
+	roomsPreviews, err := a.roomService.GetRoomsRelatedWithOffer(r.Context(), offerID, session.HotelID, int(pageNumber), int(pageSize), roomNumber)
+	if err != nil {
+		if errors.Is(err, bookly.ErrOfferNotOwned) {
+			httputils.RespondWithCode(w, http.StatusUnauthorized)
+		} else if errors.Is(err, bookly.ErrRoomNotFound) {
+			httputils.RespondWithCode(w, http.StatusNotFound)
+		} else {
+			httputils.RespondWithError(w, "Unable to get rooms related with offer (Service Error)")
+		}
+		return
+	}
+	httputils.WriteJSONResponse(a.logger, w, roomsPreviews)
+	return
+}
+
+func (a *api) handlePostRoomToOffer(w http.ResponseWriter, r *http.Request) {
+	session := auth.SessionFromContext(r.Context())
+	if session.HotelID == 0 {
+		a.logger.Info("Unable to post room to offer, since logged person doesnt have assigned hotel", zap.Int64("UserID", session.UserID))
+		httputils.RespondWithError(w, "User is not a manager of any hotel")
+		return
+	}
+
+	offerIDStr := chi.URLParam(r, "offerID")
+	offerID, errConvert := strconv.ParseInt(offerIDStr, 10, 64)
+	if errConvert != nil {
+		a.logger.Info("Unable to delete room from offer, due bad parameter", zap.Error(errConvert))
+		httputils.RespondWithError(w, "Unable to delete room from offer (Conv Error)")
+		return
+	}
+
+	if !httputils.IsHeaderTypeValid(w, r, "application/json", "Unable to add room to offer (Header Type Invalid)") {
+		return
+	}
+	decoder := json.NewDecoder(r.Body)
+	var decodedRequest int
+	err := decoder.Decode(&decodedRequest)
+	if err != nil {
+		httputils.RespondWithError(w, "Unable to add room to offer")
+		a.logger.Info("handlePostRoomToOffer: could not decode", zap.Error(err))
+		return
+	}
+
+	err = a.roomService.AddRoomToOffer(r.Context(), offerID, int64(decodedRequest), session.HotelID)
+	if err != nil {
+		a.logger.Info("Unable to add room from offer, due to internal server error", zap.Error(err))
+		if errors.Is(err, bookly.ErrRoomNotOwnedByHotel) || errors.Is(err, bookly.ErrOfferNotOwned) {
+			httputils.RespondWithCode(w, http.StatusUnauthorized)
+		} else if errors.Is(err, bookly.ErrLinkOfferRoomNotFound) {
+			httputils.RespondWithCode(w, http.StatusNotFound)
+		} else {
+			httputils.RespondWithError(w, "Unable to add room from offer (Service Error)")
+		}
+		return
+	}
+	httputils.RespondWithCode(w, http.StatusOK)
+	return
+}
+
+func (a *api) handleDeleteRoomFromOffer(w http.ResponseWriter, r *http.Request) {
+	session := auth.SessionFromContext(r.Context())
+	if session.HotelID == 0 {
+		a.logger.Info("Unable to delete room from offer, since logged person doesnt have assigned hotel", zap.Int64("UserID", session.UserID))
+		httputils.RespondWithError(w, "User is not a manager of any hotel")
+		return
+	}
+	roomIDStr := chi.URLParam(r, "roomID")
+	roomID, errConvert := strconv.ParseInt(roomIDStr, 10, 64)
+	if errConvert != nil {
+		a.logger.Info("Unable to delete room from offer, due bad parameter", zap.Error(errConvert))
+		httputils.RespondWithError(w, "Unable to delete room from offer (Conv Error)")
+		return
+	}
+	offerIDStr := chi.URLParam(r, "offerID")
+	offerID, errConvert := strconv.ParseInt(offerIDStr, 10, 64)
+	if errConvert != nil {
+		a.logger.Info("Unable to delete room from offer, due bad parameter", zap.Error(errConvert))
+		httputils.RespondWithError(w, "Unable to delete room from offer (Conv Error)")
+		return
+	}
+
+	err := a.roomService.DeleteRoomFromOffer(r.Context(), offerID, roomID, session.HotelID)
+	if err != nil {
+		a.logger.Info("Unable to delete room from offer, due to internal server error", zap.Error(err))
+		if errors.Is(err, bookly.ErrRoomNotOwnedByHotel) || errors.Is(err, bookly.ErrOfferNotOwned) {
+			httputils.RespondWithCode(w, http.StatusUnauthorized)
+		} else if errors.Is(err, bookly.ErrLinkOfferRoomNotFound) {
+			httputils.RespondWithCode(w, http.StatusNotFound)
+		} else {
+			httputils.RespondWithError(w, "Unable to delete room from offer (Service Error)")
 		}
 		return
 	}
