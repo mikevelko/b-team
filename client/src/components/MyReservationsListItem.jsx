@@ -57,9 +57,9 @@ function MyReservationListItem(props) {
     return (
         <div className={LastDate > CurrentDate ? "container-green" : "container-blue"}>
             <div className="container-item">
-                <p1>Hotel Name: {props.item.hotelInfoPreview.hotelName}</p1>
+                <p>Hotel Name: {props.item.hotelInfoPreview.hotelName}</p>
                 <p>City: {props.item.hotelInfoPreview.city}</p>
-                <p1>Country: {props.item.hotelInfoPreview.country}</p1>
+                <p>Country: {props.item.hotelInfoPreview.country}</p>
                 <h3>Reservations:</h3>
                 {
                     props.item.offerReservations.reservationsInfo.map(item =>
@@ -67,7 +67,7 @@ function MyReservationListItem(props) {
                 }
             </div>
 
-            {LastDate > CurrentDate ? <Button variant="contained" color="secondary" size="large">Cancel reservation</Button> :
+            {LastDate > CurrentDate ? <Button variant="contained" color="secondary" size="medium">Cancel reservation</Button> :
                 <div>
                     {props.item.offerReservations.offerReviewID === null ?
                         <div>
@@ -82,7 +82,7 @@ function MyReservationListItem(props) {
                                         setNewRating(newValue);
                                     }}></Rating>
                                 <div>
-                                    <Button variant="contained" color="primary" size="large">Add new review</Button>
+                                    <Button variant="contained" color="primary" size="medium">Add new review</Button>
                                 </div>
                             </div>
                         </div>
@@ -99,8 +99,8 @@ function MyReservationListItem(props) {
                                         setNewRating(newValue);
                                     }}></Rating>
                                 <div>
-                                    <Button variant="contained" color="primary" size="large" onClick={ReviewEdit}>{buttonText}</Button>
-                                    <Button variant="contained" color="secondary" size="large">Delete review</Button>
+                                    <Button variant="contained" color="primary" size="medium" onClick={ReviewEdit}>{buttonText}</Button>
+                                    <Button variant="contained" color="secondary" size="medium">Delete review</Button>
                                 </div>
                             </div>
                         </div>}

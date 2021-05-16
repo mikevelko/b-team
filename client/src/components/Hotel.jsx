@@ -8,10 +8,12 @@ import GridListTileBar from '@material-ui/core/GridListTileBar';
 import IconButton from '@material-ui/core/IconButton';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
 import axios from 'axios';
+import { Link, useHistory } from 'react-router-dom';
 
 function Hotel(props) {
     let hotelId = props.match.params.hotelId;
     const [hotel, setHotel] = useState([]);
+    const history = useHistory();
 
 
     useEffect(() => {
@@ -60,7 +62,13 @@ function Hotel(props) {
                 setHotel(response.data);
             })
             .catch(error => {
-                console.error('There was an error!', error);
+                // if hotel not exist then redirect to hotels page
+                if(error.response.status === 404) 
+                {
+                    let path = `/hotels`;
+                    history.push(path);
+                }
+                console.error('There was an error!', error.response);
             });
 
 
@@ -90,6 +98,10 @@ function Hotel(props) {
         },
     }));
 
+    const CheckOffers = () => {
+        let path = `/hotels/${hotelId}/offers`;
+        history.push(path);
+    }
 
 
     const classes = useStyles();
@@ -100,8 +112,8 @@ function Hotel(props) {
                 <p>{hotel.hotelName}</p>
                 <p>{hotel.hotelDesc}</p>
                 <p>{hotel.city}, {hotel.country}</p>
-                <Button variant="contained" color="primary" style={{ fontSize: '42px', maxWidth: '30%', maxHeight: '100px', minWidth: '30%', minHeight: '100px' }}
-                    size="large" >Check offers</Button>
+                <Button variant="contained" color="primary" style={{ fontSize: '20px', maxWidth: '30%', maxHeight: '70px', minWidth: '30%', minHeight: '70px' }}
+                    size="large" onClick={CheckOffers}>Check offers</Button>
                 <div className={classes.root}>
                     <GridList className={classes.gridList} cols={3} cellHeight='auto'>
                         {tileData.map((tile) => (

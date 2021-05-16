@@ -22,7 +22,7 @@ function Nav(props) {
                 </Link>
             </div>
             <div className="main-navbar-right">
-                {!props.isUserAuthenticated ? "" :
+                {!props.token ? "" :
                     <Button variant="contained" color="secondary" size="large" onClick={routeChange}>Logout</Button>
                 }
             </div>

@@ -28,7 +28,7 @@ function Client() {
                 console.log(response.data.name);
             })
             .catch(error => {
-                console.error('There was an error!', error);
+                console.error('There was an error!', error.response);
             });
 
 
