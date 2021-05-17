@@ -89,7 +89,7 @@ function Offers(props) {
 
 
     const fetchItems = () => {
-        axios.get(`/api-client/hotels/${hotelId}/offers`, { headers: { 'accept': 'application/json', 'x-session-token': window.localStorage.getItem("token") } })
+        axios.get(`/api-client/hotels/${hotelId}/offers?pageSize=10`, { headers: { 'accept': 'application/json', 'x-session-token': window.localStorage.getItem("token") } })
             .then(response => {
                 setItems(response.data);
                 console.log(response);
@@ -99,6 +99,30 @@ function Offers(props) {
             });
         console.log(items);
 
+    }
+
+    const Search = () => {
+        let url = "";
+        if(guests!== "") url += "&minGuests="+guests;
+        if(maxCost != "") url += "&costMax="+maxCost; 
+        if(minCost != "") url += "&costMin="+minCost; 
+
+        const GET_URL = `/api-client/hotels/${hotelId}/offers?pageSize=10` + url;
+        console.log(GET_URL);
+        console.log(GET_URL);
+        const headers = {
+            'accept': 'application/json',
+            'x-session-token': window.localStorage.getItem("token")
+        };
+        axios.get(GET_URL , { headers: { 'accept': 'application/json', 'x-session-token': window.localStorage.getItem("token") } })
+            .then(response => {
+                setItems(response.data);
+                console.log(response);
+            })
+            .catch(error => {
+                console.error('There was an error!', error);
+            });
+        console.log(items);
     }
 
 
@@ -123,13 +147,13 @@ function Offers(props) {
                         <TextField id="outlined-basic" label="Max cost" variant="outlined" type="number" InputProps={{ inputProps: { min: 0, max: 1000000 } }} size="small" value={maxCost} onChange={handleChangeMaxCost} />
                     </li>
                     <li className="ul-li-filters">
-                        <Button variant="contained" color="primary" size="large">Search</Button>
+                        <Button variant="contained" color="primary" size="large" onClick={Search}>Search</Button>
                     </li>
                 </ul>
             </div>
             <div>
                 {
-                    temp.map(item =>
+                    items.map(item =>
                         (<Link key={item.offerID} to={`/hotels/${hotelId}/offers/${item.offerID}`} className="hotel-link"><OffersListItem item={item}></OffersListItem></Link>))
                 }
             </div>
