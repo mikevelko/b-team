@@ -83,6 +83,7 @@ func (os *offerService) GetFilteredHotelOfferClientPreviews(ctx context.Context,
 			continue
 		}
 		addedPreview := bookly.OfferClientPreview{
+			OfferID:             offers[i].ID,
 			OfferTitle:          offers[i].OfferTitle,
 			OfferPreviewPicture: offers[i].OfferPreviewPicture,
 			CostPerChild:        offers[i].CostPerChild,
