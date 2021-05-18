@@ -10,7 +10,7 @@ import (
 	"github.com/pw-software-engineering/b-team/server/pkg/auth"
 	"github.com/pw-software-engineering/b-team/server/pkg/bookly"
 
-	"github.com/pw-software-engineering/b-team/server/pkg/httputils"
+	"github.com/pw-software-engineering/b-team/server/pkg/httpapi"
 	"github.com/stretchr/testify/require"
 )
 
@@ -40,9 +40,9 @@ func JSONRequest(t *testing.T, method string, url string, marshallable interface
 	return req
 }
 
-// ErrRespFromBody tries to parse response body to httputils.ErrorResponse
-func ErrRespFromBody(t *testing.T, body io.Reader) httputils.ErrorResponse {
-	var resp httputils.ErrorResponse
+// ErrRespFromBody tries to parse response body to httpapi.ErrorResponse
+func ErrRespFromBody(t *testing.T, body io.Reader) httpapi.ErrorResponse {
+	var resp httpapi.ErrorResponse
 	require.NoError(t, json.NewDecoder(body).Decode(&resp))
 	return resp
 }

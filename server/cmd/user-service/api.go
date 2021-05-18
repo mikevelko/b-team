@@ -8,7 +8,7 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/pw-software-engineering/b-team/server/pkg/bookly"
-	"github.com/pw-software-engineering/b-team/server/pkg/httputils"
+	"github.com/pw-software-engineering/b-team/server/pkg/httpapi"
 	"go.uber.org/zap"
 )
 
@@ -41,20 +41,20 @@ func (a *api) handleGetUser(w http.ResponseWriter, r *http.Request) {
 
 	user, err := a.userService.GetUser(r.Context(), sesion.UserID)
 	if err != nil {
-		httputils.RespondWithError(w, "Unable to get user (Service error)")
+		httpapi.RespondWithError(w, "Unable to get user (Service error)")
 		return
 	}
 
 	userResponse := GetUserResponseFromUser(user)
 
-	httputils.WriteJSONResponse(a.logger, w, userResponse)
+	httpapi.WriteJSONResponse(a.logger, w, userResponse)
 	return
 }
 
 func (a *api) handlePatchUser(w http.ResponseWriter, r *http.Request) {
 	sesion := auth.SessionFromContext(r.Context())
 
-	if !httputils.IsHeaderTypeValid(w, r, "application/json", "Unable to update user info (Wrong header)") {
+	if !httpapi.IsHeaderTypeValid(w, r, "application/json", "Unable to update user info (Wrong header)") {
 		return
 	}
 
@@ -62,7 +62,7 @@ func (a *api) handlePatchUser(w http.ResponseWriter, r *http.Request) {
 	var decodedRequest PatchUserRequest
 	err := decoder.Decode(&decodedRequest)
 	if err != nil {
-		httputils.RespondWithError(w, "Unable to update user info (Decode error)")
+		httpapi.RespondWithError(w, "Unable to update user info (Decode error)")
 		return
 	}
 
@@ -74,19 +74,19 @@ func (a *api) handlePatchUser(w http.ResponseWriter, r *http.Request) {
 			UserNameError: ErrorResponse{Message: err.Error()},
 		}
 		// todo: StatusBadRequest could be change in spec !!!!!!!!
-		errW := httputils.JSONRespondError(w, pathUserRespond, http.StatusBadRequest)
+		errW := httpapi.JSONRespondError(w, pathUserRespond, http.StatusBadRequest)
 		if errW != nil {
-			httputils.RespondWithError(w, "Unable to update user info (JSONErrorRespond error)")
+			httpapi.RespondWithError(w, "Unable to update user info (JSONErrorRespond error)")
 			return
 		}
 		return
 	}
-	httputils.RespondWithCode(w, http.StatusOK)
+	httpapi.RespondWithCode(w, http.StatusOK)
 	return
 }
 
 func (a *api) handlePostUserVerify(w http.ResponseWriter, r *http.Request) {
-	if !httputils.IsHeaderTypeValid(w, r, "application/json", "Unable to login") {
+	if !httpapi.IsHeaderTypeValid(w, r, "application/json", "Unable to login") {
 		return
 	}
 
@@ -94,25 +94,25 @@ func (a *api) handlePostUserVerify(w http.ResponseWriter, r *http.Request) {
 	var decodedRequest PostUserRequest
 	err := decoder.Decode(&decodedRequest)
 	if err != nil {
-		httputils.RespondWithError(w, "Unable to login")
+		httpapi.RespondWithError(w, "Unable to login")
 		return
 	}
 
 	check, token, err := a.userService.UserVerify(r.Context(), decodedRequest.Login, decodedRequest.Password)
 	if err != nil {
-		httputils.RespondWithError(w, "Unable to login")
+		httpapi.RespondWithError(w, "Unable to login")
 		return
 	}
 
 	if check {
-		httputils.WriteJSONResponse(a.logger, w, token)
+		httpapi.WriteJSONResponse(a.logger, w, token)
 		return
 	}
 	// todo: Add better respond with user exists or no
 	respond := PostUserErrorResponse{Desc: "This user might not exists or you write wrong email and password"}
-	err = httputils.JSONRespondError(w, respond, http.StatusUnauthorized)
+	err = httpapi.JSONRespondError(w, respond, http.StatusUnauthorized)
 	if err != nil {
-		httputils.RespondWithError(w, "Unable to login")
+		httpapi.RespondWithError(w, "Unable to login")
 		return
 	}
 	return

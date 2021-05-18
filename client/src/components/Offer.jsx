@@ -20,21 +20,34 @@ function Offer(props) {
     const [reservationPossible, setReservationPossible] = useState(true);
 
     const handleChangeAdults = (event) => {
+        if((parseInt(event.target.value) + parseInt(children)) > offer.maxGuests) setReservationPossible(false);
+        else setReservationPossible(true);
         if(event.target.value < 0)
         {
             setAdults(0);
+            if(parseInt(children) > offer.maxGuests) setReservationPossible(false);
+            else setReservationPossible(true);
             return;
         }
+        if(event.target.value === "" || children === "") setReservationPossible(false);
         setAdults(event.target.value);
     };
     const handleChangeChildren = (event) => {
+        if((parseInt(event.target.value) + parseInt(adults)) > offer.maxGuests) setReservationPossible(false);
+        else setReservationPossible(true);
         if(event.target.value < 0)
         {
             setChildren(0);
+            if(parseInt(adults) > offer.maxGuests) setReservationPossible(false);
+            else setReservationPossible(true);
             return;
         }
+        if(event.target.value === "" || adults === "") setReservationPossible(false);
         setChildren(event.target.value);
+
     };
+
+
 
 
     useEffect(() => {
@@ -155,7 +168,7 @@ function Offer(props) {
                     <p></p>
                     <TextField id="outlined-basic" label="Children" variant="outlined" type="number" InputProps={{ inputProps: { min: 1, max: 10 } }} size="small" value={children} onChange={handleChangeChildren} />
                     <p>Total: {offer.costPerAdult * adults + offer.costPerChild * children}€ per night</p>
-                    <Button variant="contained" color="primary" size="large">Reserve</Button>
+                    <Button variant="contained" color="primary" size="large" disabled={!reservationPossible}>Reserve</Button>
                 </div>
             </div>
 

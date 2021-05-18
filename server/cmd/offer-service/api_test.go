@@ -24,7 +24,7 @@ import (
 
 // this is simpler way of doing these tests, but it does not include routing
 func Test_api_handlePostOfferSimple(t *testing.T) {
-	exampleRequest := CreateOfferRequest{
+	exampleRequest := createOfferRequest{
 		IsActive:            false,
 		OfferTitle:          "dfsdfs",
 		MaxGuests:           2,

@@ -46,6 +46,7 @@ type OfferClientFilter struct {
 
 // OfferClientPreview holds previews for offers client searched for
 type OfferClientPreview struct {
+	OfferID      int64           `json:"offerID"`
 	OfferTitle   string          `json:"OfferTitle"`
 	CostPerChild decimal.Decimal `json:"costPerChild"`
 	CostPerAdult decimal.Decimal `json:"costPerAdult"`
