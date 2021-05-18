@@ -1,0 +1,1031 @@
+{
+	"info": {
+		"_postman_id": "cb640a49-fefe-4587-a93c-89c70e1bef15",
+		"name": "api-tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "hotel-api",
+			"item": [
+				{
+					"name": "hotel",
+					"item": [
+						{
+							"name": "UnauthorizedRequest",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is not 200\", function () {",
+											"    pm.response.to.not.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"followRedirects": false
+							},
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "value",
+											"value": "wrong-value",
+											"type": "string"
+										},
+										{
+											"key": "key",
+											"value": "x-hotel-token",
+											"type": "string"
+										},
+										{
+											"key": "in",
+											"value": "header",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api-hotel/hotelInfo",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api-hotel",
+										"hotelInfo"
+									]
+								},
+								"description": "Show info about hotel"
+							},
+							"response": []
+						},
+						{
+							"name": "GetHotelInfo",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"let jsonData = pm.response.json();",
+											"",
+											"pm.collectionVariables.set(\"hotel_name\", jsonData.hotelName);",
+											"pm.collectionVariables.set(\"hotel_country\", jsonData.country);",
+											"pm.collectionVariables.set(\"hotel_city\", jsonData.city);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api-hotel/hotelInfo",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api-hotel",
+										"hotelInfo"
+									]
+								},
+								"description": "Show info about hotel"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "offers",
+					"item": [
+						{
+							"name": "CreateAnOffer",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"let jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Response contains offer ID\", function () {",
+											"    pm.expect(jsonData).to.have.property(\"offerID\");",
+											"});",
+											"",
+											"pm.collectionVariables.set(\"offer_id\", jsonData.offerID);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"isActive\": true,\n    \"offerTitle\": \"test-offer\",\n    \"costPerChild\": 123.45,\n    \"costPerAdult\": 432.10,\n    \"maxGuests\": 123,\n    \"description\": \"test-offer-description\",\n    \"offerPreviewPicture\": \"commodo cupidatat\",\n    \"pictures\": [],\n    \"rooms\": [\n        \"10a\",\n        \"12b\",\n        \"13a\"\n    ]\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api-hotel/offers",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api-hotel",
+										"offers"
+									]
+								},
+								"description": "Add new offer"
+							},
+							"response": []
+						},
+						{
+							"name": "GetOffers",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"there is added offer in offer list\", function () {",
+											"    let jsonData = pm.response.json();",
+											"    const offerID = pm.collectionVariables.get(\"offer_id\");",
+											"    let foundOffer = jsonData.offerPreview.find(o=> o.offerID === offerID)",
+											"    pm.expect(foundOffer.offerID).to.equal(offerID)",
+											"    pm.expect(foundOffer.offerTitle).to.equal(\"test-offer\")",
+											"    pm.expect(foundOffer.isActive).to.equal(true)",
+											"    pm.expect(foundOffer.costPerChild).to.equal(432.1)",
+											"    pm.expect(foundOffer.costPerAdult).to.equal(123.45)",
+											"    pm.expect(foundOffer.maxGuests).to.equal(123)",
+											"    //todo: add testing for room values when its finished",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api-hotel/offers?isActive=true&pageNumber=1&pageSize=1000",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api-hotel",
+										"offers"
+									],
+									"query": [
+										{
+											"key": "isActive",
+											"value": "true",
+											"description": "Optional parameter deciding what type of offers should be returned |"
+										},
+										{
+											"key": "pageNumber",
+											"value": "1",
+											"description": "Number of page to show results"
+										},
+										{
+											"key": "pageSize",
+											"value": "1000",
+											"description": "Number of show results"
+										}
+									]
+								},
+								"description": "List all offers related to hotel"
+							},
+							"response": []
+						},
+						{
+							"name": "GET offers-offer ID",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"offer retrieved has same values as the one added\", function () {",
+											"    let foundOffer = pm.response.json();",
+											"    pm.expect(foundOffer.isActive).to.equal(true)",
+											"    pm.expect(foundOffer.costPerChild).to.equal(432.1)",
+											"    pm.expect(foundOffer.costPerAdult).to.equal(123.45)",
+											"    pm.expect(foundOffer.maxGuests).to.equal(123)",
+											"    pm.expect(foundOffer.description).to.equal(\"test-offer-description\")",
+											"    //todo add and check rooms and pictures",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api-hotel/offers/:offerID",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api-hotel",
+										"offers",
+										":offerID"
+									],
+									"variable": [
+										{
+											"key": "offerID",
+											"value": "{{offer_id}}",
+											"description": "(Required) "
+										}
+									]
+								},
+								"description": "Gets information related to a specific offer with ID equal to offerID"
+							},
+							"response": []
+						}
+					]
+				}
+			],
+			"auth": {
+				"type": "apikey",
+				"apikey": [
+					{
+						"key": "value",
+						"value": "{{hotel_token}}",
+						"type": "string"
+					},
+					{
+						"key": "key",
+						"value": "x-hotel-token",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "client-api",
+			"item": [
+				{
+					"name": "login",
+					"item": [
+						{
+							"name": "IncorrectClientLoginForbidden",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status test\", ()=>{",
+											"    pm.expect(pm.response.code).to.equal(401)",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"login\": \"incorrect-login\",\n    \"password\": \"incorrect-password\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api-client/client/login",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api-client",
+										"client",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "CorrectLoginReturnsToken",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Correct JSON response \", ()=>{",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.json;",
+											"})",
+											"",
+											"const jsonEscaped = JSON.stringify(pm.response.json())",
+											"pm.collectionVariables.set(\"session_token\",jsonEscaped);",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"login\": \"{{client_login}}\",\n    \"password\": \"{{client_password}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api-client/client/login/",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api-client",
+										"client",
+										"login",
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "client-data",
+					"item": [
+						{
+							"name": "retrieveClientInformation",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"required properties are set\", function () {",
+											"    const jsonData = pm.response.json();",
+											"    pm.expect(jsonData).to.have.property('name');",
+											"    pm.expect(jsonData).to.have.property('surname');",
+											"    pm.expect(jsonData).to.have.property('username');",
+											"    pm.expect(jsonData).to.have.property('email');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "value",
+											"value": "{{session_token}}",
+											"type": "string"
+										},
+										{
+											"key": "key",
+											"value": "x-session-token",
+											"type": "string"
+										},
+										{
+											"key": "in",
+											"value": "header",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api-client/client",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api-client",
+										"client"
+									]
+								},
+								"description": "Get logged in client information."
+							},
+							"response": []
+						},
+						{
+							"name": "retrieveClientInformation bad credentials",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 405\", function () {",
+											"    pm.response.to.have.status(405);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "value",
+											"value": "{\"ID\": 132455666454, \"CreatedAt\":\"2020-01-01\"}",
+											"type": "string"
+										},
+										{
+											"key": "key",
+											"value": "x-session-token",
+											"type": "string"
+										},
+										{
+											"key": "in",
+											"value": "header",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api-client/client",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api-client",
+										"client"
+									]
+								},
+								"description": "Get logged in client information."
+							},
+							"response": []
+						},
+						{
+							"name": "updateClientInfo",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disabledSystemHeaders": {}
+							},
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"username\": \"client\",\n  \"email\": \"new-email@domain.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api-client/client",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api-client",
+										"client"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "retrieveClientInformation Copy",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"",
+											"pm.test(\"Updated user values\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.email).to.eql(\"new-email@domain.com\");",
+											"    pm.expect(jsonData.username).to.eql(\"client\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "value",
+											"value": "{{session_token}}",
+											"type": "string"
+										},
+										{
+											"key": "key",
+											"value": "x-session-token",
+											"type": "string"
+										},
+										{
+											"key": "in",
+											"value": "header",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api-client/client",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api-client",
+										"client"
+									]
+								},
+								"description": "Get logged in client information."
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "hotel",
+					"item": [
+						{
+							"name": "getListOfAllHotels",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"let jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Response is non-empty array\", function () {",
+											"    pm.expect(jsonData).to.be.an('Array');",
+											"    pm.expect(jsonData.length).to.be.above(0);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api-client/hotels",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api-client",
+										"hotels"
+									],
+									"query": [
+										{
+											"key": "country",
+											"value": "aute in laborum",
+											"disabled": true
+										},
+										{
+											"key": "city",
+											"value": "aute in laborum",
+											"disabled": true
+										},
+										{
+											"key": "hotelName",
+											"value": "aute in laborum",
+											"disabled": true
+										}
+									]
+								},
+								"description": "Returns list of hotels according to filter values"
+							},
+							"response": []
+						},
+						{
+							"name": "getHotelsByCountry",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"let jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Response is non-empty array\", function () {",
+											"    pm.expect(jsonData).to.be.an('Array');",
+											"    pm.expect(jsonData.length).to.be.above(0);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api-client/hotels?country={{hotel_country}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api-client",
+										"hotels"
+									],
+									"query": [
+										{
+											"key": "country",
+											"value": "{{hotel_country}}"
+										},
+										{
+											"key": "city",
+											"value": "aute in laborum",
+											"disabled": true
+										},
+										{
+											"key": "hotelName",
+											"value": "aute in laborum",
+											"disabled": true
+										}
+									]
+								},
+								"description": "Returns list of hotels according to filter values"
+							},
+							"response": []
+						},
+						{
+							"name": "getHotelsByCity",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"let jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Response is non-empty array\", function () {",
+											"    pm.expect(jsonData).to.be.an('Array');",
+											"    pm.expect(jsonData.length).to.be.above(0);",
+											"});",
+											"",
+											"",
+											"const jsonEscaped = JSON.stringify(jsonData);",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api-client/hotels?city={{hotel_city}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api-client",
+										"hotels"
+									],
+									"query": [
+										{
+											"key": "country",
+											"value": "{{hotel_country}}",
+											"disabled": true
+										},
+										{
+											"key": "city",
+											"value": "{{hotel_city}}"
+										},
+										{
+											"key": "hotelName",
+											"value": "aute in laborum",
+											"disabled": true
+										}
+									]
+								},
+								"description": "Returns list of hotels according to filter values"
+							},
+							"response": []
+						},
+						{
+							"name": "getHotelsByName",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"let jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Response is non-empty array\", function () {",
+											"    pm.expect(jsonData).to.be.an('Array');",
+											"    pm.expect(jsonData.length).to.be.above(0);",
+											"});",
+											"",
+											"",
+											"const jsonEscaped = JSON.stringify(jsonData);",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api-client/hotels?hotelName={{hotel_name}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api-client",
+										"hotels"
+									],
+									"query": [
+										{
+											"key": "country",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "city",
+											"value": "aute in laborum",
+											"disabled": true
+										},
+										{
+											"key": "hotelName",
+											"value": "{{hotel_name}}"
+										}
+									]
+								},
+								"description": "Returns list of hotels according to filter values"
+							},
+							"response": []
+						},
+						{
+							"name": "singleHotelByID",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"hotel data is the same as in the one from list, with additional description\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.hotelName).to.eql(pm.collectionVariables.get(\"hotel_name\"));",
+											"    pm.expect(jsonData.city).to.eql(pm.collectionVariables.get(\"hotel_city\"));",
+											"    pm.expect(jsonData.country).to.eql(pm.collectionVariables.get(\"hotel_country\"));",
+											"    pm.expect(jsonData.hotelDesc).to.not.empty;",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api-client/hotels/:hotelID",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api-client",
+										"hotels",
+										":hotelID"
+									],
+									"variable": [
+										{
+											"key": "hotelID",
+											"value": "{{hotel_id}}",
+											"description": "(Required) "
+										}
+									]
+								},
+								"description": "Gets detailed information about a hotel"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "offers",
+					"item": []
+				}
+			],
+			"auth": {
+				"type": "apikey",
+				"apikey": [
+					{
+						"key": "value",
+						"value": "{{session_token}}",
+						"type": "string"
+					},
+					{
+						"key": "key",
+						"value": "x-session-token",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "apikey",
+		"apikey": [
+			{
+				"key": "value",
+				"value": "{{session_token}}",
+				"type": "string"
+			},
+			{
+				"key": "key",
+				"value": "x-session-token",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "offer_id",
+			"value": "CREATE OFFER IN HOTEL"
+		},
+		{
+			"key": "hotel_token",
+			"value": "{  \"id\": 99999999,\"createdAt\": \"2021-05-11T18:21:50Z\"}"
+		},
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080"
+		},
+		{
+			"key": "client_login",
+			"value": "client"
+		},
+		{
+			"key": "client_password",
+			"value": "client"
+		},
+		{
+			"key": "session_token",
+			"value": "LOG IN TO GET"
+		},
+		{
+			"key": "hotel_id",
+			"value": "99999999"
+		},
+		{
+			"key": "hotel_name",
+			"value": "GET HOTELS TO SET"
+		},
+		{
+			"key": "hotel_country",
+			"value": "GET HOTELS TO SET"
+		},
+		{
+			"key": "hotel_city",
+			"value": "GET HOTELS TO SET"
+		}
+	]
+}

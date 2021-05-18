@@ -5,13 +5,15 @@ on:
     branches: [ main ]
     paths:
       - 'server/**'
+      - 'api-tests/**'
   pull_request:
     branches: [ main ]
     paths:
       - 'server/**'
+      - 'api-tests/**'
 
 jobs:
-  builds:
+  test:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -29,29 +31,48 @@ jobs:
         skip-go-installation: true
         skip-pkg-cache: true
 
-    - name: Build
-      run: go build -v ./...
-      working-directory: ./server
-
     - name: setup-db
       run: docker-compose up -d postgres init-postgres
 
-    - name: Test
+    - name: UnitTest
       run: go test -v -covermode=count -coverprofile=coverage.out ./...
       working-directory: ./server
 
-#    - name: gcov2lcov-action
-#      uses: jandelgado/gcov2lcov-action@v1.0.8
-#      with:
-#        infile: server/coverage.out
-#        outfile: server/coverage.lcov
-#        version: v1.0.8
-#
-#    - name: coverage-report
-#      uses: romeovs/lcov-reporter-action@v0.2.16
-#      with:
-#        github-token: ${{ secrets.GITHUB_TOKEN }}
-#        lcov-file: ./server/coverage.lcov
+    - name: PrepareIntegrationTests
+      run: docker-compose up -d init-postgres auth-service hotel-service offer-service room-service user-service api-gateway
+
+    - name: RunIntegrationTest
+      uses: matt-ball/newman-action@master
+      with:
+        collection: api-tests/api-tests.postman_collection.json
+
+  #    - name: gcov2lcov-action
+  #      uses: jandelgado/gcov2lcov-action@v1.0.8
+  #      with:
+  #        infile: server/coverage.out
+  #        outfile: server/coverage.lcov
+  #        version: v1.0.8
+  #
+  #    - name: coverage-report
+  #      uses: romeovs/lcov-reporter-action@v0.2.16
+  #      with:
+  #        github-token: ${{ secrets.GITHUB_TOKEN }}
+  #        lcov-file: ./server/coverage.lcov
+
+
+  build:
+    runs-on: ubuntu-latest
+    needs: [test]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.16.2
+      - name: Build
+        run: go build -v ./...
+        working-directory: ./server
+
 
 
 
