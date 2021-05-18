@@ -18,8 +18,6 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      ACR_URL: ${{ env.ACR_URL }}
     steps:
     - uses: actions/checkout@v2
     - name: Login to ACR
@@ -29,5 +27,7 @@ jobs:
         username: ${{ secrets.ACR_USER_ID }}
         password: ${{ secrets.ACR_USER_PASSWORD }}
     - name: Build and push server apps
+      env:
+        REGISTRY_URL: ${{ env.ACR_URL }}
       run: ./deploy/push-server-images.sh
 
