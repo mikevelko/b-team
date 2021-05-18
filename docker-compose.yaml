@@ -1,3 +1,4 @@
+version: "3.7"
 services:
   hotel:
     container_name: hotel
@@ -55,9 +56,7 @@ services:
       PGDATABASE: bookly
     networks:
       server-vpn:
-    depends_on:
-      postgres:
-        condition: service_healthy
+
 
   offer-service:
     container_name: offer-service
