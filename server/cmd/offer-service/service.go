@@ -16,7 +16,7 @@ func newOfferService(storage bookly.OfferStorage) *offerService {
 	return &offerService{offerStorage: storage}
 }
 
-// IsCreatedOfferValid validates CreateOfferRequest and either returns nil or error with description of wrong parameter
+// IsCreatedOfferValid validates createOfferRequest and either returns nil or error with description of wrong parameter
 func IsCreatedOfferValid(offer *bookly.Offer) (err error) {
 	// cost per adult and per child should not be negative
 	if offer.CostPerChild.IsNegative() {

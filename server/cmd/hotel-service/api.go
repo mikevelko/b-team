@@ -8,7 +8,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/pw-software-engineering/b-team/server/pkg/auth"
 	"github.com/pw-software-engineering/b-team/server/pkg/bookly"
-	"github.com/pw-software-engineering/b-team/server/pkg/httputils"
+	"github.com/pw-software-engineering/b-team/server/pkg/httpapi"
 	"go.uber.org/zap"
 )
 
@@ -50,10 +50,10 @@ func (a *api) handleGetHotelPreviews(w http.ResponseWriter, r *http.Request) {
 	hotelPreviews, err := a.hotelService.GetHotelPreviews(r.Context(), decodedFilter)
 	if err != nil {
 		a.logger.Info("Unable to get hotel previews, due to internal error", zap.Error(err))
-		httputils.RespondWithError(w, "Unable to get hotel previews")
+		httpapi.RespondWithError(w, "Unable to get hotel previews")
 		return
 	}
-	httputils.WriteJSONResponse(a.logger, w, hotelPreviews)
+	httpapi.WriteJSONResponse(a.logger, w, hotelPreviews)
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -62,16 +62,16 @@ func (a *api) handleGetHotelDetails(w http.ResponseWriter, r *http.Request) {
 	hotelID, errConvert := strconv.ParseInt(hotelIDStr, 10, 64)
 	if errConvert != nil {
 		a.logger.Info("Unable to get hotel details, due bad parameter", zap.Error(errConvert))
-		httputils.RespondWithCode(w, http.StatusNotFound)
+		httpapi.RespondWithCode(w, http.StatusNotFound)
 		return
 	}
 	hotel, err := a.hotelService.GetHotelDetails(r.Context(), hotelID)
 	if err != nil {
 		a.logger.Info("Unable to get hotel details, due to internal error", zap.Error(err))
-		httputils.RespondWithCode(w, http.StatusNotFound)
+		httpapi.RespondWithCode(w, http.StatusNotFound)
 		return
 	}
-	httputils.WriteJSONResponse(a.logger, w, hotel)
+	httpapi.WriteJSONResponse(a.logger, w, hotel)
 }
 
 func (a *api) handleGetManagerHotelDetails(w http.ResponseWriter, r *http.Request) {
@@ -79,16 +79,16 @@ func (a *api) handleGetManagerHotelDetails(w http.ResponseWriter, r *http.Reques
 	// todo: add role checking for hotel workers
 	if session.HotelID == 0 {
 		a.logger.Info("Unable to get manager hotel details, since logged person doesnt have assigned hotel", zap.Int64("UserID", session.UserID))
-		httputils.RespondWithError(w, "User is not a manager of any hotel")
+		httpapi.RespondWithError(w, "User is not a manager of any hotel")
 		return
 	}
 	hotel, err := a.hotelService.GetHotelDetails(r.Context(), session.HotelID)
 	if err != nil {
 		a.logger.Info("Unable to get hotel details, due to internal error", zap.Error(err))
-		httputils.RespondWithError(w, "Could not get hotel details")
+		httpapi.RespondWithError(w, "Could not get hotel details")
 		return
 	}
-	httputils.WriteJSONResponse(a.logger, w, hotel)
+	httpapi.WriteJSONResponse(a.logger, w, hotel)
 }
 
 func (a *api) handlePatchManagerHotelDetails(w http.ResponseWriter, r *http.Request) {
@@ -96,18 +96,18 @@ func (a *api) handlePatchManagerHotelDetails(w http.ResponseWriter, r *http.Requ
 	// todo: add role checking for hotel workers
 	if session.HotelID == 0 {
 		a.logger.Info("Unable to get manager hotel details, since logged person doesnt have assigned hotel", zap.Int64("UserID", session.UserID))
-		httputils.RespondWithError(w, "User is not a manager of any hotel")
+		httpapi.RespondWithError(w, "User is not a manager of any hotel")
 		return
 	}
 
-	if !httputils.IsHeaderTypeValid(w, r, "application/json", "Unable to update hotel details") {
+	if !httpapi.IsHeaderTypeValid(w, r, "application/json", "Unable to update hotel details") {
 		return
 	}
 	decoder := json.NewDecoder(r.Body)
 	var request HotelPatchRequest
 	errDecode := decoder.Decode(&request)
 	if errDecode != nil {
-		httputils.RespondWithError(w, "Unable to update hotel details")
+		httpapi.RespondWithError(w, "Unable to update hotel details")
 		a.logger.Info("handlePatchManagerHotelDetails: could not decode", zap.Error(errDecode))
 		return
 	}
@@ -122,11 +122,11 @@ func (a *api) handlePatchManagerHotelDetails(w http.ResponseWriter, r *http.Requ
 	if err != nil {
 		if err == bookly.ErrEmptyHotelName {
 			a.logger.Info("Unable to get update hotel details, due to bad request", zap.Error(err))
-			httputils.RespondWithError(w, "Could not update hotel details: hotel name is empty")
+			httpapi.RespondWithError(w, "Could not update hotel details: hotel name is empty")
 			return
 		}
-		httputils.RespondWithError(w, "Unable to update hotel details")
+		httpapi.RespondWithError(w, "Unable to update hotel details")
 		return
 	}
-	httputils.RespondWithCode(w, http.StatusOK)
+	httpapi.RespondWithCode(w, http.StatusOK)
 }

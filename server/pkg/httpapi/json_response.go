@@ -1,4 +1,4 @@
-package httputils
+package httpapi
 
 import (
 	"encoding/json"

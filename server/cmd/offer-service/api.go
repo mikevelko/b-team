@@ -6,14 +6,14 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/pw-software-engineering/b-team/server/pkg/parseutils"
+	"github.com/pw-software-engineering/b-team/server/pkg/parse"
 	"github.com/shopspring/decimal"
 
 	"github.com/pw-software-engineering/b-team/server/pkg/auth"
 
 	"github.com/go-chi/chi"
 	"github.com/pw-software-engineering/b-team/server/pkg/bookly"
-	"github.com/pw-software-engineering/b-team/server/pkg/httputils"
+	"github.com/pw-software-engineering/b-team/server/pkg/httpapi"
 	"go.uber.org/zap"
 )
 
@@ -51,28 +51,28 @@ func (a *api) mount(router chi.Router) {
 
 func (a *api) handleGetClientHotelOffers(w http.ResponseWriter, r *http.Request) {
 	filter := bookly.OfferClientFilter{}
-	filter.CostMin = parseutils.ParseDecimalWithDefault(r.URL.Query().Get("costMin"), decimal.NewFromInt(0))
-	filter.CostMax = parseutils.ParseDecimalWithDefault(r.URL.Query().Get("costMax"), decimal.NewFromInt(2100000000))
-	filter.MinGuests = parseutils.ParseIntWithDefault(r.URL.Query().Get("minGuests"), 1)
+	filter.CostMin = parse.DecimalWithDefault(r.URL.Query().Get("costMin"), decimal.NewFromInt(0))
+	filter.CostMax = parse.DecimalWithDefault(r.URL.Query().Get("costMax"), decimal.NewFromInt(2100000000))
+	filter.MinGuests = parse.IntWithDefault(r.URL.Query().Get("minGuests"), 1)
 
 	hotelIDStr := chi.URLParam(r, "hotelID")
 	hotelID, errConvert := strconv.ParseInt(hotelIDStr, 10, 64)
 	if errConvert != nil {
 		a.logger.Info("Unable to get client hotel offers, due to bad hotelID parameter", zap.Error(errConvert))
-		httputils.RespondWithCode(w, http.StatusBadRequest)
+		httpapi.RespondWithCode(w, http.StatusBadRequest)
 		return
 	}
 
-	pageNumber := parseutils.ParseIntWithDefault(r.URL.Query().Get("pageNumber"), 1)
-	offersPerPage := parseutils.ParseIntWithDefault(r.URL.Query().Get("pageSize"), 1)
+	pageNumber := parse.IntWithDefault(r.URL.Query().Get("pageNumber"), 1)
+	offersPerPage := parse.IntWithDefault(r.URL.Query().Get("pageSize"), 1)
 	a.logger.Info("Get Offers", zap.Int("pageNumber", pageNumber), zap.Int("itemsPerPage", offersPerPage))
 	offerPreviews, err := a.offerService.GetFilteredHotelOfferClientPreviews(r.Context(), hotelID, filter, pageNumber, offersPerPage)
 	if err != nil {
 		a.logger.Info("Unable to get client hotel offers, due to internal error", zap.Error(err))
-		httputils.RespondWithError(w, "Unable to get offers")
+		httpapi.RespondWithError(w, "Unable to get offers")
 		return
 	}
-	httputils.WriteJSONResponse(a.logger, w, offerPreviews)
+	httpapi.WriteJSONResponse(a.logger, w, offerPreviews)
 }
 
 func (a *api) handleGetClientHotelOfferDetails(w http.ResponseWriter, r *http.Request) {
@@ -80,59 +80,59 @@ func (a *api) handleGetClientHotelOfferDetails(w http.ResponseWriter, r *http.Re
 	hotelID, errConvert := strconv.ParseInt(hotelIDStr, 10, 64)
 	if errConvert != nil {
 		a.logger.Info("Unable to get client hotel offer details, due to bad hotelID parameter", zap.Error(errConvert))
-		httputils.RespondWithCode(w, http.StatusBadRequest)
+		httpapi.RespondWithCode(w, http.StatusBadRequest)
 		return
 	}
 	offerIDStr := chi.URLParam(r, "offerID")
 	offerID, errConvertOf := strconv.ParseInt(offerIDStr, 10, 64)
 	if errConvertOf != nil {
 		a.logger.Info("Unable to get client hotel offer details, due to bad offerID parameter", zap.Error(errConvertOf))
-		httputils.RespondWithCode(w, http.StatusBadRequest)
+		httpapi.RespondWithCode(w, http.StatusBadRequest)
 		return
 	}
 	result, err := a.offerService.GetClientHotelOfferDetails(r.Context(), hotelID, offerID)
 	if err != nil {
 		a.logger.Info("Unable to get client hotel offer details, due to internal error", zap.Error(err))
-		httputils.RespondWithCode(w, http.StatusNotFound)
+		httpapi.RespondWithCode(w, http.StatusNotFound)
 		return
 	}
-	httputils.WriteJSONResponse(a.logger, w, result)
+	httpapi.WriteJSONResponse(a.logger, w, result)
 }
 
 func (a *api) handlePostOffer(w http.ResponseWriter, r *http.Request) {
 	session := auth.SessionFromContext(r.Context())
 	if session.HotelID == 0 {
 		a.logger.Info("Unable to post offer, since logged person doesnt have assigned hotel", zap.Int64("UserID", session.UserID))
-		httputils.RespondWithError(w, "User is not a manager of any hotel")
+		httpapi.RespondWithError(w, "User is not a manager of any hotel")
 		return
 	}
-	if !httputils.IsHeaderTypeValid(w, r, "application/json", "Unable to add offer") {
+	if !httpapi.IsHeaderTypeValid(w, r, "application/json", "Unable to add offer") {
 		return
 	}
 	decoder := json.NewDecoder(r.Body)
-	var decodedRequest CreateOfferRequest
+	var decodedRequest createOfferRequest
 	err := decoder.Decode(&decodedRequest)
 	if err != nil {
-		httputils.RespondWithError(w, "Unable to add offer")
+		httpapi.RespondWithError(w, "Unable to add offer")
 		a.logger.Info("handlePostOffer: could not decode", zap.Error(err))
 		return
 	}
 
-	id, err := a.offerService.CreateOffer(r.Context(), session.HotelID, decodedRequest.ToOffer())
+	id, err := a.offerService.CreateOffer(r.Context(), session.HotelID, decodedRequest.toOffer())
 	if err != nil {
-		httputils.RespondWithError(w, "Unable to add offer")
+		httpapi.RespondWithError(w, "Unable to add offer")
 		a.logger.Info("handlePostOffer: could error create offer", zap.Error(err))
 		return
 	}
 	idResponse := &offerIDResponse{id}
-	httputils.WriteJSONResponse(a.logger, w, idResponse)
+	httpapi.WriteJSONResponse(a.logger, w, idResponse)
 }
 
 func (a *api) handleGetOffers(w http.ResponseWriter, r *http.Request) {
 	session := auth.SessionFromContext(r.Context())
 	if session.HotelID == 0 {
 		a.logger.Info("Unable to get offers, since logged person doesnt have assigned hotel", zap.Int64("UserID", session.UserID))
-		httputils.RespondWithError(w, "User is not a manager of any hotel")
+		httpapi.RespondWithError(w, "User is not a manager of any hotel")
 		return
 	}
 	pageNumberStr := r.URL.Query().Get("pageNumber")
@@ -158,113 +158,114 @@ func (a *api) handleGetOffers(w http.ResponseWriter, r *http.Request) {
 	offerPreviews, err := a.offerService.GetHotelOfferPreviews(r.Context(), session.HotelID, isActive, int(pageNumber), int(offersPerPage))
 	if err != nil {
 		a.logger.Info("Unable to get offers, due to internal error", zap.Error(err))
-		httputils.RespondWithError(w, "Unable to get offers")
+		httpapi.RespondWithError(w, "Unable to get offers")
 		return
 	}
-	offersResponse := &GetOffersResponse{Offers: offerPreviews}
-	httputils.WriteJSONResponse(a.logger, w, offersResponse)
+	offersResponse := &getOffersResponse{Offers: offerPreviewsFromOffers(offerPreviews)}
+	httpapi.WriteJSONResponse(a.logger, w, offersResponse)
 }
 
 func (a *api) handleGetOfferDetails(w http.ResponseWriter, r *http.Request) {
 	session := auth.SessionFromContext(r.Context())
 	if session.HotelID == 0 {
 		a.logger.Info("Unable to get offer details, since logged person doesnt have assigned hotel", zap.Int64("UserID", session.UserID))
-		httputils.RespondWithError(w, "User is not a manager of any hotel")
+		httpapi.RespondWithError(w, "User is not a manager of any hotel")
 		return
 	}
 	offerIDStr := chi.URLParam(r, "offerID")
 	offerID, errConvert := strconv.ParseInt(offerIDStr, 10, 64)
 	if errConvert != nil {
 		a.logger.Info("Unable to get offers details, due bad parameter", zap.Error(errConvert))
-		httputils.RespondWithCode(w, http.StatusNotFound)
+		httpapi.RespondWithCode(w, http.StatusNotFound)
 		return
 	}
 	offer, err := a.offerService.GetHotelOfferDetails(r.Context(), session.HotelID, offerID)
 	if err != nil {
 		a.logger.Info("Unable to get offers details, due to internal server error", zap.Error(err))
 		if errors.Is(err, bookly.ErrOfferNotOwned) {
-			httputils.RespondWithCode(w, http.StatusUnauthorized)
+			httpapi.RespondWithCode(w, http.StatusUnauthorized)
 		} else {
-			httputils.RespondWithCode(w, http.StatusNotFound)
+			httpapi.RespondWithCode(w, http.StatusNotFound)
 		}
 		return
 	}
+
 	response := &offerDetailsResponse{
 		IsActive:            offer.IsActive,
 		OfferTitle:          offer.OfferTitle,
-		CostPerAdult:        offer.CostPerAdult,
-		CostPerChild:        offer.CostPerChild,
+		CostPerAdult:        parse.DecimalToFloat(offer.CostPerAdult),
+		CostPerChild:        parse.DecimalToFloat(offer.CostPerChild),
 		MaxGuests:           offer.MaxGuests,
 		Description:         offer.Description,
 		OfferPreviewPicture: offer.OfferPreviewPicture,
 	}
-	httputils.WriteJSONResponse(a.logger, w, response)
+	httpapi.WriteJSONResponse(a.logger, w, response)
 }
 
 func (a *api) handleDeleteOffer(w http.ResponseWriter, r *http.Request) {
 	session := auth.SessionFromContext(r.Context())
 	if session.HotelID == 0 {
 		a.logger.Info("Unable to delete offer, since logged person doesnt have assigned hotel", zap.Int64("UserID", session.UserID))
-		httputils.RespondWithError(w, "User is not a manager of any hotel")
+		httpapi.RespondWithError(w, "User is not a manager of any hotel")
 		return
 	}
 	offerIDStr := chi.URLParam(r, "offerID")
 	offerID, errConvert := strconv.ParseInt(offerIDStr, 10, 64)
 	if errConvert != nil {
 		a.logger.Info("Unable to delete offer, due bad parameter", zap.Error(errConvert))
-		httputils.RespondWithCode(w, http.StatusNotFound)
+		httpapi.RespondWithCode(w, http.StatusNotFound)
 		return
 	}
 	err := a.offerService.MarkHotelOfferAsDeleted(r.Context(), session.HotelID, offerID)
 	if err != nil {
 		a.logger.Info("Unable to delete offer, due to internal server error", zap.Error(err))
 		if errors.Is(err, bookly.ErrOfferNotOwned) {
-			httputils.RespondWithCode(w, http.StatusUnauthorized)
+			httpapi.RespondWithCode(w, http.StatusUnauthorized)
 		} else if errors.Is(err, bookly.ErrOfferStillActive) {
-			httputils.RespondWithError(w, "Offer is still active")
-			httputils.RespondWithCode(w, http.StatusConflict)
+			httpapi.RespondWithError(w, "Offer is still active")
+			httpapi.RespondWithCode(w, http.StatusConflict)
 		} else {
-			httputils.RespondWithCode(w, http.StatusNotFound)
+			httpapi.RespondWithCode(w, http.StatusNotFound)
 		}
 		return
 	}
-	httputils.RespondWithCode(w, http.StatusOK)
+	httpapi.RespondWithCode(w, http.StatusOK)
 }
 
 func (a *api) handleUpdateOfferDetails(w http.ResponseWriter, r *http.Request) {
 	session := auth.SessionFromContext(r.Context())
 	if session.HotelID == 0 {
 		a.logger.Info("Unable to update offer, since logged person doesnt have assigned hotel", zap.Int64("UserID", session.UserID))
-		httputils.RespondWithError(w, "User is not a manager of any hotel")
+		httpapi.RespondWithError(w, "User is not a manager of any hotel")
 		return
 	}
 	offerIDStr := chi.URLParam(r, "offerID")
 	offerID, errConvert := strconv.ParseInt(offerIDStr, 10, 64)
 	if errConvert != nil {
 		a.logger.Info("Unable to update offer, due bad parameter", zap.Error(errConvert))
-		httputils.RespondWithCode(w, http.StatusNotFound)
+		httpapi.RespondWithCode(w, http.StatusNotFound)
 		return
 	}
-	if !httputils.IsHeaderTypeValid(w, r, "application/json", "Unable to update offer") {
+	if !httpapi.IsHeaderTypeValid(w, r, "application/json", "Unable to update offer") {
 		return
 	}
 	decoder := json.NewDecoder(r.Body)
-	var decodedRequest CreateOfferRequest
+	var decodedRequest createOfferRequest
 	errDecode := decoder.Decode(&decodedRequest)
 	if errDecode != nil {
-		httputils.RespondWithError(w, "Unable to update offer")
+		httpapi.RespondWithError(w, "Unable to update offer")
 		a.logger.Info("handleUpdateOffer: could not decode", zap.Error(errDecode))
 		return
 	}
-	err := a.offerService.UpdateHotelOffer(r.Context(), session.HotelID, offerID, *decodedRequest.ToOffer())
+	err := a.offerService.UpdateHotelOffer(r.Context(), session.HotelID, offerID, *decodedRequest.toOffer())
 	if err != nil {
 		a.logger.Info("Unable to update offer, due to internal server error", zap.Error(err))
 		if errors.Is(err, bookly.ErrOfferNotOwned) {
-			httputils.RespondWithCode(w, http.StatusUnauthorized)
+			httpapi.RespondWithCode(w, http.StatusUnauthorized)
 		} else {
-			httputils.RespondWithCode(w, http.StatusNotFound)
+			httpapi.RespondWithCode(w, http.StatusNotFound)
 		}
 		return
 	}
-	httputils.RespondWithCode(w, http.StatusOK)
+	httpapi.RespondWithCode(w, http.StatusOK)
 }
