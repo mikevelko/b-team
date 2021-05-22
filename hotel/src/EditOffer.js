@@ -90,8 +90,8 @@ function EditOffer() {
   useEffect(()=>{
     TryGetHotelOffer(history.location.pathname.split('/')[3]).then(function (response) {
       if(response!= ""){
-        setActiveStatus(response.IsActive)
-        setOfferTitle(response.OfferTitle)
+        setActiveStatus(response.isActive)
+        setOfferTitle(response.offerTitle)
         setCostPerChild(response.costPerChild)
         setCostPerAdult(response.costPerAdult)
         setDescription(response.description)

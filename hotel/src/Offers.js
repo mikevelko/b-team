@@ -59,6 +59,9 @@ function Offers() {
       });
   },[])
 
+  useEffect(()=>{
+    console.log(offersList)
+  },[offersList])
   function EditOfferButton(event, offerID) {
     console.log("aasfafsasafs")
 
@@ -90,23 +93,23 @@ function Offers() {
       </div>
       <div className="offersList">     
         {offersList.map((item,_) => {
-          return item.IsActive ? 
-          (<Grid className={classes.activeOfferItem} onClick={() => {OfferDetails(item.ID)}} container key={item.ID}>
+          return item.isActive ? 
+          (<Grid className={classes.activeOfferItem} onClick={() => {OfferDetails(item.offerID)}} container key={item.offerID}>
             <Grid item className={classes.partOfOfferItem}>
                 <ButtonBase>
                   <img src={offerImage} className={classes.offerPreviewImage}/>
                 </ButtonBase>
             </Grid>
             <Grid item className={classes.partOfOfferItem}>
-              <Typography>{item.OfferTitle}</Typography>
-              <Typography>Cost per child:{item.CostPerChild}</Typography>
-              <Typography>Cost per adult:{item.CostPerAdult}</Typography>
-              <Typography>Max guests:{item.MaxGuests}</Typography>
+              <Typography>{item.offerTitle}</Typography>
+              <Typography>Cost per child:{item.costPerChild}</Typography>
+              <Typography>Cost per adult:{item.costPerAdult}</Typography>
+              <Typography>Max guests:{item.maxGuests}</Typography>
             </Grid>
             <Grid item style={{display:'flex',flexDirection:'column'}}>
               <Grid item style={{display:'flex', justifyContent:'space-around', marginBottom:10}}>
-                <Button className={classes.editOfferButton} onClick={(event) => {EditOfferButton(event,item.ID)}}>Edit offer</Button>
-                <Button className={classes.deleteOfferButton}  onClick={(event) => {DeleteOfferButton(event,item.ID)}}>Delete offer</Button>
+                <Button className={classes.editOfferButton} onClick={(event) => {EditOfferButton(event,item.offerID)}}>Edit offer</Button>
+                <Button className={classes.deleteOfferButton}  onClick={(event) => {DeleteOfferButton(event,item.offerID)}}>Delete offer</Button>
 
               </Grid>
               <Grid item>
@@ -117,23 +120,23 @@ function Offers() {
             
           </Grid>) 
         :
-        (<Grid className={classes.inactiveOfferItem} container onClick={() => {OfferDetails(item.ID)}} key={item.ID}>
+        (<Grid className={classes.inactiveOfferItem} container onClick={() => {OfferDetails(item.offerID)}} key={item.offerID}>
           <Grid item className={classes.partOfOfferItem}>
               <ButtonBase>
                 <img src={offerImage} className={classes.offerPreviewImage}/>
               </ButtonBase>
           </Grid>
           <Grid item className={classes.partOfOfferItem}>
-            <Typography>{item.OfferTitle}</Typography>
-            <Typography>Cost per child:{item.CostPerChild}</Typography>
-            <Typography>Cost per adult:{item.CostPerAdult}</Typography>
-            <Typography>Max guests:{item.MaxGuests}</Typography>
+            <Typography>{item.offerTitle}</Typography>
+            <Typography>Cost per child:{item.costPerChild}</Typography>
+            <Typography>Cost per adult:{item.costPerAdult}</Typography>
+            <Typography>Max guests:{item.maxGuests}</Typography>
           </Grid>
 
           <Grid item style={{display:'flex',flexDirection:'column'}}>
             <Grid item style={{display:'flex', justifyContent:'space-around', marginBottom:10}}>
-            <Button className={classes.editOfferButton} onClick={(event) => {EditOfferButton(event,item.ID)}}>Edit offer</Button>
-                <Button className={classes.deleteOfferButton}  onClick={(event) => {DeleteOfferButton(event,item.ID)}}>Delete offer</Button>
+            <Button className={classes.editOfferButton} onClick={(event) => {EditOfferButton(event,item.offerID)}}>Edit offer</Button>
+                <Button className={classes.deleteOfferButton}  onClick={(event) => {DeleteOfferButton(event,item.offerID)}}>Delete offer</Button>
 
             </Grid>
             <Grid item>
