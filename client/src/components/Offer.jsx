@@ -168,7 +168,7 @@ function Offer(props) {
                     <p></p>
                     <TextField id="outlined-basic" label="Children" variant="outlined" type="number" InputProps={{ inputProps: { min: 1, max: 10 } }} size="small" value={children} onChange={handleChangeChildren} />
                     <p>Total: {offer.costPerAdult * adults + offer.costPerChild * children}€ per night</p>
-                    <Button variant="contained" color="primary" size="large" disabled={!reservationPossible}>Reserve</Button>
+                    <Button variant="contained" color="primary" size="large" disabled={!reservationPossible || !offer.isActive}>Reserve</Button>
                 </div>
             </div>
 
