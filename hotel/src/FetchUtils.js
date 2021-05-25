@@ -142,6 +142,7 @@ export async function TryLogIn(login, password){
     .catch(function (error) {
       console.log(error);
     });
+    console.log(res)
     if(res !== undefined) return res.data.offerPreview;
     return "";
   };
@@ -156,7 +157,6 @@ export async function TryLogIn(login, password){
       }, 
     })
     .then(function (response) {
-      console.log(response)
       return response;
     })
     .catch(function (error) {
@@ -212,4 +212,73 @@ export async function TryLogIn(login, password){
     });
     if(res !== undefined) return res.status;
     return "";
+  };
+
+  export async function TryGetHotelRooms(roomNumber = null,pageNumber = 1,pageSize = 100){
+    const res = await axios({
+      method: 'get',
+      url: '/api-hotel/rooms',
+      headers: {
+        'accept': 'application/json',
+        'x-hotel-token': localStorage.getItem(HOTEL_TOKEN_NAME)
+      }, 
+      params:{
+        roomNumber,
+        pageNumber,
+        pageSize
+      }
+    })
+    .then(function (response) {
+      return response;
+    })
+    .catch(function (error) {
+    });
+    if(res !== undefined) return res.data;
+    return "";
+  };
+  export async function TryAddHotelRoom(roomNumber){
+    let a = `"`+roomNumber+`"`
+    console.log(a)
+    const res = await axios({
+      method: 'post',
+      url: '/api-hotel/rooms',
+      headers: {
+        'accept': 'application/json',
+        'x-hotel-token': localStorage.getItem(HOTEL_TOKEN_NAME),
+        'Content-Type' : 'application/json'
+      }, 
+      data:`"`+roomNumber+`"`
+    })
+    .then(function (response) {
+      return response;
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+    if(res !== undefined) return res;
+    return "";
+  };
+
+  export async function TryGetRoomsForOffer(offerID,roomNumber = null,pageNumber = 1,pageSize = 100){
+    const res = await axios({
+      method: 'get',
+      url: '/api-hotel/offers/' + offerID + '/rooms',
+      headers: {
+        'accept': 'application/json',
+        'x-hotel-token': localStorage.getItem(HOTEL_TOKEN_NAME)
+      }, 
+      params:{
+        roomNumber,
+        pageNumber,
+        pageSize
+      }
+    })
+    .then(function (response) {
+      return response;
+    })
+    .catch(function (error) {
+      console.log(error)
+    });
+    if(res !== undefined && res.data != null) return res.data;
+    return [];
   };

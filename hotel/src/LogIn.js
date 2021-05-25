@@ -25,6 +25,7 @@ function LogIn() {
   function OnClickLogInButton(){
     if(loginUsingToken){
       CheckToken(token).then(function (response) {
+        console.log(response)
         if(response !== undefined){
           localStorage.setItem(HOTEL_TOKEN_NAME, token);
           history.push('/');
