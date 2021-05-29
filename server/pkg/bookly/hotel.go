@@ -30,6 +30,14 @@ type HotelListing struct {
 	PreviewPicture string `json:"previewPicture"`
 }
 
+// HotelInfoPreview holds info about hotel for reservation purpose
+type HotelInfoPreview struct {
+	HotelID   int64  `json:"hotelID"`
+	HotelName string `json:"hotelName"`
+	Country   string `json:"country"`
+	City      string `json:"city"`
+}
+
 // HotelStorage is responsible for operations on hotels
 type HotelStorage interface {
 	CreateHotel(ctx context.Context, hotel Hotel) (int64, error)

@@ -1206,6 +1206,11 @@
     },
     "/api-client/client/reservations": {
       "get": {
+        "security": [
+          {
+            "customTokenSecurityClient": []
+          }
+        ],
         "description": "Get list of all reservations made by the client",
         "operationId": "GET_client-reservations",
         "produces": [
@@ -1216,10 +1221,23 @@
             "description": "List of reservation information and offerID relating to the reservation and preview information related to the hotel"
           }
         }
-      }
+      },
+      "parameters": [
+        {
+          "$ref": "#/parameters/pageNumber"
+        },
+        {
+          "$ref": "#/parameters/pageSize"
+        }
+      ]
     },
     "/api-client/client/reservations/{reservationID}": {
       "delete": {
+        "security": [
+          {
+            "customTokenSecurityClient": []
+          }
+        ],
         "description": "Cancel exisiting reservation provided that it hasn't started",
         "operationId": "DELETE_client-reservations-reservationID",
         "produces": [
@@ -1480,6 +1498,11 @@
     },
     "/api-client/hotels/{hotelID}/offers/{offerID}/reservations": {
       "post": {
+        "security": [
+          {
+            "customTokenSecurityClient": []
+          }
+        ],
         "description": "Create new reservation",
         "operationId": "POST_hotels-hotelID-offers-offerID-reservations",
         "produces": [
@@ -1507,7 +1530,33 @@
         "parameters": [
           {
             "schema": {
-              "type": "string"
+              "example": {
+                "from": "2021-10-02T10:00:00-05:00",
+                "to": "2021-12-02T10:00:00-05:00",
+                "numberOfChildren": 1,
+                "numberOfAdults": 2
+              },
+              "type": "object",
+              "properties": {
+                "from": {
+                  "type": "datetime"
+                },
+                "to": {
+                  "type": "datetime"
+                },
+                "numberOfChildren": {
+                  "type": "integer"
+                },
+                "numberOfAdults": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "from",
+                "to",
+                "numberOfChildren",
+                "numberOfAdults"
+              ]
             },
             "in": "body",
             "name": "body",

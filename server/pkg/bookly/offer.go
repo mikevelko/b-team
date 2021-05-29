@@ -55,6 +55,14 @@ type OfferClientPreview struct {
 	OfferPreviewPicture string `json:"offerPreviewPicture"`
 }
 
+// OfferInfoPreview holds info about offer for reservation purpose
+type OfferInfoPreview struct {
+	OfferID    int64  `json:"offerID"`
+	OfferTitle string `json:"offerTitle"`
+	// todo: pictures will probably need different struct, reimplement it as soon as they are implemented
+	OfferPreviewPicture string `json:"offerPreviewPicture"`
+}
+
 // OfferStorage is responsible for persisting offers
 type OfferStorage interface {
 	CreateOffer(ctx context.Context, offer *Offer, hotelID int64) (int64, error)

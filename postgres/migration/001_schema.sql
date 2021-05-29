@@ -54,6 +54,17 @@ CREATE TABLE IF NOT EXISTS users
     user_role                   text DEFAULT 'CLIENT_CUSTOMER' not null
 );
 
+CREATE TABLE IF NOT EXISTS reservations
+(
+    id                        bigserial primary key,
+    client_id                 bigint not null,
+    hotel_id                  bigint not null,
+    offer_id                  bigint not null,
+    from_time                 timestamptz not null,
+    to_time                   timestamptz not null,
+    child_count               int not null,
+    adult_count               int not null
+);
 
 CREATE TABLE IF NOT EXISTS sessions
 (
