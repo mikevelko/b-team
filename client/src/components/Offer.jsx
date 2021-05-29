@@ -103,8 +103,33 @@ function Offer(props) {
                 }
                 console.error('There was an error!', error.response);
             });
+    }
 
+    
 
+    const Reserve = () => {
+        const body = 
+        {
+            from: "2021-10-02T10:00:00-05:00",
+            to: "2021-12-02T10:00:00-05:00",
+            numberOfChildren: children,
+            numberOfAdults: adults
+        };
+
+        const url = `/api-client/hotels/${hotelId}/offers/${offerId}/reservations`;
+        axios.post(url,body, { headers: { 'accept': 'application/json', 'x-session-token': window.localStorage.getItem("token"), 'Content-Type': 'application/json' } })
+            .then(response => {
+                console.log(response.data);
+                fetchItems();
+            })
+            .catch(error => {
+                // if hotel not exist then redirect to hotels page
+                if (error.response.status === 404) {
+                    let path = `/hotels/${hotelId}/offers`;
+                    history.push(path);
+                }
+                console.error('There was an error!', error.response);
+            });
     }
 
 
@@ -168,7 +193,7 @@ function Offer(props) {
                     <p></p>
                     <TextField id="outlined-basic" label="Children" variant="outlined" type="number" InputProps={{ inputProps: { min: 1, max: 10 } }} size="small" value={children} onChange={handleChangeChildren} />
                     <p>Total: {offer.costPerAdult * adults + offer.costPerChild * children}€ per night</p>
-                    <Button variant="contained" color="primary" size="large" disabled={!reservationPossible || !offer.isActive}>Reserve</Button>
+                    <Button variant="contained" color="primary" size="large" disabled={!reservationPossible || !offer.isActive} onClick={Reserve}>Reserve</Button>
                 </div>
             </div>
 
