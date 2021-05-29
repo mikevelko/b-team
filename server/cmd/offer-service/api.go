@@ -22,8 +22,6 @@ type api struct {
 	offerService bookly.OfferService
 }
 
-// todo: those structures below should be moved to other go file for readibility
-
 func newAPI(logger *zap.Logger, service bookly.OfferService) *api {
 	return &api{
 		logger:       logger,

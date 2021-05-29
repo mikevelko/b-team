@@ -1,0 +1,40 @@
+.rootRooms{
+    align-self: center;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: column;
+    flex-basis: 100%;
+    width: 40%;
+    margin-top: 50px;
+}
+.roomList{
+    display: flex;
+    flex-wrap: wrap;
+
+    justify-content: flex-start;
+}
+.roomListItem{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #8e99d7;
+    padding: 10px;
+    width: 50px;
+    height: 25px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+}
+.roomsTitle{
+    display: flex;
+    justify-content: center;
+
+}
+.roomsButtons  {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 80%;
+    margin-bottom: 10px;
+}

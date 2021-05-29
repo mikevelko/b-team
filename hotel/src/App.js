@@ -18,6 +18,7 @@ import EditOffer from './EditOffer';
 import { PrivateRoute } from './PrivateRoute';
 import { TryGetHotelInfo } from './FetchUtils';
 import OfferDetails from './OfferDetails';
+import RoomOffers from './RoomOffers';
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -76,7 +77,10 @@ export default function App() {
 
 
         <PrivateRoute path='/reservations' component={Reservations}/>
-        <PrivateRoute path='/rooms' component={Rooms}/>
+
+        <PrivateRoute path='/rooms' exact component={Rooms}/>
+        <PrivateRoute path='/rooms/:roomNumber' exact component={RoomOffers}/>
+
         <Route path='/login' component={LogIn}/>
       </Switch>
     </Router>

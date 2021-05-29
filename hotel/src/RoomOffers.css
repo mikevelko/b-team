@@ -1,0 +1,12 @@
+.roomOffers{
+    margin: 30px;
+} 
+.offers{
+    display: flex;
+}
+.titleRoomOffers{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 30px;
+}

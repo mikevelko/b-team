@@ -22,3 +22,21 @@ var ErrOfferStillActive = errors.New("offer is still active")
 
 // ErrOfferDeleted indicates that offer is deleted and should not be modified
 var ErrOfferDeleted = errors.New("offer is marked as deleted")
+
+// ErrOfferNotAvailable indicates that offer is not available
+var ErrOfferNotAvailable = errors.New("offer is not available")
+
+// ErrOfferNotFound indicates that offer does not exists
+var ErrOfferNotFound = errors.New("offer not found")
+
+// ErrReservationDoesNotExists indicates that there is no reservation with that parameters
+var ErrReservationDoesNotExists = errors.New("reservation does not exists")
+
+// ErrReservationTooBig indicates that reservation has too many people for particular offer
+var ErrReservationTooBig = errors.New("reservation is already in progress")
+
+// ErrReservationNotOwned indicates that reservation is not owned
+var ErrReservationNotOwned = errors.New("reservation is not owned")
+
+// ErrReservationInProgress indicates that reservation is in progress and cannot be modified
+var ErrReservationInProgress = errors.New("reservation is already in progress")

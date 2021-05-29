@@ -188,7 +188,7 @@ func TestRoomService_GetRoomsRelatedWithOffer(t *testing.T) {
 			name: "if room storage returns error, error is expected",
 			prepare: func(t *testing.T, f *fields) {
 				f.offerStorage.EXPECT().IsOfferOwnedByHotel(gomock.Any(), gomock.Any(), gomock.Any()).Return(true, nil)
-				f.roomStorage.EXPECT().RoomsRelatedWithOffer(gomock.Any(), gomock.Any()).Return(nil, mockErr)
+				f.roomStorage.EXPECT().GetRoomsRelatedWithOffer(gomock.Any(), gomock.Any()).Return(nil, mockErr)
 			},
 			check: func(t *testing.T, service *roomService, f *fields) {
 				_, err := service.GetRoomsRelatedWithOffer(nil, 0, 0, 0, 0, "")
@@ -199,7 +199,7 @@ func TestRoomService_GetRoomsRelatedWithOffer(t *testing.T) {
 			name: "if room storage returns error, error is expected",
 			prepare: func(t *testing.T, f *fields) {
 				f.offerStorage.EXPECT().IsOfferOwnedByHotel(gomock.Any(), gomock.Any(), gomock.Any()).Return(true, nil)
-				f.roomStorage.EXPECT().RoomsRelatedWithOffer(gomock.Any(), gomock.Any()).Return([]int64{1, 2, 3}, nil)
+				f.roomStorage.EXPECT().GetRoomsRelatedWithOffer(gomock.Any(), gomock.Any()).Return([]int64{1, 2, 3}, nil)
 				f.roomStorage.EXPECT().GetRoom(gomock.Any(), gomock.Any()).Return(bookly.Room{}, mockErr)
 			},
 			check: func(t *testing.T, service *roomService, f *fields) {
@@ -211,9 +211,9 @@ func TestRoomService_GetRoomsRelatedWithOffer(t *testing.T) {
 			name: "if room storage returns error, error is expected",
 			prepare: func(t *testing.T, f *fields) {
 				f.offerStorage.EXPECT().IsOfferOwnedByHotel(gomock.Any(), gomock.Any(), gomock.Any()).Return(true, nil)
-				f.roomStorage.EXPECT().RoomsRelatedWithOffer(gomock.Any(), gomock.Any()).Return([]int64{1, 2, 3}, nil)
+				f.roomStorage.EXPECT().GetRoomsRelatedWithOffer(gomock.Any(), gomock.Any()).Return([]int64{1, 2, 3}, nil)
 				f.roomStorage.EXPECT().GetRoom(gomock.Any(), gomock.Any()).Return(bookly.Room{}, nil)
-				f.roomStorage.EXPECT().OffersRelatedWithRoom(gomock.Any(), gomock.Any()).Return(nil, mockErr)
+				f.roomStorage.EXPECT().GetOffersRelatedWithRoom(gomock.Any(), gomock.Any()).Return(nil, mockErr)
 			},
 			check: func(t *testing.T, service *roomService, f *fields) {
 				_, err := service.GetRoomsRelatedWithOffer(nil, 0, 0, 0, 0, "")
@@ -224,9 +224,9 @@ func TestRoomService_GetRoomsRelatedWithOffer(t *testing.T) {
 			name: "all is fine",
 			prepare: func(t *testing.T, f *fields) {
 				f.offerStorage.EXPECT().IsOfferOwnedByHotel(gomock.Any(), gomock.Any(), gomock.Any()).Return(true, nil)
-				f.roomStorage.EXPECT().RoomsRelatedWithOffer(gomock.Any(), gomock.Any()).Return([]int64{1}, nil)
+				f.roomStorage.EXPECT().GetRoomsRelatedWithOffer(gomock.Any(), gomock.Any()).Return([]int64{1}, nil)
 				f.roomStorage.EXPECT().GetRoom(gomock.Any(), gomock.Any()).Return(bookly.Room{}, nil)
-				f.roomStorage.EXPECT().OffersRelatedWithRoom(gomock.Any(), gomock.Any()).Return([]int64{1}, nil)
+				f.roomStorage.EXPECT().GetOffersRelatedWithRoom(gomock.Any(), gomock.Any()).Return([]int64{1}, nil)
 			},
 			check: func(t *testing.T, service *roomService, f *fields) {
 				_, err := service.GetRoomsRelatedWithOffer(nil, 0, 0, 0, 0, "")
@@ -276,7 +276,7 @@ func TestRoomService_AddRoomToOffer(t *testing.T) {
 			name: "if room storage returns error, error is expected",
 			prepare: func(t *testing.T, f *fields) {
 				f.offerStorage.EXPECT().IsOfferOwnedByHotel(gomock.Any(), gomock.Any(), gomock.Any()).Return(true, nil)
-				f.roomStorage.EXPECT().IsRoomBelongToHotel(gomock.Any(), gomock.Any(), gomock.Any()).Return(false, mockErr)
+				f.roomStorage.EXPECT().IsRoomOwnedByHotel(gomock.Any(), gomock.Any(), gomock.Any()).Return(false, mockErr)
 			},
 			check: func(t *testing.T, service *roomService, f *fields) {
 				err := service.AddRoomToOffer(nil, 0, 0, 0)
@@ -287,7 +287,7 @@ func TestRoomService_AddRoomToOffer(t *testing.T) {
 			name: "if room storage returns error, error is expected",
 			prepare: func(t *testing.T, f *fields) {
 				f.offerStorage.EXPECT().IsOfferOwnedByHotel(gomock.Any(), gomock.Any(), gomock.Any()).Return(true, nil)
-				f.roomStorage.EXPECT().IsRoomBelongToHotel(gomock.Any(), gomock.Any(), gomock.Any()).Return(true, nil)
+				f.roomStorage.EXPECT().IsRoomOwnedByHotel(gomock.Any(), gomock.Any(), gomock.Any()).Return(true, nil)
 				f.roomStorage.EXPECT().IsExistLinkWithRoomAndOffer(gomock.Any(), gomock.Any(), gomock.Any()).Return(false, mockErr)
 			},
 			check: func(t *testing.T, service *roomService, f *fields) {
@@ -299,7 +299,7 @@ func TestRoomService_AddRoomToOffer(t *testing.T) {
 			name: "if room storage returns error, error is expected",
 			prepare: func(t *testing.T, f *fields) {
 				f.offerStorage.EXPECT().IsOfferOwnedByHotel(gomock.Any(), gomock.Any(), gomock.Any()).Return(true, nil)
-				f.roomStorage.EXPECT().IsRoomBelongToHotel(gomock.Any(), gomock.Any(), gomock.Any()).Return(true, nil)
+				f.roomStorage.EXPECT().IsRoomOwnedByHotel(gomock.Any(), gomock.Any(), gomock.Any()).Return(true, nil)
 				f.roomStorage.EXPECT().IsExistLinkWithRoomAndOffer(gomock.Any(), gomock.Any(), gomock.Any()).Return(false, nil)
 				f.roomStorage.EXPECT().AddLinkWithRoomAndOffer(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockErr)
 			},
@@ -312,7 +312,7 @@ func TestRoomService_AddRoomToOffer(t *testing.T) {
 			name: "all is fine",
 			prepare: func(t *testing.T, f *fields) {
 				f.offerStorage.EXPECT().IsOfferOwnedByHotel(gomock.Any(), gomock.Any(), gomock.Any()).Return(true, nil)
-				f.roomStorage.EXPECT().IsRoomBelongToHotel(gomock.Any(), gomock.Any(), gomock.Any()).Return(true, nil)
+				f.roomStorage.EXPECT().IsRoomOwnedByHotel(gomock.Any(), gomock.Any(), gomock.Any()).Return(true, nil)
 				f.roomStorage.EXPECT().IsExistLinkWithRoomAndOffer(gomock.Any(), gomock.Any(), gomock.Any()).Return(false, nil)
 				f.roomStorage.EXPECT().AddLinkWithRoomAndOffer(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil)
 			},
@@ -364,7 +364,7 @@ func TestRoomService_DeleteRoomFromOffer(t *testing.T) {
 			name: "if room storage returns error, error is expected",
 			prepare: func(t *testing.T, f *fields) {
 				f.offerStorage.EXPECT().IsOfferOwnedByHotel(gomock.Any(), gomock.Any(), gomock.Any()).Return(true, nil)
-				f.roomStorage.EXPECT().IsRoomBelongToHotel(gomock.Any(), gomock.Any(), gomock.Any()).Return(false, mockErr)
+				f.roomStorage.EXPECT().IsRoomOwnedByHotel(gomock.Any(), gomock.Any(), gomock.Any()).Return(false, mockErr)
 			},
 			check: func(t *testing.T, service *roomService, f *fields) {
 				err := service.DeleteRoomFromOffer(nil, 0, 0, 0)
@@ -375,7 +375,7 @@ func TestRoomService_DeleteRoomFromOffer(t *testing.T) {
 			name: "if room storage returns error, error is expected",
 			prepare: func(t *testing.T, f *fields) {
 				f.offerStorage.EXPECT().IsOfferOwnedByHotel(gomock.Any(), gomock.Any(), gomock.Any()).Return(true, nil)
-				f.roomStorage.EXPECT().IsRoomBelongToHotel(gomock.Any(), gomock.Any(), gomock.Any()).Return(true, nil)
+				f.roomStorage.EXPECT().IsRoomOwnedByHotel(gomock.Any(), gomock.Any(), gomock.Any()).Return(true, nil)
 				f.roomStorage.EXPECT().DeleteLinkWithRoomAndOffer(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockErr)
 			},
 			check: func(t *testing.T, service *roomService, f *fields) {
@@ -387,7 +387,7 @@ func TestRoomService_DeleteRoomFromOffer(t *testing.T) {
 			name: "all is fine",
 			prepare: func(t *testing.T, f *fields) {
 				f.offerStorage.EXPECT().IsOfferOwnedByHotel(gomock.Any(), gomock.Any(), gomock.Any()).Return(true, nil)
-				f.roomStorage.EXPECT().IsRoomBelongToHotel(gomock.Any(), gomock.Any(), gomock.Any()).Return(true, nil)
+				f.roomStorage.EXPECT().IsRoomOwnedByHotel(gomock.Any(), gomock.Any(), gomock.Any()).Return(true, nil)
 				f.roomStorage.EXPECT().DeleteLinkWithRoomAndOffer(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil)
 			},
 			check: func(t *testing.T, service *roomService, f *fields) {

@@ -107,6 +107,21 @@ func (mr *MockRoomStorageMockRecorder) GetAllHotelRooms(ctx, hotelID interface{}
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllHotelRooms", reflect.TypeOf((*MockRoomStorage)(nil).GetAllHotelRooms), ctx, hotelID)
 }
 
+// GetOffersRelatedWithRoom mocks base method.
+func (m *MockRoomStorage) GetOffersRelatedWithRoom(ctx context.Context, roomID int64) ([]int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetOffersRelatedWithRoom", ctx, roomID)
+	ret0, _ := ret[0].([]int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetOffersRelatedWithRoom indicates an expected call of GetOffersRelatedWithRoom.
+func (mr *MockRoomStorageMockRecorder) GetOffersRelatedWithRoom(ctx, roomID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOffersRelatedWithRoom", reflect.TypeOf((*MockRoomStorage)(nil).GetOffersRelatedWithRoom), ctx, roomID)
+}
+
 // GetRoom mocks base method.
 func (m *MockRoomStorage) GetRoom(ctx context.Context, roomID int64) (bookly.Room, error) {
 	m.ctrl.T.Helper()
@@ -137,6 +152,21 @@ func (mr *MockRoomStorageMockRecorder) GetRoomByName(ctx, roomNumber, hotelID in
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRoomByName", reflect.TypeOf((*MockRoomStorage)(nil).GetRoomByName), ctx, roomNumber, hotelID)
 }
 
+// GetRoomsRelatedWithOffer mocks base method.
+func (m *MockRoomStorage) GetRoomsRelatedWithOffer(ctx context.Context, offerID int64) ([]int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetRoomsRelatedWithOffer", ctx, offerID)
+	ret0, _ := ret[0].([]int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetRoomsRelatedWithOffer indicates an expected call of GetRoomsRelatedWithOffer.
+func (mr *MockRoomStorageMockRecorder) GetRoomsRelatedWithOffer(ctx, offerID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRoomsRelatedWithOffer", reflect.TypeOf((*MockRoomStorage)(nil).GetRoomsRelatedWithOffer), ctx, offerID)
+}
+
 // IsExistLinkWithRoomAndOffer mocks base method.
 func (m *MockRoomStorage) IsExistLinkWithRoomAndOffer(ctx context.Context, offerID, roomID int64) (bool, error) {
 	m.ctrl.T.Helper()
@@ -152,7 +182,7 @@ func (mr *MockRoomStorageMockRecorder) IsExistLinkWithRoomAndOffer(ctx, offerID,
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsExistLinkWithRoomAndOffer", reflect.TypeOf((*MockRoomStorage)(nil).IsExistLinkWithRoomAndOffer), ctx, offerID, roomID)
 }
 
-// IsRoomBelongToHotel mocks base method.
+// IsRoomOwnedByHotel mocks base method.
 func (m *MockRoomStorage) IsRoomOwnedByHotel(ctx context.Context, roomID, hotelID int64) (bool, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "IsRoomOwnedByHotel", ctx, roomID, hotelID)
@@ -161,40 +191,10 @@ func (m *MockRoomStorage) IsRoomOwnedByHotel(ctx context.Context, roomID, hotelI
 	return ret0, ret1
 }
 
-// IsRoomBelongToHotel indicates an expected call of IsRoomBelongToHotel.
-func (mr *MockRoomStorageMockRecorder) IsRoomBelongToHotel(ctx, roomID, hotelID interface{}) *gomock.Call {
+// IsRoomOwnedByHotel indicates an expected call of IsRoomOwnedByHotel.
+func (mr *MockRoomStorageMockRecorder) IsRoomOwnedByHotel(ctx, roomID, hotelID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsRoomOwnedByHotel", reflect.TypeOf((*MockRoomStorage)(nil).IsRoomOwnedByHotel), ctx, roomID, hotelID)
-}
-
-// OffersRelatedWithRoom mocks base method.
-func (m *MockRoomStorage) GetOffersRelatedWithRoom(ctx context.Context, roomID int64) ([]int64, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetOffersRelatedWithRoom", ctx, roomID)
-	ret0, _ := ret[0].([]int64)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// OffersRelatedWithRoom indicates an expected call of OffersRelatedWithRoom.
-func (mr *MockRoomStorageMockRecorder) OffersRelatedWithRoom(ctx, roomID interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOffersRelatedWithRoom", reflect.TypeOf((*MockRoomStorage)(nil).GetOffersRelatedWithRoom), ctx, roomID)
-}
-
-// RoomsRelatedWithOffer mocks base method.
-func (m *MockRoomStorage) GetRoomsRelatedWithOffer(ctx context.Context, offerID int64) ([]int64, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetRoomsRelatedWithOffer", ctx, offerID)
-	ret0, _ := ret[0].([]int64)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// RoomsRelatedWithOffer indicates an expected call of RoomsRelatedWithOffer.
-func (mr *MockRoomStorageMockRecorder) RoomsRelatedWithOffer(ctx, offerID interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRoomsRelatedWithOffer", reflect.TypeOf((*MockRoomStorage)(nil).GetRoomsRelatedWithOffer), ctx, offerID)
 }
 
 // MockRoomService is a mock of RoomService interface.
