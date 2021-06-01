@@ -21,12 +21,11 @@ spec:
             - containerPort: 8080
           env:
             - name: BASE_URL
-              value: /swagger-ui
+              value: /swagger-ui/
             - name: API_URLS
               value: >-
                 [
-                {url:'https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v3.0/petstore.yaml',name:'Pet Store Example'},
-                {url:'/swagger-ui/swagger-api.json',name:'swagger api'}
+                {url:'swagger-api/bookly.json',name:'swagger api'}
                 ]
           volumeMounts:
             - name: swagger-api
