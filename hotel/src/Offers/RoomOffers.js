@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import "./Rooms.css"
 import GridList from '@material-ui/core/GridList';
 import { Button, Grid, makeStyles, TextField, Typography } from '@material-ui/core';
-import { TryAddHotelRoom, TryGetHotelOffer, TryGetHotelRooms } from './FetchUtils';
+import { TryAddHotelRoom, TryGetHotelOffer, TryGetHotelRooms } from '../Utils/FetchUtils';
 import { useHistory } from 'react-router';
 import OffersListItem from './OffersListItem';
 import './RoomOffers.css'
