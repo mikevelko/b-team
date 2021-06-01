@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import templatePicture from './offer.png'; 
 import './CreateOffer.css'
 import { Link, useHistory } from 'react-router-dom';
-import { TryPostOffer } from './FetchUtils';
+import { TryPostOffer } from '../Utils/FetchUtils';
 const useStyles = makeStyles((theme) => ({
   offerPreviewImage:{
     width:'300px', 

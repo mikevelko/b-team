@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import "./Rooms.css"
+import "../Rooms/Rooms.css"
 import GridList from '@material-ui/core/GridList';
 import { Button, Grid, makeStyles, TextField, Typography } from '@material-ui/core';
 import { TryAddHotelRoom, TryGetHotelOffer, TryGetHotelRooms } from '../Utils/FetchUtils';
 import { useHistory } from 'react-router';
-import OffersListItem from './OffersListItem';
+import OffersListItem from '../Offers/OffersListItem';
 import './RoomOffers.css'
 const useStyles = makeStyles((theme) => ({
     title:{
