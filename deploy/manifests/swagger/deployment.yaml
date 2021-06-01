@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: swagger-ui
-          image: swaggerapi/swagger-ui:v3.49.0
+          image: swaggerapi/swagger-ui:latest
           ports:
             - containerPort: 8080
           env:
@@ -25,8 +25,7 @@ spec:
             - name: API_URLS
               value: >-
                 [
-                {url:'swagger-api/bookly.yaml',name:'swagger api'}
-                {url:'swagger-api/bookly.json',name:'swagger api'}
+                {url:'swagger-api/openapi.json',name:'bookly'}
                 ]
           volumeMounts:
             - name: swagger-api
