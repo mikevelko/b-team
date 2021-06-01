@@ -25,6 +25,7 @@ spec:
             - name: API_URLS
               value: >-
                 [
+                {url:'swagger-api/bookly.yaml',name:'swagger api'}
                 {url:'swagger-api/bookly.json',name:'swagger api'}
                 ]
           volumeMounts:
