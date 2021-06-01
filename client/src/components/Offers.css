@@ -22,3 +22,16 @@
     text-decoration: none;
     color: rgb(42, 46, 50);
 }
+
+.pagination-container
+{
+    justify-content:center;
+    display:flex;
+    margin-bottom: 50px;
+    padding: 10px;
+}
+
+.pagination-element
+{
+    margin: 5px;
+}

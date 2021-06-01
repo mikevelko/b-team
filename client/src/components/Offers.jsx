@@ -4,7 +4,8 @@ import './Offers.css';
 import TextField from '@material-ui/core/TextField';
 import OffersListItem from './OffersListItem';
 import axios from 'axios'
-import { Link, useHistory, BrowserRouter as Router, Route } from 'react-router-dom';;
+import { Link, useHistory, BrowserRouter as Router, Route } from 'react-router-dom';
+import Pagination from '@material-ui/lab/Pagination';
 
 function Offers(props) {
 
@@ -16,7 +17,7 @@ function Offers(props) {
         "maxGuests": 2,
         "costPerChild": 10.0,
         "costPerAdult": 15.0
-      }];
+    }];
 
     useEffect(() => {
         fetchItems();
@@ -58,7 +59,11 @@ function Offers(props) {
     const [guests, setGuests] = useState(1);
     const [minCost, setMinCost] = useState();
     const [maxCost, setMaxCost] = useState();
+    const [page, setPage] = useState(1);
 
+    useEffect(() => {
+        Search();
+    }, [page]);
 
     const handleChangeFrom = (event) => {
         console.log(event.target.value)
@@ -71,16 +76,14 @@ function Offers(props) {
         setGuests(event.target.value);
     };
     const handleChangeMinCost = (event) => {
-        if(event.target.value < 0)
-        {
+        if (event.target.value < 0) {
             setMinCost(0);
             return;
         }
         setMinCost(event.target.value);
     };
     const handleChangeMaxCost = (event) => {
-        if(event.target.value < 0)
-        {
+        if (event.target.value < 0) {
             setMaxCost(0);
             return;
         }
@@ -89,7 +92,7 @@ function Offers(props) {
 
 
     const fetchItems = () => {
-        axios.get(`/api-client/hotels/${hotelId}/offers?pageSize=10`, { headers: { 'accept': 'application/json', 'x-session-token': window.localStorage.getItem("token") } })
+        axios.get(`/api-client/hotels/${hotelId}/offers?pageSize=2`, { headers: { 'accept': 'application/json', 'x-session-token': window.localStorage.getItem("token") } })
             .then(response => {
                 setItems(response.data);
                 console.log(response);
@@ -103,18 +106,19 @@ function Offers(props) {
 
     const Search = () => {
         let url = "";
-        if(guests!== "") url += "&minGuests="+guests;
-        if(maxCost != "") url += "&costMax="+maxCost; 
-        if(minCost != "") url += "&costMin="+minCost; 
+        if (guests !== "") url += "&minGuests=" + guests;
+        if (maxCost != "") url += "&costMax=" + maxCost;
+        if (minCost != "") url += "&costMin=" + minCost;
+        if (page != "") url += "&pageNumber=" + page;
 
-        const GET_URL = `/api-client/hotels/${hotelId}/offers?pageSize=10` + url;
+        const GET_URL = `/api-client/hotels/${hotelId}/offers?pageSize=2` + url;
         console.log(GET_URL);
         console.log(GET_URL);
         const headers = {
             'accept': 'application/json',
             'x-session-token': window.localStorage.getItem("token")
         };
-        axios.get(GET_URL , { headers: { 'accept': 'application/json', 'x-session-token': window.localStorage.getItem("token") } })
+        axios.get(GET_URL, { headers: { 'accept': 'application/json', 'x-session-token': window.localStorage.getItem("token") } })
             .then(response => {
                 setItems(response.data);
                 console.log(response);
@@ -124,8 +128,6 @@ function Offers(props) {
             });
         console.log(items);
     }
-
-
 
     return (
         <div>
@@ -157,6 +159,12 @@ function Offers(props) {
                         (<Link key={item.offerID} to={`/hotels/${hotelId}/offers/${item.offerID}`} className="hotel-link"><OffersListItem item={item}></OffersListItem></Link>))
                 }
             </div>
+            <div className="pagination-container">
+                <div className="pagination-element"><Button variant="contained" color="primary" size="small" disabled={page===1} onClick={()=>{setPage(page-1)}}>back</Button></div>
+                <div className="pagination-element"><Button variant="outlined" color="primary" size="small">{page}</Button></div>
+                <div className="pagination-element"><Button variant="contained" color="primary" size="small" onClick={()=>{setPage(page+1)}}>next</Button></div>
+            </div>
+
         </div>
     );
 }

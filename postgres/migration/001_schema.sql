@@ -74,6 +74,16 @@ CREATE TABLE IF NOT EXISTS sessions
     user_id                     bigint not null
 );
 
+CREATE TABLE IF NOT EXISTS reviews
+(
+    id                bigserial primary key,
+    user_id           bigint not null,
+    offer_id          bigint not null,
+    content           text not null,
+    rating            integer not null,
+    review_date       timestamptz not null
+);
+
 
 
 

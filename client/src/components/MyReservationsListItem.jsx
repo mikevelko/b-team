@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import './MyReservationsListItem.css';
 import Reservation from './Reservation';
 import Rating from '@material-ui/lab/Rating';
+import axios from 'axios';
 
 function MyReservationListItem(props) {
 
@@ -19,13 +20,6 @@ function MyReservationListItem(props) {
         //get review for offer of client if exists
     }
 
-    let tempReview = {
-        "reviewID": 3,
-        "content": "so bad place",
-        "rating": 2,
-        "creationDate": "1",
-        "reviewerUsername": "alex"
-    }
 
     function ReviewEdit() {
         if (editing === true) {
@@ -38,36 +32,44 @@ function MyReservationListItem(props) {
         }
     }
 
-    const DeleteReview = () =>
-    {
+    const DeleteReview = () => {
         //axios delete
     };
 
-    const UpdateReview = () => 
-    {
+    const UpdateReview = () => {
         //axios put
     };
+
+    const CancelReservation = () => {
+        const url = `/api-client/client/reservations/${props.item.reservationInfo.reservationID}`;
+        axios.delete(url, { headers: { 'accept': 'application/json', 'x-session-token': window.localStorage.getItem("token") } })
+            .then(response => {
+                console.log(response.data);
+                props.fetchReservations();
+            })
+            .catch(error => {
+                //console.error('There was an error!', error.response);
+            });
+    }
 
 
     let today = new Date();
     let CurrentDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-    let LastDateOfReservationString = props.item.offerReservations.reservationsInfo[props.item.offerReservations.reservationsInfo.length - 1].to.split("/");
-    let LastDate = new Date(parseInt(LastDateOfReservationString[2]), parseInt(LastDateOfReservationString[1]), parseInt(LastDateOfReservationString[0]));
+    console.log(CurrentDate)
+    let LastDate = new Date(props.item.reservationInfo.from);
+    console.log(LastDate > CurrentDate);
 
     return (
         <div className={LastDate > CurrentDate ? "container-green" : "container-blue"}>
             <div className="container-item">
-                <p>Hotel Name: {props.item.hotelInfoPreview.hotelName}</p>
-                <p>City: {props.item.hotelInfoPreview.city}</p>
-                <p>Country: {props.item.hotelInfoPreview.country}</p>
-                <h3>Reservations:</h3>
-                {
-                    props.item.offerReservations.reservationsInfo.map(item =>
-                        (<Reservation key={item.id} item={item}></Reservation>))
-                }
-            </div>
+                <p>{props.item.hotelInfoPreview.hotelName}</p>
+                <p>{props.item.hotelInfoPreview.city}, {props.item.hotelInfoPreview.country}</p>
+                <p>[{props.item.reservationInfo.from.substring(0, 10)}] — [{props.item.reservationInfo.to.substring(0, 10)}]</p>
+                <p>Adults : {props.item.reservationInfo.numberOfAdults}</p>
+                <p>Children : {props.item.reservationInfo.numberOfChildren}</p>
 
-            {LastDate > CurrentDate ? <Button variant="contained" color="secondary" size="medium">Cancel reservation</Button> :
+            </div>
+            {LastDate > CurrentDate ? <Button variant="contained" color="secondary" size="medium" onClick={CancelReservation}>Cancel reservation</Button> :
                 <div>
                     {props.item.offerReservations.offerReviewID === null ?
                         <div>
@@ -105,6 +107,7 @@ function MyReservationListItem(props) {
                             </div>
                         </div>}
                 </div>}
+
         </div>
     );
 }

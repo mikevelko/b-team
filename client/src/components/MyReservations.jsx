@@ -1,118 +1,43 @@
 import React, { useEffect, useState } from 'react';
 import MyReservationsListItem from './MyReservationsListItem';
-import './MyReservations.css'
+import './MyReservations.css';
+import axios from 'axios';
 
-function MyReservations (){
+function MyReservations() {
 
-    useEffect(() => {
-        fetchItems();
-    }, []);
+  useEffect(() => {
+    fetchItems();
+  }, []);
 
-    const [items, setItems] = useState([]);
+  const [items, setItems] = useState([]);
 
-    const data = [
+
+  const fetchItems = () => {
+    const url = `/api-client/client/reservations?pageNumber=1&pageSize=10`;
+    axios.get(url, { headers: { 'accept': 'application/json', 'x-session-token': window.localStorage.getItem("token") } })
+      .then(response => {
+        console.log(response.data);
+        setItems(response.data);
+      })
+      .catch(error => {
+        //console.error('There was an error!', error.response);
+      });
+  }
+  
+
+
+
+  return (
+    <div>
+      <div className="reservations-container">
+
         {
-          "hotelInfoPreview": {
-            "hotelID": 4,
-            "hotelName": "Grand",
-            "country": "Poland",
-            "city": "Warsaw"
-          },
-          "offerReservations": {
-            "reservationsInfo": [
-              {
-                "reservationID": 3,
-                "from": "25/7/1999",
-                "to": "31/7/1999",
-                "numberOfChildren": 1,
-                "numberOfAdults": 2
-              },
-              {
-                "reservationID": 3,
-                "from": "25/7/1999",
-                "to": "31/7/1999",
-                "numberOfChildren": 0,
-                "numberOfAdults": 4
-              }
-            ],
-            "offerID": 15,
-            "offerReviewID": 3,
-          }
-        },
-        {
-          "hotelInfoPreview": {
-            "hotelID": 4,
-            "hotelName": "Grand",
-            "country": "Poland",
-            "city": "Warsaw"
-          },
-          "offerReservations": {
-            "reservationsInfo": [
-              {
-                "reservationID": 3,
-                "from": "25/7/1999",
-                "to": "31/7/1999",
-                "numberOfChildren": 1,
-                "numberOfAdults": 2
-              },
-              {
-                "reservationID": 3,
-                "from": "25/7/1999",
-                "to": "31/7/1999",
-                "numberOfChildren": 0,
-                "numberOfAdults": 4
-              }
-            ],
-            "offerID": 15,
-            "offerReviewID": null,
-          }
-        },
-        {
-            "hotelInfoPreview": {
-              "hotelID": 4,
-              "hotelName": "Grand",
-              "country": "Poland",
-              "city": "Warsaw"
-            },
-            "offerReservations": {
-              "reservationsInfo": [
-                {
-                  "reservationID": 3,
-                  "from": "25/7/1999",
-                  "to": "31/7/1999",
-                  "numberOfChildren": 1,
-                  "numberOfAdults": 2
-                },
-                {
-                  "reservationID": 3,
-                  "from": "1/8/1999",
-                  "to": "3/8/2022", 
-                  "numberOfChildren": 3,
-                  "numberOfAdults": 4
-                }
-              ],
-              "offerID": 15,
-              "offerReviewID": null,
-            }
-          }
-      ];
-
-    const fetchItems = async () => {
-
-    }
-
-
-        return (
-            <div>
-                <div className="reservations-container">
-                
-                {
-                    data.map(item =>
-                    (<MyReservationsListItem key={item.id} item={item}></MyReservationsListItem>)) 
-                }
-                </div>
-            </div>
-        );
+          items.map(item =>
+            (<MyReservationsListItem key={item.id} item={item} fetchReservations={fetchItems}></MyReservationsListItem>))
+        }
+      </div>
+    </div>
+  );
 }
 
 export default MyReservations;
