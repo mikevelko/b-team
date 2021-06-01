@@ -7,12 +7,14 @@ import (
 
 // Review is a model for room, not implemented yed
 type Review struct {
-	ID         int64
-	OfferID    int64
-	UserID     int64
-	Content    string
-	Rating     int32 //[1-5]
-	ReviewDate time.Time
+	ID         int64     `json:"reviewID"`
+	OfferID    int64     `json:"-"`
+	UserID     int64     `json:"-"`
+	Content    string    `json:"content"`
+	Rating     int32     `json:"rating"` //[1-5]
+	ReviewDate time.Time `json:"creationDate"`
+
+	ReviewerUsername string `json:"reviewerUsername"` // put in service
 }
 
 // ReviewStorage is responsible for persisting review
@@ -28,4 +30,9 @@ type ReviewStorage interface {
 }
 
 // ReviewService is a service which is responsible for actions related to review
-type ReviewService interface{}
+type ReviewService interface {
+	GetReviewsOfOffer(ctx context.Context, offerID int64, userID int64) ([]*Review, error)
+	CreateReview(ctx context.Context, review Review, userID int64, offerID int64) (int64, error)
+	DeleteReview(ctx context.Context, reviewID int64, userID int64, offerID int64) error
+	UpdateReview(ctx context.Context, review Review, userID int64, offerID int64) (int64, error)
+}
