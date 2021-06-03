@@ -1,3 +1,4 @@
+version: "3.7"
 services:
   hotel:
     container_name: hotel
@@ -122,25 +123,6 @@ services:
       POSTGRES_DATABASE: bookly
     networks:
       - server-vpn
-  hotel-service:
-    container_name:  hotel-service
-    build:
-      context: server
-      dockerfile: Dockerfile
-      args:
-        SERVICE_NAME: hotel-service
-    environment:
-      POSTGRES_HOST: postgres
-      POSTGRES_PORT: 5432
-      POSTGRES_USER: bookly
-      POSTGRES_PASSWORD: bookly
-      POSTGRES_DATABASE: bookly
-    depends_on:
-      postgres:
-        condition: service_healthy
-    networks:
-      - server-vpn
-
   user-service:
     container_name: user-service
     build:
@@ -156,7 +138,6 @@ services:
       POSTGRES_DATABASE: bookly
     networks:
       - server-vpn
-
   api-gateway:
     image: nginx:stable-alpine
     container_name: api-gateway-nginx
@@ -187,9 +168,11 @@ services:
     image: swaggerapi/swagger-ui:v3.49.0
     container_name: swagger-ui
     volumes:
-      - .deploy/manifests/swagger/swagger-api.json:/usr/share/nginx/html/swagger
+      - type: bind
+        source: ./deploy/manifests/swagger/bookly.json
+        target: /usr/share/nginx/html/swagger/bookly.json
     environment:
-      API_URL: swagger/swagger-api.json
+      API_URLS: "[{url:'swagger-api/openapi.json',name:'bookly'}]"
     networks:
       server-vpn:
 

@@ -16,17 +16,14 @@ spec:
     spec:
       containers:
         - name: swagger-ui
-          image: swaggerapi/swagger-ui:v3.49.0
+          image: swaggerapi/swagger-ui:latest
           ports:
             - containerPort: 8080
           env:
             - name: BASE_URL
               value: /swagger-ui/
             - name: API_URLS
-              value: >-
-                [
-                {url:'swagger-api/bookly.json',name:'swagger api'}
-                ]
+              value: "[{url:'swagger-api/openapi.json',name:'bookly'}]"
           volumeMounts:
             - name: swagger-api
               mountPath: /usr/share/nginx/html/swagger-api
