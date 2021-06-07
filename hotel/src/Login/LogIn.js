@@ -1,6 +1,6 @@
 import { Button, Checkbox, FormControlLabel, TextField } from '@material-ui/core';
 import React, { useState } from 'react';
-import { HOTEL_TOKEN_NAME, CheckToken, TryLogIn } from './FetchUtils';
+import { HOTEL_TOKEN_NAME, CheckToken, TryLogIn } from '../Utils/FetchUtils';
 import './LogIn.css'
 
 import { useHistory } from "react-router-dom";

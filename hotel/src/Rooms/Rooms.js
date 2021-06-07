@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import "./Rooms.css"
 import GridList from '@material-ui/core/GridList';
 import { Button, Grid, makeStyles, TextField, Typography } from '@material-ui/core';
-import { TryAddHotelRoom, TryGetHotelRooms } from './FetchUtils';
+import { TryAddHotelRoom, TryGetHotelRooms } from '../Utils/FetchUtils';
 import { useHistory } from 'react-router';
 const useStyles = makeStyles((theme) => ({
   AddNewRoomButton:{

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Button, ButtonBase, makeStyles, TextField, Typography, } from '@material-ui/core';
-import templatePicture from './offer.png'; 
+import templatePicture from '../Offers/offer.png'; 
 import './HotelInfoEdit.css'
 import { useHistory } from 'react-router-dom';
 import ClearIcon from '@material-ui/icons/Clear';
-import {TryGetHotelInfo, TryPatchHotelInfo} from './FetchUtils.js';
+import {TryGetHotelInfo, TryPatchHotelInfo} from '../Utils/FetchUtils.js';
 
 const useStyles = makeStyles((theme) => ({
     hotelPreviewPicture:{
