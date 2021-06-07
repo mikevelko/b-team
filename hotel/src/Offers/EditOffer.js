@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import templatePicture from './offer.png'; 
 import './CreateOffer.css'
 import { Link, useHistory } from 'react-router-dom';
-import { TryEditHotelOffer, TryGetHotelOffer } from '../Utils/FetchUtils';
+import { TryEditHotelOffer, TryGetHotelOffer,TryGetRoomsForOffer } from '../Utils/FetchUtils';
 const useStyles = makeStyles((theme) => ({
   offerPreviewImage:{
     width:'300px', 
@@ -89,6 +89,7 @@ function EditOffer() {
 
   useEffect(()=>{
     TryGetHotelOffer(history.location.pathname.split('/')[3]).then(function (response) {
+      console.log(response)
       if(response!= ""){
         setActiveStatus(response.isActive)
         setOfferTitle(response.offerTitle)
@@ -98,13 +99,17 @@ function EditOffer() {
         setMaxGuests(response.maxGuests)
         setPreviewPicture(response.offerPreviewPicture)
         setPictures(response.pictures)
+
       }
+    })
+    TryGetRoomsForOffer(history.location.pathname.split('/')[3]).then(function (response) {
+      setRooms(response)
     })
   },[])
   const classes = useStyles();
 
   function SaveChangesButton(){
-    TryEditHotelOffer(history.location.pathname.split('/')[3],offerTitle,maxGuests,activeStatus,description,pictures,previewPicture)
+    TryEditHotelOffer(history.location.pathname.split('/')[3],offerTitle,maxGuests,activeStatus,description,rooms,pictures,previewPicture)
       .then(function (response) {
         console.log(response)
 
