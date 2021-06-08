@@ -23,7 +23,7 @@ spec:
             - name: BASE_URL
               value: /swagger-ui/
             - name: API_URLS
-              value: "[{url:'swagger-api/openapi.json',name:'bookly'}]"
+              value: "[{url:'swagger-api/bookly.json',name:'bookly'}]"
           volumeMounts:
             - name: swagger-api
               mountPath: /usr/share/nginx/html/swagger-api
