@@ -70,12 +70,10 @@ export default function OffersListItem(props){
       history.push(`/offers/edit/${offerID}`)
     }
     function OfferDetails(offerID){
-      console.log(offerID)
       history.push(`/offers/${offerID}`)
     }
     function DeleteOfferButton(event,offerID) {
       event.stopPropagation()
-      console.log(props)
       if(props.GetOffersWithRoomNumber != null){
         props.GetOffersWithRoomNumber()
       }else{

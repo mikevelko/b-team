@@ -83,7 +83,7 @@ function CreateOffer() {
   const [costPerAdult,setCostPerAdult] = useState(5);
   const [maxGuests,setMaxGuests] = useState(1);
   const [activeStatus, setActiveStatus] = useState(false);
-  const [rooms, setRooms] = useState([]);
+  const [rooms, setRooms] = useState();
   const [description, setDescription] = useState('');
 
     // For feature
@@ -94,8 +94,8 @@ function CreateOffer() {
   
 
   function OnClickCreateOfferButton() {
-    if(offerTitle != '' && costPerChild >0 && costPerAdult > 0 && maxGuests >0 && rooms.length > 0){
-      TryPostOffer(offerTitle,costPerChild,costPerAdult,maxGuests,activeStatus,rooms,description,pictures,previewPicture).then(function (response) {
+    if(offerTitle != '' && costPerChild >0 && costPerAdult > 0 && maxGuests >0){
+      TryPostOffer(offerTitle,costPerChild,costPerAdult,maxGuests,activeStatus,rooms.trim().split(' '),description,pictures,previewPicture).then(function (response) {
         if(response !== -1){
           history.push('/offers')
         }
@@ -194,7 +194,7 @@ function CreateOffer() {
           <Typography className={classes.offerDetailsItem}> 
             Rooms:
           </Typography>
-            <TextField onChange={(e) => {setRooms(e.target.value.split(' '))}}>
+            <TextField value={rooms} onChange={(e) => {setRooms(e.target.value)}}>
             </TextField>  
           </div>
           <div className={classes.fieldRowDescription}>

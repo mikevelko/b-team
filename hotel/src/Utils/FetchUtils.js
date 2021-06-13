@@ -142,7 +142,6 @@ export async function TryLogIn(login, password){
     .catch(function (error) {
       console.log(error);
     });
-    console.log(res)
     if(res !== undefined) return res.data.offerPreview;
     return "";
   };
@@ -176,7 +175,6 @@ export async function TryLogIn(login, password){
       }, 
     })
     .then(function (response) {
-      console.log(response)
       return response;
     })
     .catch(function (error) {
@@ -204,7 +202,6 @@ export async function TryLogIn(login, password){
       }
     })
     .then(function (response) {
-      console.log(response)
       return response;
     })
     .catch(function (error) {
@@ -221,7 +218,6 @@ export async function TryLogIn(login, password){
       }, 
     })
     .then(function (response) {
-      console.log(response)
       return response;
     })
     .catch(function (error) {
@@ -229,21 +225,18 @@ export async function TryLogIn(login, password){
     });
 
     rooms.forEach((room) =>{
-      if(!res2.data.some((elem) =>(elem.roomID === room))){
-        const res3 = await axios({
+      if((res2.data == null) || (res2.data && !res2.data.some((elem) =>(elem.roomID === room)))){
+        const res3 = axios({
           method: 'post',
           url: '/api-hotel/offers/'+offerID + '/rooms',
           headers: {
-            'accept': 'application/json',
+            'accept': '*/*',
             'x-hotel-token': localStorage.getItem(HOTEL_TOKEN_NAME),
             'Content-Type': 'application/json',
           }, 
-          data:{
-            roomID:room
-          }
+          data:parseInt(room)
         })
         .then(function (response) {
-          console.log(response)
           return response;
         })
         .catch(function (error) {
@@ -252,11 +245,12 @@ export async function TryLogIn(login, password){
       }
     })
 
-    res2.data.forEach((elem)=>{
-      if(!rooms.some((room) =>(elem.roomID === room))){
-        const res3 = await axios({
+    if(res2.data) res2.data.forEach((elem)=>{
+
+      if(!rooms.some((room) =>(elem.roomID.toString() === room))){
+        const res3 = axios({
           method: 'delete',
-          url: '/api-hotel/offers/'+offerID + '/rooms' + room,
+          url: '/api-hotel/offers/'+offerID + '/rooms/' + elem.roomID,
           headers: {
             'accept': 'application/json',
             'x-hotel-token': localStorage.getItem(HOTEL_TOKEN_NAME),
