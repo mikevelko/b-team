@@ -31,7 +31,7 @@ type ReservationInfo struct {
 	ToTime        time.Time `json:"to"`
 	ChildAmount   int       `json:"numberOfChildren"`
 	AdultAmount   int       `json:"numberOfAdults"`
-	ReviewID      *int      `json:"reviewID,omitempty"`
+	ReviewID      *int64    `json:"reviewID,omitempty"`
 }
 
 // ReservationStorage is responsible for storage operations on client reservation

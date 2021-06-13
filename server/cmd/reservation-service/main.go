@@ -34,8 +34,9 @@ func main() {
 		offerStorage := postgres.NewOfferStorage(pool)
 		reservationStorage := postgres.NewReservationStorage(pool)
 		hotelStorage := postgres.NewHotelStorage(pool)
+		reviewStorage := postgres.NewReviewStorage(pool)
 
-		service := newReservationService(offerStorage, reservationStorage, hotelStorage)
+		service := newReservationService(offerStorage, reservationStorage, hotelStorage, reviewStorage)
 		api := newAPI(application.Logger, service)
 		api.mount(application.Router)
 		return nil
