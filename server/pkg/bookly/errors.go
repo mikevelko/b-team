@@ -43,3 +43,6 @@ var ErrReservationInProgress = errors.New("reservation is already in progress")
 
 // ErrReviewNotFound indicates that review doesn't exist in database
 var ErrReviewNotFound = errors.New("review not fount")
+
+// ErrReviewNotOwned indicates that review doesn't exist in database
+var ErrReviewNotOwned = errors.New("review not Owned")

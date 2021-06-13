@@ -69,7 +69,7 @@ func (a *api) handlePostReservation(w http.ResponseWriter, r *http.Request) {
 	reservation.HotelID = hotelID
 	reservation.OfferID = offerID
 	errAdd := a.reservationService.CreateReservation(r.Context(), reservation)
-	//todo: refactor this to use SentinelError and switch to check error type
+	// todo: refactor this to use SentinelError and switch to check error type
 	if errAdd != nil {
 		if errAdd == bookly.ErrOfferNotAvailable {
 			httpapi.RespondWithError(w, "Unable to reserve: offer is not available, please refresh offers page.")
@@ -99,7 +99,7 @@ func (a *api) handleDeleteReservation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	errDelete := a.reservationService.DeleteReservation(r.Context(), session.UserID, reservationID)
-	//todo: refactor this to use SentinelError and switch to check error type
+	// todo: refactor this to use SentinelError and switch to check error type
 	if errDelete != nil {
 		if errDelete == bookly.ErrReservationInProgress {
 			httpapi.RespondWithError(w, "Unable to delete reservation: reservation is in progress")

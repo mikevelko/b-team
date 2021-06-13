@@ -1126,6 +1126,11 @@
     },
     "/api-client/client/reservations/{reservationID}/review": {
       "get": {
+        "security": [
+          {
+            "customTokenSecurityClient": []
+          }
+        ],
         "description": "Pobiera opinię do danej rezerwacji",
         "operationId": "GET_client-reservations-reservationID-review",
         "parameters": [
@@ -1150,8 +1155,39 @@
         }
       },
       "put": {
+        "security": [
+          {
+            "customTokenSecurityClient": []
+          }
+        ],
         "description": "Creates/edits a new review related to an offer",
         "operationId": "PUT_client-reservations-reservationID-review",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": [
+                  "content",
+                  "rating"
+                ],
+                "type": "object",
+                "properties": {
+                  "content": {
+                    "type": "string"
+                  },
+                  "rating": {
+                    "type": "integer"
+                  }
+                },
+                "example": {
+                  "content": "fine",
+                  "rating": 5
+                }
+              }
+            }
+          },
+          "required": true
+        },
         "parameters": [
           {
             "name": "reservationID",
@@ -1162,21 +1198,6 @@
             }
           }
         ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object"
-              }
-            },
-            "responses": {
-              "schema": {
-                "type": "object"
-              }
-            }
-          },
-          "required": true
-        },
         "responses": {
           "default": {
             "description": "",
@@ -1186,6 +1207,11 @@
         "x-codegen-request-body-name": "body"
       },
       "delete": {
+        "security": [
+          {
+            "customTokenSecurityClient": []
+          }
+        ],
         "description": "Deletes a client review related to an offer",
         "operationId": "DELETE_client-reservations-reservationID-review",
         "parameters": [
@@ -1494,6 +1520,11 @@
     },
     "/api-client/hotels/{hotelID}/offers/{offerID}/reviews": {
       "get": {
+        "security": [
+          {
+            "customTokenSecurityClient": []
+          }
+        ],
         "description": "Returns all reviews related to an offer",
         "operationId": "GET_hotels-hotelID-offers-offerID-reviews",
         "parameters": [
@@ -1528,6 +1559,11 @@
     },
     "/api-client/hotels/{hotelID}/reviews": {
       "get": {
+        "security": [
+          {
+            "customTokenSecurityClient": []
+          }
+        ],
         "description": "Returns all reviews related to a hotel",
         "operationId": "GET_hotels-hotelID-reviews",
         "parameters": [

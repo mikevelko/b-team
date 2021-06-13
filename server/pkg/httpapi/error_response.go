@@ -26,3 +26,20 @@ func RespondWithError(w http.ResponseWriter, msg string) {
 		return
 	}
 }
+
+// RespondWithErrorCode is used to handle internal errors with code
+func RespondWithErrorCode(w http.ResponseWriter, msg string, code int) {
+	errResponse := ErrorResponse{msg}
+	js, err := json.Marshal(errResponse)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(code)
+	w.Header().Set("Content-Type", "application/json")
+	_, err = w.Write(js)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}

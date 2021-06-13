@@ -34,8 +34,11 @@ func main() {
 		application.AddHealthCheck(postgres.NewHealthConfig(pool))
 
 		reviewStorage := postgres.NewReviewStorage(pool)
+		userStorage := postgres.NewUserStorage(pool)
+		offerStorage := postgres.NewOfferStorage(pool)
+		reservationStorage := postgres.NewReservationStorage(pool)
 
-		service := newReviewService(reviewStorage)
+		service := newReviewService(reviewStorage, offerStorage, userStorage, reservationStorage)
 
 		api := newAPI(application.Logger, service)
 		api.mount(application.Router)
