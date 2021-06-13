@@ -1,0 +1,67 @@
+INSERT INTO reservations(
+    id,
+    client_id,
+    hotel_id,
+    offer_id,
+    from_time,
+    to_time,
+    child_count,
+    adult_count
+)
+VALUES
+(
+    99999990,
+    99999990,
+    1,
+    1,
+    '2021-05-01',
+    '2021-06-01',
+    1,
+    1
+),
+(
+    99999991,
+    99999991,
+    1,
+    2,
+    '2021-05-01',
+    '2021-06-01',
+    1,
+    1
+),
+(
+    99999992,
+    99999992,
+    1,
+    3,
+    '2021-05-01',
+    '2021-07-01',
+    1,
+    1
+);
+
+INSERT INTO reviews(
+    id,
+    user_id,
+    offer_id,
+    content,
+    rating,
+    review_date
+)
+VALUES
+(
+    99999990,
+    99999990,
+    1,
+    'abc',
+    5,
+    '2021-06-02'
+),
+(
+    99999991,
+    99999991,
+    2,
+    'abc',
+    5,
+    '2021-06-02'
+);

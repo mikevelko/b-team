@@ -3,7 +3,12 @@ import axios from 'axios'
 import { Link, useHistory, BrowserRouter as Router, Route } from 'react-router-dom';import ReviewsListItem from './ReviewsListItem';
 ;
 
-function Reviews() {
+function Reviews(props) {
+
+    let hotelId = props.match.params.hotelId;
+    let offerId = props.match.params.offerId;
+    const [reviews, setReviews] = useState([]);
+
     useEffect(() => {
         fetchItems();
     }, []);
@@ -11,7 +16,21 @@ function Reviews() {
 
 
     const fetchItems = () => {
+        const url = `/api-client/hotels/${hotelId}/offers/${offerId}/reviews`;
+        axios.get(url, { headers: { 'accept': 'application/json', 'x-session-token': window.localStorage.getItem("token") } })
+            .then(response => {
+                console.log(response.data);
+                setReviews(response.data);
+            })
+            .catch(error => {
+                if (error.response.status === 404) {
+                    let path = `/hotels/${hotelId}/offers`;
+                    history.push(path);
+                }
+                console.error('There was an error!', error.response);
+            });
 
+        
     }
 
     const items = [
@@ -34,7 +53,7 @@ function Reviews() {
     return (
         <div>
             {
-                items.map(item =>
+                reviews.map(item =>
                     (<ReviewsListItem item={item} key={item.reviewID}></ReviewsListItem>))
             }
         </div>
