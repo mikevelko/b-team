@@ -8,4 +8,4 @@ resources:
 configMapGenerator:
   - name: swagger-api
     files:
-      - swagger-api.json
+      - bookly.json

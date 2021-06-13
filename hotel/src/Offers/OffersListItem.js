@@ -2,7 +2,7 @@ import { Button, ButtonBase, Grid, makeStyles, Typography } from "@material-ui/c
 import React from 'react';
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router";
-import { TryDeleteHotelOffer, TryGetHotelOffers, TryGetRoomsForOffer } from "./FetchUtils";
+import { TryDeleteHotelOffer, TryGetHotelOffers, TryGetRoomsForOffer } from "../Utils/FetchUtils";
 import offerImage from './offer.png';
 
 const useStyles = makeStyles((theme) => ({

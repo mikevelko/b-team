@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Offers.css'
 
-import {  TryGetHotelOffers } from './FetchUtils';
+import {  TryGetHotelOffers } from '../Utils/FetchUtils';
 import OffersListItem from './OffersListItem';
 
 

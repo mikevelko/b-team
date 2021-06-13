@@ -6,19 +6,19 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import {BrowserRouter as Router, Switch, Route, Link, useHistory} from 'react-router-dom';
 import StartPage from './StartPage';
-import HotelInfo from './HotelInfo';
-import Offers from './Offers';
-import Reservations from './Reservations';
-import Rooms from './Rooms';
-import LogIn from './LogIn';
+import HotelInfo from '../HotelInfo/HotelInfo';
+import Offers from '../Offers/Offers';
+import Reservations from '../Reservations/Reservations';
+import Rooms from '../Rooms/Rooms';
+import LogIn from '../Login/LogIn';
 import HomeIcon from '@material-ui/icons/Home';
-import CreateOffer from './CreateOffer';
-import HotelInfoEdit from './HotelInfoEdit';
-import EditOffer from './EditOffer';
-import { PrivateRoute } from './PrivateRoute';
-import { TryGetHotelInfo } from './FetchUtils';
-import OfferDetails from './OfferDetails';
-import RoomOffers from './RoomOffers';
+import CreateOffer from '../Offers/CreateOffer';
+import HotelInfoEdit from '../HotelInfo/HotelInfoEdit';
+import EditOffer from '../Offers/EditOffer';
+import { PrivateRoute } from '../MainComponents/PrivateRoute';
+import { TryGetHotelInfo } from '../Utils/FetchUtils';
+import OfferDetails from '../Offers/OfferDetails';
+import RoomOffers from '../Offers/RoomOffers';
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,

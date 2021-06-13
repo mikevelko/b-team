@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Button, makeStyles, Typography, } from '@material-ui/core';
-import templatePicture from './offer.png'; 
+import templatePicture from '../Offers/offer.png'; 
 import './HotelInfo.css'
 import { Link } from 'react-router-dom';
-import { TryGetHotelInfo } from './FetchUtils';
+import { TryGetHotelInfo } from '../Utils/FetchUtils';
 
 const useStyles = makeStyles((theme) => ({
   hotelPreviewPicture:{

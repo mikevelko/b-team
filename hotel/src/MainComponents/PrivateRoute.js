@@ -1,6 +1,6 @@
 import React from "react";
 import { Redirect, Route } from "react-router";
-import {HOTEL_TOKEN_NAME} from './FetchUtils.js';
+import {HOTEL_TOKEN_NAME} from '../Utils/FetchUtils.js';
 export function PrivateRoute ({component: Component}) {
     function isAuthorised(){
         try{
