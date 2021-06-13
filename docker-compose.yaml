@@ -60,6 +60,22 @@ services:
       postgres:
         condition: service_healthy
 
+  review-service:
+    container_name: review-service
+    build:
+      context: server
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: review-service
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: bookly
+      POSTGRES_PASSWORD: bookly
+      POSTGRES_DATABASE: bookly
+    networks:
+      - server-vpn
+
   offer-service:
     container_name: offer-service
     build:
@@ -123,6 +139,7 @@ services:
       POSTGRES_DATABASE: bookly
     networks:
       - server-vpn
+
   user-service:
     container_name: user-service
     build:
@@ -172,7 +189,7 @@ services:
         source: ./deploy/manifests/swagger/bookly.json
         target: /usr/share/nginx/html/swagger/bookly.json
     environment:
-      API_URLS: "[{url:'swagger-api/openapi.json',name:'bookly'}]"
+      API_URLS: "[{url:'swagger/bookly.json',name:'bookly'}]"
     networks:
       server-vpn:
 

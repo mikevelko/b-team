@@ -31,8 +31,9 @@ type ReviewStorage interface {
 
 // ReviewService is a service which is responsible for actions related to review
 type ReviewService interface {
+	GetReviewsOfHotel(ctx context.Context, hotelID int64, userID int64) ([]*Review, error)
 	GetReviewsOfOffer(ctx context.Context, offerID int64, userID int64) ([]*Review, error)
-	CreateReview(ctx context.Context, review Review, userID int64, offerID int64) (int64, error)
-	DeleteReview(ctx context.Context, reviewID int64, userID int64, offerID int64) error
-	UpdateReview(ctx context.Context, review Review, userID int64, offerID int64) (int64, error)
+	GetReviewsOfReservation(ctx context.Context, reservationID int64, userID int64) (Review, error)
+	CreateOrUpdateReview(ctx context.Context, review Review, userID int64, reservationID int64) (int64, error)
+	DeleteReview(ctx context.Context, userID int64, reservationID int64) error
 }
