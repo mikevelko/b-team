@@ -33,7 +33,7 @@ function MyReservations() {
 
         {
           items.map(item =>
-            (<MyReservationsListItem key={item.id} item={item} fetchReservations={fetchItems}></MyReservationsListItem>))
+            (<MyReservationsListItem key={item.reservationInfo.reservationId} item={item} fetchReservations={fetchItems}></MyReservationsListItem>))
         }
       </div>
     </div>

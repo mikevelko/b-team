@@ -10,7 +10,7 @@ function MyReservationListItem(props) {
     const [newReview, setNewReview] = useState("");
     const [editing, setEditing] = useState(false);
     const [buttonText, setButtonText] = useState("Edit review");
-    const [newRating, setNewRating] = useState();
+    const [newRating, setNewRating] = useState(0);
 
     useEffect(() => {
         fetchItems();
@@ -36,10 +36,6 @@ function MyReservationListItem(props) {
         //axios delete
     };
 
-    const UpdateReview = () => {
-        //axios put
-    };
-
     const CancelReservation = () => {
         const url = `/api-client/client/reservations/${props.item.reservationInfo.reservationID}`;
         axios.delete(url, { headers: { 'accept': 'application/json', 'x-session-token': window.localStorage.getItem("token") } })
@@ -49,6 +45,26 @@ function MyReservationListItem(props) {
             })
             .catch(error => {
                 //console.error('There was an error!', error.response);
+            });
+    }
+
+    const AddEditReview = () => {
+        const data =
+        {
+            content: newReview.toString(),
+            rating: parseInt(newRating)
+        }
+
+        const url = `/api-client/client/reservations/${props.item.reservationInfo.reservationID}/review`;
+        axios.put(url,
+            data,
+            { headers: { 'accept': '*/*', 'Content-Type': 'application/json', 'x-session-token': window.localStorage.getItem("token") } })
+            .then(response => {
+                console.log(response.data);
+                props.fetchReservations();
+            })
+            .catch(error => {
+                console.error('There was an error!', error.response);
             });
     }
 
@@ -63,6 +79,7 @@ function MyReservationListItem(props) {
         <div className={LastDate > CurrentDate ? "container-green" : "container-blue"}>
             <div className="container-item">
                 <p>{props.item.hotelInfoPreview.hotelName}</p>
+                <p>{props.item.reservationInfo.reservationID}</p>
                 <p>{props.item.hotelInfoPreview.city}, {props.item.hotelInfoPreview.country}</p>
                 <p>[{props.item.reservationInfo.from.substring(0, 10)}] — [{props.item.reservationInfo.to.substring(0, 10)}]</p>
                 <p>Adults : {props.item.reservationInfo.numberOfAdults}</p>
@@ -71,20 +88,20 @@ function MyReservationListItem(props) {
             </div>
             {LastDate > CurrentDate ? <Button variant="contained" color="secondary" size="medium" onClick={CancelReservation}>Cancel reservation</Button> :
                 <div>
-                    {props.item.offerReservations.offerReviewID === null ?
+                    {(!(props.item.hasOwnProperty('offerReviewID')) || props.item.reservationInfo.offerReviewID === null) ?
                         <div>
                             <div>
                                 <Input value={newReview}
                                     onChange={(event, newValue) => {
-                                        setNewReview(newValue);
+                                        setNewReview(event.target.value);
                                     }}
                                     color='secondary'></Input>
                                 <Rating value={newRating}
                                     onChange={(event, newValue) => {
-                                        setNewRating(newValue);
+                                        setNewRating(event.target.value);
                                     }}></Rating>
                                 <div>
-                                    <Button variant="contained" color="primary" size="medium">Add new review</Button>
+                                    <Button variant="contained" color="primary" size="medium" onClick={AddEditReview}>Add new review</Button>
                                 </div>
                             </div>
                         </div>
@@ -102,7 +119,8 @@ function MyReservationListItem(props) {
                                     }}></Rating>
                                 <div>
                                     <Button variant="contained" color="primary" size="medium" onClick={ReviewEdit}>{buttonText}</Button>
-                                    <Button variant="contained" color="secondary" size="medium">Delete review</Button>
+                                    <Button variant="contained" color="primary" size="medium" onClick={AddEditReview}>Update review</Button>
+                                    <Button variant="contained" color="secondary" size="medium" onClick={AddEditReview}>Delete</Button>
                                 </div>
                             </div>
                         </div>}
