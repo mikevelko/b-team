@@ -12,12 +12,14 @@ type reservationService struct {
 	offerStorage       bookly.OfferStorage
 	reservationStorage bookly.ReservationStorage
 	hotelStorage       bookly.HotelStorage
+	reviewStorage      bookly.ReviewStorage
 }
 
 func newReservationService(offers bookly.OfferStorage,
 	reservations bookly.ReservationStorage,
-	hotels bookly.HotelStorage) *reservationService {
-	return &reservationService{reservationStorage: reservations, offerStorage: offers, hotelStorage: hotels}
+	hotels bookly.HotelStorage,
+	review bookly.ReviewStorage) *reservationService {
+	return &reservationService{reservationStorage: reservations, offerStorage: offers, hotelStorage: hotels, reviewStorage: review}
 }
 
 // CreateReservation handles business logic connected to creating reservations
@@ -71,7 +73,17 @@ func (s *reservationService) GetClientReservations(ctx context.Context, clientID
 		obj.OfferPreview.OfferTitle = offer.OfferTitle
 		obj.OfferPreview.OfferPreviewPicture = offer.OfferPreviewPicture
 		// todo: add reviews
-		obj.Reservation.ReviewID = nil
+		review, err := s.reviewStorage.GetReviewByOwner(ctx, clientID, el.OfferID)
+		if err != nil {
+			if err == bookly.ErrReviewNotFound {
+				obj.Reservation.ReviewID = nil
+			} else {
+				return nil, err
+			}
+		} else {
+			obj.Reservation.ReviewID = &(review.ID)
+		}
+
 		obj.Reservation.ReservationID = el.ID
 		obj.Reservation.FromTime = el.FromTime
 		obj.Reservation.ToTime = el.ToTime
