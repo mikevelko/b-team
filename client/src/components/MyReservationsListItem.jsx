@@ -11,13 +11,26 @@ function MyReservationListItem(props) {
     const [editing, setEditing] = useState(false);
     const [buttonText, setButtonText] = useState("Edit review");
     const [newRating, setNewRating] = useState(0);
+    const [reviewItem, setReviewItem] = useState([])
 
     useEffect(() => {
         fetchItems();
     }, []);
 
     const fetchItems = async () => {
-        //get review for offer of client if exists
+        if ((props.item.reservationInfo.hasOwnProperty('reviewID') && props.item.reservationInfo.reviewID !== null)) {
+            const url = `/api-client/client/reservations/${props.item.reservationInfo.reservationID}/review`;
+            axios.get(url, { headers: { 'accept': '*/*', 'x-session-token': window.localStorage.getItem("token") } })
+                .then(response => {
+                    console.log(response.data);
+                    setReviewItem(response.data);
+                    setNewReview(response.data.content);
+                    setNewRating(response.data.rating);
+                })
+                .catch(error => {
+                    //console.error('There was an error!', error.response);
+                });
+        }
     }
 
 
@@ -32,9 +45,7 @@ function MyReservationListItem(props) {
         }
     }
 
-    const DeleteReview = () => {
-        //axios delete
-    };
+    
 
     const CancelReservation = () => {
         const url = `/api-client/client/reservations/${props.item.reservationInfo.reservationID}`;
@@ -68,12 +79,25 @@ function MyReservationListItem(props) {
             });
     }
 
+    const DeleteReview = () => {
+        const url = `/api-client/client/reservations/${props.item.reservationInfo.reservationID}/review`;
+        axios.delete(url, { headers: { 'accept': '*/*', 'x-session-token': window.localStorage.getItem("token") } })
+            .then(response => {
+                console.log(response.data);
+                props.fetchReservations();
+                setNewReview("");
+                setNewRating(0);
+            })
+            .catch(error => {
+                //console.error('There was an error!', error.response);
+            });
+    };
+
 
     let today = new Date();
     let CurrentDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-    console.log(CurrentDate)
     let LastDate = new Date(props.item.reservationInfo.from);
-    console.log(LastDate > CurrentDate);
+
 
     return (
         <div className={LastDate > CurrentDate ? "container-green" : "container-blue"}>
@@ -86,9 +110,10 @@ function MyReservationListItem(props) {
                 <p>Children : {props.item.reservationInfo.numberOfChildren}</p>
 
             </div>
-            {LastDate > CurrentDate ? <Button variant="contained" color="secondary" size="medium" onClick={CancelReservation}>Cancel reservation</Button> :
+            {LastDate > CurrentDate ? <Button variant="contained" color="secondary" size="small" onClick={CancelReservation}>Cancel reservation</Button> :
                 <div>
-                    {(!(props.item.hasOwnProperty('offerReviewID')) || props.item.reservationInfo.offerReviewID === null) ?
+                    {console.log(!(props.item.hasOwnProperty('reviewID')))}
+                    {(!(props.item.reservationInfo.hasOwnProperty('reviewID')) || props.item.reservationInfo.reviewID === null) ?
                         <div>
                             <div>
                                 <Input value={newReview}
@@ -101,7 +126,7 @@ function MyReservationListItem(props) {
                                         setNewRating(event.target.value);
                                     }}></Rating>
                                 <div>
-                                    <Button variant="contained" color="primary" size="medium" onClick={AddEditReview}>Add new review</Button>
+                                    <Button variant="contained" color="primary" size="small" onClick={AddEditReview}>Add new review</Button>
                                 </div>
                             </div>
                         </div>
@@ -110,17 +135,17 @@ function MyReservationListItem(props) {
                             <div>
                                 <Input disabled={!editing} value={newReview}
                                     onChange={(event, newValue) => {
-                                        setNewReview(newValue);
+                                        setNewReview(event.target.value);
                                     }}
                                     color='secondary'></Input>
                                 <Rating disabled={!editing} value={newRating}
                                     onChange={(event, newValue) => {
-                                        setNewRating(newValue);
+                                        setNewRating(event.target.value);
                                     }}></Rating>
                                 <div>
-                                    <Button variant="contained" color="primary" size="medium" onClick={ReviewEdit}>{buttonText}</Button>
-                                    <Button variant="contained" color="primary" size="medium" onClick={AddEditReview}>Update review</Button>
-                                    <Button variant="contained" color="secondary" size="medium" onClick={AddEditReview}>Delete</Button>
+                                    <Button variant="contained" color="primary" size="small" onClick={ReviewEdit}>{buttonText}</Button>
+                                    <Button variant="contained" color="primary" size="small" onClick={AddEditReview}>Update review</Button>
+                                    <Button variant="contained" color="secondary" size="small" onClick={DeleteReview}>Delete review</Button>
                                 </div>
                             </div>
                         </div>}
