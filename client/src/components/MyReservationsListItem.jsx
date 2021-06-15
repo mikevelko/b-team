@@ -20,7 +20,7 @@ function MyReservationListItem(props) {
     const fetchItems = async () => {
         if ((props.item.reservationInfo.hasOwnProperty('reviewID') && props.item.reservationInfo.reviewID !== null)) {
             const url = `/api-client/client/reservations/${props.item.reservationInfo.reservationID}/review`;
-            axios.get(url, { headers: { 'accept': '*/*', 'x-session-token': window.localStorage.getItem("token") } })
+            axios.get(url, { headers: { 'accept': '*/*', 'x-client-token': window.localStorage.getItem("token") } })
                 .then(response => {
                     console.log(response.data);
                     setReviewItem(response.data);
@@ -49,7 +49,7 @@ function MyReservationListItem(props) {
 
     const CancelReservation = () => {
         const url = `/api-client/client/reservations/${props.item.reservationInfo.reservationID}`;
-        axios.delete(url, { headers: { 'accept': 'application/json', 'x-session-token': window.localStorage.getItem("token") } })
+        axios.delete(url, { headers: { 'accept': 'application/json', 'x-client-token': window.localStorage.getItem("token") } })
             .then(response => {
                 console.log(response.data);
                 props.fetchReservations();
@@ -69,7 +69,7 @@ function MyReservationListItem(props) {
         const url = `/api-client/client/reservations/${props.item.reservationInfo.reservationID}/review`;
         axios.put(url,
             data,
-            { headers: { 'accept': '*/*', 'Content-Type': 'application/json', 'x-session-token': window.localStorage.getItem("token") } })
+            { headers: { 'accept': '*/*', 'Content-Type': 'application/json', 'x-client-token': window.localStorage.getItem("token") } })
             .then(response => {
                 console.log(response.data);
                 props.fetchReservations();
@@ -81,7 +81,7 @@ function MyReservationListItem(props) {
 
     const DeleteReview = () => {
         const url = `/api-client/client/reservations/${props.item.reservationInfo.reservationID}/review`;
-        axios.delete(url, { headers: { 'accept': '*/*', 'x-session-token': window.localStorage.getItem("token") } })
+        axios.delete(url, { headers: { 'accept': '*/*', 'x-client-token': window.localStorage.getItem("token") } })
             .then(response => {
                 console.log(response.data);
                 props.fetchReservations();

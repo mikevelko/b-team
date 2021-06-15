@@ -35,9 +35,9 @@ function Hotels() {
         };
         const headers = {
             'accept': 'application/json',
-            'x-session-token': window.localStorage.getItem("token")
+            'x-client-token': window.localStorage.getItem("token")
         };
-        axios.get('/api-client/hotels', { headers: { 'accept': 'application/json', 'x-session-token': window.localStorage.getItem("token") } })
+        axios.get('/api-client/hotels', { headers: { 'accept': 'application/json', 'x-client-token': window.localStorage.getItem("token") } })
             .then(response => {
                 setItems(response.data);
                 console.log(response);
@@ -61,9 +61,9 @@ function Hotels() {
         console.log(GET_URL);
         const headers = {
             'accept': 'application/json',
-            'x-session-token': window.localStorage.getItem("token")
+            'x-client-token': window.localStorage.getItem("token")
         };
-        axios.get(GET_URL , { headers: { 'accept': 'application/json', 'x-session-token': window.localStorage.getItem("token") } })
+        axios.get(GET_URL , { headers: { 'accept': 'application/json', 'x-client-token': window.localStorage.getItem("token") } })
             .then(response => {
                 setItems(response.data);
                 console.log(response);
