@@ -24,6 +24,13 @@ type ReservationObject struct {
 	OfferPreview OfferInfoPreview `json:"offerInfoPreview"`
 }
 
+// ReservationHotelObject holds data about reservations for hotel
+type ReservationHotelObject struct {
+	Reservation ReservationInfo `json:"reservation"`
+	User        UserPreview     `json:"client"`
+	Room        RoomPreview     `json:"room"`
+}
+
 // ReservationInfo holds info about offer for reservation purpose
 type ReservationInfo struct {
 	ReservationID int64     `json:"reservationID"`
@@ -42,6 +49,10 @@ type ReservationStorage interface {
 	GetClientReservations(ctx context.Context, clientID int64) ([]*Reservation, error)
 	GetHotelReservations(ctx context.Context, hotelID int64) ([]*Reservation, error)
 	IsReservationOwnedByClient(ctx context.Context, clientID int64, reservationID int64) (bool, error)
+	CreateReservationRoomLink(ctx context.Context, reservationID int64, roomID int64) error
+	GetRoomFromReservation(ctx context.Context, reservationID int64) (int64, error)
+	DeleteReservationRoomLink(ctx context.Context, reservationID int64) error
+	IsRoomBooked(ctx context.Context, roomID int64) (bool, error)
 }
 
 // ReservationService is a service which is responsible for actions related to reservations
@@ -49,4 +60,5 @@ type ReservationService interface {
 	CreateReservation(ctx context.Context, reservation *Reservation) error
 	GetClientReservations(ctx context.Context, clientID int64, pageNumber int, pageSize int) ([]*ReservationObject, error)
 	DeleteReservation(ctx context.Context, clientID int64, reservationID int64) error
+	GetHotelReservations(ctx context.Context, currentOnly bool, clientID int64, pageNumber int, pageSize int) ([]*ReservationHotelObject, error)
 }

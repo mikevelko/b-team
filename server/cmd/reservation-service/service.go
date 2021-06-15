@@ -13,19 +13,33 @@ type reservationService struct {
 	reservationStorage bookly.ReservationStorage
 	hotelStorage       bookly.HotelStorage
 	reviewStorage      bookly.ReviewStorage
+	roomStorage        bookly.RoomStorage
+	userStorage        bookly.UserStorage
 }
 
 func newReservationService(offers bookly.OfferStorage,
 	reservations bookly.ReservationStorage,
 	hotels bookly.HotelStorage,
-	review bookly.ReviewStorage) *reservationService {
-	return &reservationService{reservationStorage: reservations, offerStorage: offers, hotelStorage: hotels, reviewStorage: review}
+	reviews bookly.ReviewStorage,
+	rooms bookly.RoomStorage,
+	users bookly.UserStorage) *reservationService {
+	return &reservationService{
+		reservationStorage: reservations,
+		offerStorage:       offers,
+		hotelStorage:       hotels,
+		reviewStorage:      reviews,
+		roomStorage:        rooms,
+		userStorage:        users,
+	}
 }
 
 // CreateReservation handles business logic connected to creating reservations
 func (s *reservationService) CreateReservation(ctx context.Context, reservation *bookly.Reservation) error {
 	if reservation.ToTime.Before(reservation.FromTime) {
 		// Offers is not available during negative time periods
+		return bookly.ErrOfferNotAvailable
+	}
+	if reservation.FromTime.Before(time.Now()) {
 		return bookly.ErrOfferNotAvailable
 	}
 	isActive, err := s.offerStorage.IsOfferActive(ctx, reservation.OfferID)
@@ -44,11 +58,29 @@ func (s *reservationService) CreateReservation(ctx context.Context, reservation 
 		return bookly.ErrReservationTooBig
 	}
 	// todo: check availability intervals
-	_, errCreate := s.reservationStorage.CreateReservation(ctx, reservation)
-	if errCreate != nil {
-		return errCreate
+	rooms, errRooms := s.roomStorage.GetRoomsRelatedWithOffer(ctx, reservation.OfferID)
+	if errRooms != nil {
+		return errRooms
 	}
-	return nil
+
+	for _, room := range rooms {
+		owned, errStatus := s.reservationStorage.IsRoomBooked(ctx, room)
+		if errStatus != nil {
+			return errStatus
+		}
+		if !owned {
+			reservationID, errCreate := s.reservationStorage.CreateReservation(ctx, reservation)
+			if errCreate != nil {
+				return errCreate
+			}
+			errLink := s.reservationStorage.CreateReservationRoomLink(ctx, reservationID, room)
+			if errLink != nil {
+				return errLink
+			}
+			return nil
+		}
+	}
+	return bookly.ErrNoRoomsLeft
 }
 
 // GetClientReservations retrieves client reservations
@@ -72,7 +104,7 @@ func (s *reservationService) GetClientReservations(ctx context.Context, clientID
 		obj.OfferPreview.OfferID = el.OfferID
 		obj.OfferPreview.OfferTitle = offer.OfferTitle
 		obj.OfferPreview.OfferPreviewPicture = offer.OfferPreviewPicture
-		// todo: add reviews
+
 		review, err := s.reviewStorage.GetReviewByOwner(ctx, clientID, el.OfferID)
 		if err != nil {
 			if err == bookly.ErrReviewNotFound {
@@ -118,5 +150,59 @@ func (s *reservationService) DeleteReservation(ctx context.Context, clientID int
 		return bookly.ErrReservationInProgress
 	}
 	errDelete := s.reservationStorage.DeleteReservation(ctx, reservationID)
-	return errDelete
+	if errDelete != nil {
+		return errDelete
+	}
+	errDeleteLinks := s.reservationStorage.DeleteReservationRoomLink(ctx, reservationID)
+	return errDeleteLinks
+}
+
+// GetHotelReservations retrieves hotel reservations
+func (s *reservationService) GetHotelReservations(ctx context.Context, currentOnly bool, hotelID int64, pageNumber int, pageSize int) ([]*bookly.ReservationHotelObject, error) {
+	reservations, errGet := s.reservationStorage.GetHotelReservations(ctx, hotelID)
+	if errGet != nil {
+		return nil, errGet
+	}
+
+	list := []*bookly.ReservationHotelObject{}
+	for _, el := range reservations {
+		if currentOnly && el.ToTime.Before(time.Now()) {
+			continue
+		}
+
+		obj := &bookly.ReservationHotelObject{}
+
+		client, errGetClient := s.userStorage.GetUser(ctx, el.ClientID)
+		if errGetClient != nil {
+			return nil, errGetClient
+		}
+
+		roomID, errGetRoom := s.reservationStorage.GetRoomFromReservation(ctx, el.ID)
+		if errGetRoom != nil {
+			return nil, errGetRoom
+		}
+
+		roomInfo, errGetRoomInfo := s.roomStorage.GetRoom(ctx, roomID)
+
+		if errGetRoomInfo != nil {
+			return nil, errGetRoomInfo
+		}
+
+		obj.Room.ID = roomID
+		obj.Room.RoomNumber = roomInfo.RoomNumber
+
+		obj.User.ID = el.ClientID
+		obj.User.FirstName = client.FirstName
+		obj.User.Surname = client.Surname
+
+		obj.Reservation.ReservationID = el.ID
+		obj.Reservation.FromTime = el.FromTime
+		obj.Reservation.ToTime = el.ToTime
+		obj.Reservation.AdultAmount = el.AdultCount
+		obj.Reservation.ChildAmount = el.ChildCount
+
+		list = append(list, obj)
+	}
+	start, end := paging.GetPageItems(pageNumber, pageSize, len(list))
+	return list[start:end], nil
 }

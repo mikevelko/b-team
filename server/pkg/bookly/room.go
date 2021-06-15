@@ -13,6 +13,12 @@ type Room struct {
 	OfferID    []int64 `json:"offerID"`
 }
 
+// RoomPreview holds info for room preview
+type RoomPreview struct {
+	ID         int64  `json:"roomID"`
+	RoomNumber string `json:"hotelRoomNumber"`
+}
+
 // RoomStorage is responsible for persisting offers
 type RoomStorage interface {
 	CreateRoom(ctx context.Context, room Room, hotelID int64) (int64, error)

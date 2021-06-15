@@ -41,6 +41,9 @@ var ErrReservationNotOwned = errors.New("reservation is not owned")
 // ErrReservationInProgress indicates that reservation is in progress and cannot be modified
 var ErrReservationInProgress = errors.New("reservation is already in progress")
 
+// ErrNoRoomsLeft indicates that offer has no rooms left for reservation
+var ErrNoRoomsLeft = errors.New("no rooms are available for this offer")
+
 // ErrReviewNotFound indicates that review doesn't exist in database
 var ErrReviewNotFound = errors.New("review not fount")
 

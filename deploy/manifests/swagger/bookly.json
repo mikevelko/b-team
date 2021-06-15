@@ -714,6 +714,11 @@
     },
     "/api-hotel/reservations": {
       "get": {
+        "security": [
+          {
+            "customTokenSecurityHotel": []
+          }
+        ],
         "description": "fetches current (and future) reservations made by clients and information regarding these clients",
         "operationId": "GET_reservations",
         "parameters": [

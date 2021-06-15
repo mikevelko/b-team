@@ -35,6 +35,13 @@ type User struct {
 	HotelID null.Int
 }
 
+// UserPreview is a domain-level model
+type UserPreview struct {
+	ID        int64  `json:"clientID"`
+	FirstName string `json:"name"`
+	Surname   string `json:"surname"`
+}
+
 // UserStorage persists user related data
 type UserStorage interface {
 	AddUserForce(ctx context.Context, user User, password string) (int64, error)

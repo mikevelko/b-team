@@ -154,3 +154,68 @@ func (r *ReservationStorage) GetSpecificReservation(ctx context.Context, reserva
 	}
 	return &reservation, nil
 }
+
+// CreateReservationRoomLink creates room link to reservation in database
+func (r *ReservationStorage) CreateReservationRoomLink(ctx context.Context, reservationID int64, roomID int64) error {
+	const query = `
+    INSERT INTO room_reservations(
+        reservation_id,
+        room_id
+        )
+    VALUES ($1,$2)
+`
+	_, err := r.connPool.Exec(ctx, query,
+		reservationID,
+		roomID,
+	)
+	if err != nil {
+		return fmt.Errorf("postgres: could not insert room reservation : %w", err)
+	}
+	return nil
+}
+
+// DeleteReservationRoomLink deletes room link to reservation in database
+func (r *ReservationStorage) DeleteReservationRoomLink(ctx context.Context, reservationID int64) error {
+	const query = `
+    DELETE FROM room_reservations
+    WHERE reservation_id = $1
+`
+	_, err := r.connPool.Exec(ctx, query,
+		reservationID,
+	)
+	if err != nil {
+		return fmt.Errorf("postgres: could not delete room reservation : %w", err)
+	}
+	return nil
+}
+
+//IsRoomBooked checks if room is already booked by someone
+func (r *ReservationStorage) IsRoomBooked(ctx context.Context, roomID int64) (bool, error) {
+	const query = `
+    SELECT * FROM room_reservations
+    WHERE room_id = $1
+`
+	result, err := r.connPool.Exec(ctx, query,
+		roomID,
+	)
+	if err != nil {
+		return false, fmt.Errorf("postgres: could not check room reservation existence: %w", err)
+	}
+	return result.RowsAffected() > 0, nil
+}
+
+// GetRoomFromReservation gets roomID from reservation
+func (r *ReservationStorage) GetRoomFromReservation(ctx context.Context, reservationID int64) (int64, error) {
+	const query = `
+    SELECT room_id FROM room_reservations
+    WHERE reservation_id = $1
+`
+	var roomID int64
+	errCheck := r.connPool.QueryRow(ctx, query,
+		reservationID,
+	).Scan(&roomID)
+	if errCheck != nil {
+		return -1, fmt.Errorf("postgres: could not get reservation room: %w", errCheck)
+	}
+	return roomID, nil
+}

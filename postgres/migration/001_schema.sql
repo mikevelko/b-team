@@ -66,6 +66,12 @@ CREATE TABLE IF NOT EXISTS reservations
     adult_count               int not null
 );
 
+CREATE TABLE IF NOT EXISTS room_reservations
+(
+    reservation_id          bigserial not null,
+    room_id                 bigserial not null
+);
+
 CREATE TABLE IF NOT EXISTS sessions
 (
     id                          bigserial primary key,

@@ -35,6 +35,11 @@ func (a *api) mount(router chi.Router) {
 			r.Get("/", a.handleGetClientReservations)
 		})
 	})
+	router.Route("/api/v1/hotel", func(r chi.Router) {
+		r.With(auth.SessionMiddleware()).Route("/reservations", func(r chi.Router) {
+			r.Get("/", a.handleGetHotelReservations)
+		})
+	})
 }
 
 func (a *api) handlePostReservation(w http.ResponseWriter, r *http.Request) {
@@ -69,13 +74,16 @@ func (a *api) handlePostReservation(w http.ResponseWriter, r *http.Request) {
 	reservation.HotelID = hotelID
 	reservation.OfferID = offerID
 	errAdd := a.reservationService.CreateReservation(r.Context(), reservation)
-	// todo: refactor this to use SentinelError and switch to check error type
+	//todo: refactor this to use SentinelError and switch to check error type
 	if errAdd != nil {
 		if errAdd == bookly.ErrOfferNotAvailable {
 			httpapi.RespondWithError(w, "Unable to reserve: offer is not available, please refresh offers page.")
 			w.WriteHeader(http.StatusBadRequest)
 		} else if errAdd == bookly.ErrReservationTooBig {
 			httpapi.RespondWithError(w, "Unable to reserve: too much people for this offer.")
+			w.WriteHeader(http.StatusBadRequest)
+		} else if errAdd == bookly.ErrNoRoomsLeft {
+			httpapi.RespondWithError(w, "Unable to reserve: no rooms left for this offer.")
 			w.WriteHeader(http.StatusBadRequest)
 		} else if errAdd == bookly.ErrOfferNotFound {
 			w.WriteHeader(http.StatusNotFound)
@@ -99,7 +107,7 @@ func (a *api) handleDeleteReservation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	errDelete := a.reservationService.DeleteReservation(r.Context(), session.UserID, reservationID)
-	// todo: refactor this to use SentinelError and switch to check error type
+	//todo: refactor this to use SentinelError and switch to check error type
 	if errDelete != nil {
 		if errDelete == bookly.ErrReservationInProgress {
 			httpapi.RespondWithError(w, "Unable to delete reservation: reservation is in progress")
@@ -121,10 +129,51 @@ func (a *api) handleGetClientReservations(w http.ResponseWriter, r *http.Request
 	session := auth.SessionFromContext(r.Context())
 	pageNumber := parse.IntWithDefault(r.URL.Query().Get("pageNumber"), 1)
 	reservesPerPage := parse.IntWithDefault(r.URL.Query().Get("pageSize"), 1)
+	if pageNumber <= 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	if reservesPerPage <= 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 
 	reservations, err := a.reservationService.GetClientReservations(r.Context(), session.UserID, pageNumber, reservesPerPage)
 	if err != nil {
 		a.logger.Info("handlePostOffer: error could not get client reservations", zap.Error(err))
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+	httpapi.WriteJSONResponse(a.logger, w, reservations)
+}
+
+func (a *api) handleGetHotelReservations(w http.ResponseWriter, r *http.Request) {
+	session := auth.SessionFromContext(r.Context())
+	pageNumber := parse.IntWithDefault(r.URL.Query().Get("pageNumber"), 1)
+	reservesPerPage := parse.IntWithDefault(r.URL.Query().Get("pageSize"), 1)
+	if pageNumber <= 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	if reservesPerPage <= 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if session.HotelID < 0 {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	currentOnly := false
+
+	currentOnlyValue := r.URL.Query().Get("currentOnly")
+	if currentOnlyValue == "true" {
+		currentOnly = true
+	}
+
+	reservations, err := a.reservationService.GetHotelReservations(r.Context(), currentOnly, session.HotelID, pageNumber, reservesPerPage)
+	if err != nil {
+		a.logger.Info("handlePostOffer: error could not get hotel reservations", zap.Error(err))
 		w.WriteHeader(http.StatusInternalServerError)
 	}
 	httpapi.WriteJSONResponse(a.logger, w, reservations)

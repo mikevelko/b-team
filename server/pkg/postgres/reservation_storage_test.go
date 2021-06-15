@@ -15,6 +15,7 @@ import (
 func CleanTestReservationStorage(t *testing.T, pool *pgxpool.Pool, ctx context.Context) {
 	queries := []string{
 		"DELETE FROM reservations",
+		"DELETE FROM room_reservations",
 	}
 	for _, q := range queries {
 		_, err := pool.Exec(ctx, q)
@@ -202,4 +203,21 @@ func TestReservationStorage_IsReservationOwnedByClient(t *testing.T) {
 	owned2, err := storage.IsReservationOwnedByClient(ctx, 1, id0)
 	require.NoError(t, err)
 	assert.Equal(t, true, owned2)
+}
+
+func TestReservationStorage_IsRoomBooked(t *testing.T) {
+	testutils.SetIntegration(t)
+	storage := NewReservationStorage(initDb(t))
+	ctx := context.Background()
+	CleanTestReservationStorage(t, storage.connPool, ctx)
+
+	errAdd1 := storage.CreateReservationRoomLink(ctx, 1, 15)
+	require.NoError(t, errAdd1)
+
+	notBooked, err1 := storage.IsRoomBooked(ctx, 50)
+	require.NoError(t, err1)
+	assert.False(t, notBooked)
+	booked, err2 := storage.IsRoomBooked(ctx, 15)
+	require.NoError(t, err2)
+	assert.True(t, booked)
 }
