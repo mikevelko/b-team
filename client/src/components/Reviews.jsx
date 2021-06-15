@@ -17,7 +17,7 @@ function Reviews(props) {
 
     const fetchItems = () => {
         const url = `/api-client/hotels/${hotelId}/offers/${offerId}/reviews`;
-        axios.get(url, { headers: { 'accept': 'application/json', 'x-session-token': window.localStorage.getItem("token") } })
+        axios.get(url, { headers: { 'accept': 'application/json', 'x-client-token': window.localStorage.getItem("token") } })
             .then(response => {
                 console.log(response.data);
                 setReviews(response.data);

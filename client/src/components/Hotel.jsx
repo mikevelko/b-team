@@ -56,7 +56,7 @@ function Hotel(props) {
 
     const fetchItems = () => {
         const url = '/api-client/hotels/' + hotelId.toString();
-        axios.get(url, { headers: { 'accept': 'application/json', 'x-session-token': window.localStorage.getItem("token") } })
+        axios.get(url, { headers: { 'accept': 'application/json', 'x-client-token': window.localStorage.getItem("token") } })
             .then(response => {
                 console.log(response);
                 setHotel(response.data);

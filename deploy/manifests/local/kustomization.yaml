@@ -1,0 +1,32 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../base
+  - secrets
+
+images:
+  - name: b-team-auth-service
+    newName: docker.io/areknoster/b-team-auth-service
+    newTag: 1c04a1f
+  - name: b-team-hotel-service
+    newName: docker.io/areknoster/b-team-hotel-service
+    newTag: 1c04a1f
+  - name: b-team-offer-service
+    newName: docker.io/areknoster/b-team-offer-service
+    newTag: 1c04a1f
+  - name: b-team-reservation-service
+    newName: docker.io/areknoster/b-team-reservation-service
+    newTag: 1c04a1f
+  - name: b-team-review-service
+    newName: docker.io/areknoster/b-team-review-service
+    newTag: 1c04a1f
+  - name: b-team-room-service
+    newName: docker.io/areknoster/b-team-room-service
+    newTag: 1c04a1f
+  - name: b-team-user-service
+    newName: docker.io/areknoster/b-team-user-service
+    newTag: 1c04a1f
+  - name: b-team-postgres-migrator
+    newName: docker.io/areknoster/b-team-postgres-migrator
+    newTag: 1c04a1f

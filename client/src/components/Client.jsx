@@ -19,7 +19,7 @@ function Client() {
     }, []);
 
     const fetchItems = () => {
-        axios.get('/api-client/client', { headers: { 'accept': 'application/json', 'x-session-token': window.localStorage.getItem("token") } })
+        axios.get('/api-client/client', { headers: { 'accept': 'application/json', 'x-client-token': window.localStorage.getItem("token") } })
             .then(response => {
                 setName(response.data.name);
                 setSurname(response.data.surname);
@@ -61,7 +61,7 @@ function Client() {
         };
         const headers = {
             'accept': 'application/json',
-            'x-session-token': window.localStorage.getItem("token"),
+            'x-client-token': window.localStorage.getItem("token"),
             'Content-Type': 'application/json'
         };
         axios.patch('/api-client/client', body, { headers })

@@ -90,7 +90,7 @@ function Offer(props) {
 
     const fetchItems = () => {
         const url = `/api-client/hotels/${hotelId}/offers/${offerId}`;
-        axios.get(url, { headers: { 'accept': 'application/json', 'x-session-token': window.localStorage.getItem("token") } })
+        axios.get(url, { headers: { 'accept': 'application/json', 'x-client-token': window.localStorage.getItem("token") } })
             .then(response => {
                 console.log(response.data);
                 setOffer(response.data);
@@ -117,7 +117,7 @@ function Offer(props) {
         };
 
         const url = `/api-client/hotels/${hotelId}/offers/${offerId}/reservations`;
-        axios.post(url,body, { headers: { 'accept': 'application/json', 'x-session-token': window.localStorage.getItem("token"), 'Content-Type': 'application/json' } })
+        axios.post(url,body, { headers: { 'accept': 'application/json', 'x-client-token': window.localStorage.getItem("token"), 'Content-Type': 'application/json' } })
             .then(response => {
                 console.log(response.data);
                 fetchItems();

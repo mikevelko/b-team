@@ -37,7 +37,7 @@ const (
 	// HeaderHotelToken is the name for a token received from hotel UI
 	HeaderHotelToken = "x-hotel-token"
 	// HeaderClientToken is the name for a token received from client UI
-	HeaderClientToken = "x-session-token"
+	HeaderClientToken = "x-client-token"
 )
 
 func (a *api) handleAuthorizeClient(w http.ResponseWriter, r *http.Request) {
