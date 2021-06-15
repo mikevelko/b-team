@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import templatePicture from './offer.png'; 
 import './CreateOffer.css'
 import { Link, useHistory } from 'react-router-dom';
-import { TryGetHotelOffer } from '../Utils/FetchUtils';
+import { TryGetHotelOffer, TryGetHotelRooms, TryGetRoomsForOffer } from '../Utils/FetchUtils';
 const useStyles = makeStyles((theme) => ({
   offerPreviewImage:{
     width:'300px', 
@@ -80,7 +80,6 @@ function OfferDetails() {
   const [costPerAdult,setCostPerAdult] = useState(5);
   const [maxGuests,setMaxGuests] = useState(1);
   const [activeStatus, setActiveStatus] = useState(false);
-  const [rooms, setRooms] = useState([]);
   const [description, setDescription] = useState('');
 
     // For feature
@@ -175,14 +174,6 @@ function OfferDetails() {
               {activeStatus ? 'active' : 'inactive'}
           </Typography>
 
-          </div>
-          <div className={classes.fieldRow}>
-          <Typography className={classes.offerDetailsItem}> 
-            Rooms:
-          </Typography>
-            <Typography>
-                {rooms}
-            </Typography>
           </div>
           <div className={classes.fieldRowDescription}>
           <Typography className={classes.offerDetailsItem}> 

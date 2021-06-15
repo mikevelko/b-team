@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import templatePicture from './offer.png'; 
 import './CreateOffer.css'
 import { Link, useHistory } from 'react-router-dom';
-import { TryEditHotelOffer, TryGetHotelOffer } from '../Utils/FetchUtils';
+import { TryEditHotelOffer, TryGetHotelOffer,TryGetRoomsForOffer } from '../Utils/FetchUtils';
 const useStyles = makeStyles((theme) => ({
   offerPreviewImage:{
     width:'300px', 
@@ -80,7 +80,7 @@ function EditOffer() {
   const [costPerAdult,setCostPerAdult] = useState(5);
   const [maxGuests,setMaxGuests] = useState(1);
   const [activeStatus, setActiveStatus] = useState(false);
-  const [rooms, setRooms] = useState([]);
+  const [rooms, setRooms] = useState();
   const [description, setDescription] = useState('');
 
     // For feature
@@ -98,16 +98,18 @@ function EditOffer() {
         setMaxGuests(response.maxGuests)
         setPreviewPicture(response.offerPreviewPicture)
         setPictures(response.pictures)
+
       }
+    })
+    TryGetRoomsForOffer(history.location.pathname.split('/')[3]).then(function (response) {
+      setRooms(response.map((item) => {return  item.roomID.toString()}).join(' '))
     })
   },[])
   const classes = useStyles();
 
   function SaveChangesButton(){
-    TryEditHotelOffer(history.location.pathname.split('/')[3],offerTitle,maxGuests,activeStatus,description,pictures,previewPicture)
+    TryEditHotelOffer(history.location.pathname.split('/')[3],offerTitle,maxGuests,activeStatus,description,rooms.trim().split(' '),pictures,previewPicture)
       .then(function (response) {
-        console.log(response)
-
         if(response!==''){
           history.push('/offers')
         }
@@ -202,7 +204,7 @@ function EditOffer() {
           <Typography className={classes.offerDetailsItem}> 
             Rooms:
           </Typography>
-            <TextField onChange={(e) => {setRooms(e.target.value.split(' '))}}>
+            <TextField value={rooms} onChange={(e)=>{setRooms(e.target.value)}}>
             </TextField>  
           </div>
           <div className={classes.fieldRowDescription}>
