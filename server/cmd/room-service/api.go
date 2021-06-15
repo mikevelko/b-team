@@ -93,14 +93,14 @@ func (a *api) handlePostRoom(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	decoder := json.NewDecoder(r.Body)
-	var decodedRequest string
+	var decodedRequest RoomRequest
 	err := decoder.Decode(&decodedRequest)
 	if err != nil {
 		httpapi.RespondWithError(w, "Unable to add room (")
 		a.logger.Info("handlePostRoom: could not decode", zap.Error(err))
 		return
 	}
-	room := bookly.Room{RoomNumber: decodedRequest}
+	room := bookly.Room{RoomNumber: decodedRequest.HotelRoomNumber}
 	id, err := a.roomService.CreateRoom(r.Context(), room, session.HotelID)
 	if err != nil {
 		if errors.Is(err, bookly.ErrRoomAlreadyExists) {
@@ -111,7 +111,9 @@ func (a *api) handlePostRoom(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	httpapi.WriteJSONResponse(a.logger, w, id)
+	var resp RoomRespond
+	resp.RoomID = id
+	httpapi.WriteJSONResponse(a.logger, w, resp)
 	return
 }
 
