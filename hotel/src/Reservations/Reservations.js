@@ -1,6 +1,7 @@
 import { Box, Button, Grid, makeStyles, Typography } from "@material-ui/core";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { TryGetReservations } from "../Utils/FetchUtils";
 import "./Reservations.css";
 
 const useStyles = makeStyles((theme) => ({
@@ -13,6 +14,14 @@ const useStyles = makeStyles((theme) => ({
 function Reservations() {
   const classes = useStyles();
 
+  const [reservations, setReservations] = useState([])
+  useEffect(()=>{
+    TryGetReservations().then(function (response) {
+      if(response.length != 0){
+        setReservations(response)
+      }
+    })
+  },[])
   return (
     <>
 
@@ -20,62 +29,25 @@ function Reservations() {
         <Typography className={classes.title}>
           Reservations
         </Typography>
-        <Box className="ReservationRow">
-          <Box>
-            <Typography>Date from:[Date]</Typography>
-            <Typography>Date to:[Date]</Typography>
+        {reservations.map((reservation) => {return (
+          <Box key={reservation.reservation.reservationID} className="ReservationRow">
+            <Box>
+              <Typography>Name:{reservation.client.name}</Typography>
+              <Typography>Surname:{reservation.client.surname}</Typography>
+            </Box>
+            <Box>
+              <Typography>Date from:{reservation.reservation.from}</Typography>
+              <Typography>Date to:{reservation.reservation.to}</Typography>
+            </Box>
+            <Box>
+              <Typography>Count of adults:{reservation.reservation.numberOfAdults}</Typography>
+              <Typography>Count of children:{reservation.reservation.numberOfChildren}</Typography>
+            </Box>
+            <Box>
+              <Typography>Room number:{reservation.room.hotelRoomNumber}</Typography>
+            </Box>
           </Box>
-          <Box>
-            <Typography>Count of adults:[count]</Typography>
-            <Typography>Count of children:[count]</Typography>
-          </Box>
-          <Box>
-            <Typography>Room numbers:</Typography>
-            <Typography>[room number list]</Typography>
-          </Box>
-        </Box>
-        <Box className="ReservationRow">
-          <Box>
-            <Typography>Date from:[Date]</Typography>
-            <Typography>Date to:[Date]</Typography>
-          </Box>
-          <Box>
-            <Typography>Count of adults:[count]</Typography>
-            <Typography>Count of children:[count]</Typography>
-          </Box>
-          <Box>
-            <Typography>Room numbers:</Typography>
-            <Typography>[room number list]</Typography>
-          </Box>
-        </Box>
-        <Box className="ReservationRow">
-          <Box>
-            <Typography>Date from:[Date]</Typography>
-            <Typography>Date to:[Date]</Typography>
-          </Box>
-          <Box>
-            <Typography>Count of adults:[count]</Typography>
-            <Typography>Count of children:[count]</Typography>
-          </Box>
-          <Box>
-            <Typography>Room numbers:</Typography>
-            <Typography>[room number list]</Typography>
-          </Box>
-        </Box>
-        <Box className="ReservationRow">
-          <Box>
-            <Typography>Date from:[Date]</Typography>
-            <Typography>Date to:[Date]</Typography>
-          </Box>
-          <Box>
-            <Typography>Count of adults:[count]</Typography>
-            <Typography>Count of children:[count]</Typography>
-          </Box>
-          <Box>
-            <Typography>Room numbers:</Typography>
-            <Typography>[room number list]</Typography>
-          </Box>
-        </Box>
+        )})}
       </Grid>
     </>
   );

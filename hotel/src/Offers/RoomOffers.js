@@ -23,8 +23,7 @@ function RoomOffers() {
     },[])
     function GetOffersWithRoomNumber(){
         let offerIds = []
-        //param is roomNumber
-        TryGetHotelRooms(roomNumber).then(function (response) {
+        TryGetHotelRooms(history.location.pathname.split('/')[2]).then(function (response) {
             offerIds = response[0].offerID
             setOffersWithRoomNumber([])
             offerIds.map((offerId) => {

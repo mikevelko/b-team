@@ -108,7 +108,7 @@ function EditOffer() {
   const classes = useStyles();
 
   function SaveChangesButton(){
-    TryEditHotelOffer(history.location.pathname.split('/')[3],offerTitle,maxGuests,activeStatus,description,rooms.trim().split(' '),pictures,previewPicture)
+    TryEditHotelOffer(history.location.pathname.split('/')[3],offerTitle,maxGuests,activeStatus,description,rooms.length > 0 ? rooms.trim().split(' ') : [],pictures,previewPicture)
       .then(function (response) {
         if(response!==''){
           history.push('/offers')

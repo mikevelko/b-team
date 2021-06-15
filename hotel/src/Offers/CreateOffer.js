@@ -95,7 +95,7 @@ function CreateOffer() {
 
   function OnClickCreateOfferButton() {
     if(offerTitle != '' && costPerChild >0 && costPerAdult > 0 && maxGuests >0){
-      TryPostOffer(offerTitle,costPerChild,costPerAdult,maxGuests,activeStatus,rooms.trim().split(' '),description,pictures,previewPicture).then(function (response) {
+      TryPostOffer(offerTitle,costPerChild,costPerAdult,maxGuests,activeStatus,rooms.length > 0 ? rooms.trim().split(' ') : [],description,pictures,previewPicture).then(function (response) {
         if(response !== -1){
           history.push('/offers')
         }

@@ -122,7 +122,7 @@ export async function TryLogIn(login, password){
     return -1;
   };
 
-  export async function TryGetHotelOffers(pageNumber = 1, pageSize = 10,isActive = null){
+  export async function TryGetHotelOffers(isActive = null, pageNumber = 1, pageSize = 10){
     const res = await axios({
       method: 'get',
       url: '/api-hotel/offers',
@@ -225,6 +225,7 @@ export async function TryLogIn(login, password){
     });
 
     rooms.forEach((room) =>{
+
       if((res2.data == null) || (res2.data && !res2.data.some((elem) =>(elem.roomID === room)))){
         const res3 = axios({
           method: 'post',
@@ -295,7 +296,6 @@ export async function TryLogIn(login, password){
   };
   export async function TryAddHotelRoom(roomNumber){
     let a = `"`+roomNumber+`"`
-    console.log(a)
     const res = await axios({
       method: 'post',
       url: '/api-hotel/rooms',
@@ -340,3 +340,27 @@ export async function TryLogIn(login, password){
     return [];
   };
 
+  export async function TryGetReservations(roomID = null,pageNumber = 1,pageSize = 10){
+    const res = await axios({
+      method: 'get',
+      url: '/api-hotel/reservations',
+      headers: {
+        'accept': 'application/json',
+        'x-hotel-token': localStorage.getItem(HOTEL_TOKEN_NAME)
+      }, 
+      params:{
+        roomID,
+        pageNumber,
+        pageSize
+      }
+    })
+    .then(function (response) {
+      console.log(response)
+      return response;
+    })
+    .catch(function (error) {
+      console.log(error)
+    });
+    if(res !== undefined && res.data != null) return res.data;
+    return [];
+  };
