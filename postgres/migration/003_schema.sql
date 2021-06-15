@@ -84,4 +84,35 @@ VALUES
     'If you can see this offer in listing, contact Michal',
     'qwehasihdl.cop',
     false
+);
+
+INSERT INTO rooms
+(
+    hotel_id,
+    room_number
 )
+VALUES
+(
+    1,
+    '12F'
+),
+(
+    1,
+    '14A'
+),
+(
+    1,
+    '16F'
+),
+(
+    1,
+    '112'
+);
+
+INSERT INTO offers_rooms
+(
+    room_id,
+    offer_id
+)
+VALUES
+(1,1),(2,1),(3,2),(4,2);

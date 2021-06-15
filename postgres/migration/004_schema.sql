@@ -65,3 +65,11 @@ VALUES
     5,
     '2021-06-02'
 );
+
+insert into room_reservations
+(
+    room_id,
+    reservation_id
+)
+VALUES
+(1,99999990),(3,99999991),(4,99999992);
