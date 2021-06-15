@@ -60,5 +60,5 @@ type ReservationService interface {
 	CreateReservation(ctx context.Context, reservation *Reservation) error
 	GetClientReservations(ctx context.Context, clientID int64, pageNumber int, pageSize int) ([]*ReservationObject, error)
 	DeleteReservation(ctx context.Context, clientID int64, reservationID int64) error
-	GetHotelReservations(ctx context.Context, currentOnly bool, clientID int64, pageNumber int, pageSize int) ([]*ReservationHotelObject, error)
+	GetHotelReservations(ctx context.Context, currentOnly bool, clientID int64, roomID int64, pageNumber int, pageSize int) ([]*ReservationHotelObject, error)
 }

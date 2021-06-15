@@ -158,7 +158,7 @@ func (s *reservationService) DeleteReservation(ctx context.Context, clientID int
 }
 
 // GetHotelReservations retrieves hotel reservations
-func (s *reservationService) GetHotelReservations(ctx context.Context, currentOnly bool, hotelID int64, pageNumber int, pageSize int) ([]*bookly.ReservationHotelObject, error) {
+func (s *reservationService) GetHotelReservations(ctx context.Context, currentOnly bool, hotelID int64, searchRoomID int64, pageNumber int, pageSize int) ([]*bookly.ReservationHotelObject, error) {
 	reservations, errGet := s.reservationStorage.GetHotelReservations(ctx, hotelID)
 	if errGet != nil {
 		return nil, errGet
@@ -169,7 +169,6 @@ func (s *reservationService) GetHotelReservations(ctx context.Context, currentOn
 		if currentOnly && el.ToTime.Before(time.Now()) {
 			continue
 		}
-
 		obj := &bookly.ReservationHotelObject{}
 
 		client, errGetClient := s.userStorage.GetUser(ctx, el.ClientID)
@@ -188,6 +187,9 @@ func (s *reservationService) GetHotelReservations(ctx context.Context, currentOn
 			return nil, errGetRoomInfo
 		}
 
+		if searchRoomID != -1 && roomID != searchRoomID {
+			continue
+		}
 		obj.Room.ID = roomID
 		obj.Room.RoomNumber = roomInfo.RoomNumber
 

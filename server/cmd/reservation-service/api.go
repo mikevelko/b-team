@@ -150,6 +150,7 @@ func (a *api) handleGetHotelReservations(w http.ResponseWriter, r *http.Request)
 	session := auth.SessionFromContext(r.Context())
 	pageNumber := parse.IntWithDefault(r.URL.Query().Get("pageNumber"), 1)
 	reservesPerPage := parse.IntWithDefault(r.URL.Query().Get("pageSize"), 1)
+	idSearch := parse.IntWithDefault(r.URL.Query().Get("roomID"), -1)
 	if pageNumber <= 0 {
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -171,7 +172,8 @@ func (a *api) handleGetHotelReservations(w http.ResponseWriter, r *http.Request)
 		currentOnly = true
 	}
 
-	reservations, err := a.reservationService.GetHotelReservations(r.Context(), currentOnly, session.HotelID, pageNumber, reservesPerPage)
+	reservations, err := a.reservationService.GetHotelReservations(r.Context(), currentOnly, session.HotelID, int64(idSearch), pageNumber, reservesPerPage)
+
 	if err != nil {
 		a.logger.Info("handlePostOffer: error could not get hotel reservations", zap.Error(err))
 		w.WriteHeader(http.StatusInternalServerError)
